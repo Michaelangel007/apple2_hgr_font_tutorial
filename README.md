@@ -198,9 +198,10 @@ For example this will give us a "sharp" `Y`:
     3700:8
     3B00:8
 
-If we change the 2nd scan line to:
+If we change the 2nd and 4th scan line to:
 
-    2700:A2
+    2700:92
+    2F00:8C
 
 We'll get a "smooth" `Y`. 
 
