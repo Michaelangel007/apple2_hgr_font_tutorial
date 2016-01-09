@@ -163,26 +163,26 @@ Third, the video scanner for HGR mode scans bits in reverse. :-/ This means that
     2900:20
     2D00:10
 
- We would only get:
+We would only get:
 
  * 3 scanlines intead of the expected 4 (see the next point), and
- * the image would be flipped along the left-right (X axis) like this: `/` !!
+ * the image would be flipped along the left-right (X axis) like this: `/`
 
- On the Apple we need to flip each byte:
+On the Apple we need to flip each byte:
 
     %0000_0001 = $01
     %0000_0010 = $02
     %0000_0100 = $04
     %0000_1000 = $08
 
- Enter in:
+Enter in:
 
     2200:1
     2600:2
     2A00:4
     2E00:8
 
- And we see the correct: `\`
+And we see the correct: `\`
 
 ### Half-pixel shift
 
