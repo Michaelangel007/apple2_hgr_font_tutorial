@@ -702,7 +702,7 @@ Recall we'll re-use our existing font drawing code at $0352:
     365:60       RTS
 ```
 
-We just need to touch up our entry point from $0352 to $033B:
+We just need to touch up our entry point from $0352 ScreenPtrToTempPtr() to $033B DrawCharCol():
 
 ```assembly
     307:4C 3B 03    JMP $033B   ; DrawCharCol()
@@ -934,12 +934,14 @@ This is our mini HGR Y Address look-up table. "Funny" that it has 24 entries -- 
 
 Enter these bytes:
 
-    ; HgrLo EQU $6400
+Our `HgrLo` table:
+
     6400:00 80 00 80 00 80 00 80
     6408:28 A8 28 A8 28 A8 28 A8
     6410:50 D0 50 D0 50 D0 50 D0
 
-    ; HgrHi EQU $6418
+Our `HgrHi` table:
+
     6418:00 00 01 01 02 02 03 03
     6420:00 00 01 01 02 02 03 03
     6428:00 00 01 01 02 02 03 03
@@ -980,12 +982,17 @@ Enter in:
 
 Now we can print a char at any location:
 
+```assembly
     1100:A9 41    ; A-register = char
-    1102:A0 01    ; Y-register = col 1
-    1104:A2 02    ; X-register = row 2
+    1102:A0 01    ; Y-register = col 1 (2nd column)
+    1104:A2 02    ; X-register = row 2 (3rd row)
     1106:4C 20 03 ; DrawCharColRow( c, col )
-    1100G
+````
 
+Enter in:
+
+    1100:A9 41 A0 01 A2 02 4C 20 03
+    1100G
 
 ## Natural Params CursorColRow()
 
@@ -1114,6 +1121,7 @@ Enter:
     1200:A2 03 A0 02 20 79 03
     1207:A2 12 A0 0E 4C 8E 03
     120E:48 65 6C 6C 6F 20 57 6F 72 6C 64 00
+    1200G
 
 Note: An easy way to get the hex bytes for a string is to use this tiny Javascript snippet to convert a text string to hex:
 
@@ -1127,25 +1135,22 @@ Note: An easy way to get the hex bytes for a string is to use this tiny Javascri
 
 Here are all the routines we've entered in so far:
 
-    300:20 66 03 A9 00 A0 00 4C 52 03
+    300:20 66 03 A9 00 A0 00 4C 3B 03 
     310:20 3B 03 4C 70 03
     320:48 20 28 03 68 4C 3B 03
     328:BD 00 64 18 65 E5 85 F5
-    330:BD 18 64 18 65 E6 85 F6 60
-    33B:         48 29 1F 0A 0A
+    330:BD 18 64 18 65 E6 85 F6
+    33A:60       48 29 1F 0A 0A
     340:0A 69 00 8D 55 03 68 29
     348:60 2A 2A 2A 2A 69 60 8D
-    350:56 03
-    352:      A2 00 BD 00 62 91
+    350:56 03 A2 00 BD 00 62 91
     358:F5 18 A5 F6 69 04 85 F6
-    360:E8 E0 08 D0 EF 60
-    366:                  A5 E5
+    360:E8 E0 08 D0 EF 60 A5 E5
     368:85 F5 A5 E6 85 F6 60
-    370:C8 18 A5 F6 E9 1F 85 F6 60
-    379:   86 F5 B9 00 64 18 65
+    370:C8 18 A5 F6 E9 1F 85 F6
+    378:60 86 F5 B9 00 64 18 65
     380:E5 65 F5 85 F5 B9 18 64
-    388:18 65 E6 85 F6 60
-    38E:                  84 F0
+    388:18 65 E6 85 F6 60 84 F0
     390:86 F1 A0 00 B1 F0 F0 07
     398:20 10 03 C0 28 90 F5 60
 
