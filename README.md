@@ -1047,6 +1047,7 @@ And change the low byte to add `X` instead:
 
 This is a little clunky but it is progress. Let's write the new CursorColRow() version with the CursorRow() inlined so we don't have to use a JSR.
 
+```assembly
     ; FUNC: CursorColRow3( col, row ) = $0379
     ; PARAM: X = column to draw at; $0 .. $27 (Columns 0 .. 39) (not modified)
     ; PARAM: Y = row    to draw at; $0 .. $17 (Rows 0 .. 23) (not modified)
@@ -1063,6 +1064,7 @@ This is a little clunky but it is progress. Let's write the new CursorColRow() v
     389:65 E6     ADC $E6
     38B:85 F6     STA $F6
     38D:60        RTS
+```
 
 Enter in:
 
@@ -1522,11 +1524,13 @@ Enter this:
 
 And let's write a little demo ...
 
+```assembly
     1380:A0 C0        LDY #C0
     1382:20 00 14  .1 JSR ScrollHgrUpPixel
     1385:88           DEY
     1386:D0 FA        BNE .1
     1388:60           RTS
+```
 
 And let's try it out:
 
