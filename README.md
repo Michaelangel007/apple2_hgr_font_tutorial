@@ -55,7 +55,7 @@ Note: If you use:
 
 When we are done we will have 6502 assembly code that implements the equivalent of these C functions names:
 
-    ```C
+```c
     void DrawChar();
     void DrawCharCol( char c, int col )
     void DrawCharColRow( char c, int col, int row );
@@ -66,7 +66,7 @@ When we are done we will have 6502 assembly code that implements the equivalent 
     void DrawHexByte( char c );
     void DrawString( char *text );
     void CopyTextToHGR();
-    ```
+```
 
 ## Hard-Coded: A
 
@@ -367,7 +367,7 @@ Enter in:
 
 If you were wondering how this data was generated, you see the great thing about computers is that they can automate all the tedious and boring crap, er, calculations for us. Here's a HTML + Javascript program I wrote to convert the [image to HEX](image_2_hex.html):
 
-    ```javascript
+```javascript
     <html>
         <script>
             function byte2hex$( byte )
@@ -421,7 +421,7 @@ If you were wondering how this data was generated, you see the great thing about
         <pre id="hexdump"></pre>
     </body>
     </html>
-    ```
+```
 
 
 ## Font -> Screen Memory Trace
@@ -457,7 +457,7 @@ Before we can start a simple `DrawChar(char c)` function, we also first need to 
 
 Here's the disassembly of our (hard-coded) DrawChar() program:
 
-    ```assembly
+```assembly
     ; FUNC: DrawChar() = $0300
     ; NOTES: A, X, Y is destroyed
     300:    JSR ScreenPtrToTempPtr
@@ -485,7 +485,7 @@ Here's the disassembly of our (hard-coded) DrawChar() program:
     36A:    LDA $E6      ; to working pointer
     36C:    STA $F6
     36D:    RTS
-    ```
+```
 
 Enter in:
 
@@ -520,7 +520,7 @@ This works because we are using the 6502 Indirect Zero-Page Y addressing mode to
 
 Here's the C pseudo-code of the assembly code:
 
-    ```C
+```c
     char  c      = '@'; // 0x40;
     int   col    = 0;
     char  FONT[] = { ... }; // our font data glyphs
@@ -528,7 +528,7 @@ Here's the C pseudo-code of the assembly code:
     char *font   = 0x6200;       // eventually want: &FONT[ c*8 ]
     for( y = 0; y < 8; y++, screen += 0x400 )
        *screen = *font++;
-    ```
+```
 
 ### CursorCol( col )
 
@@ -541,7 +541,7 @@ After DrawChar() it is handy if we can advance both:
 * the column of the cursor
 * the pointer to the screen where the next glyph will be drawn
 
-    ```assembly
+```assembly
     ; FUNC: IncCursorCol() = $0370
     ; OUTPUT: Y-Register (column) is incremented
     ; Increment the cursor column and move the destination screen pointer back
@@ -552,7 +552,7 @@ After DrawChar() it is handy if we can advance both:
     374:E9 1F  SBC #1F
     376:85 F6  STA $F6
     378:60     RTS
-    ```
+```
 
 Enter in:
 
@@ -640,31 +640,32 @@ Our array offset for the source glyph data is:
 
 Some C pseudo-code would be:
 
-    ```C
+```c
     char c       = 'D'; // 0x44
     int  offset  = c * 8;
     int  address = 0x6000 + offset;
-    ```
+```
 
 Since we are dealing with a 16-bit address offset it is simpler to break this down into a low-byte and high-byte calculation for the 6502 since it can't natively do 16-bit offsets. Every 32 characters we need to offset 256 bytes.
 
-    ```C
+```c
     int AddressHi = 0x60 + (c / 32)
-    ```
+```
 
 But since the 6502 doesn't have a division instruction we need to use bit-shifts instead. The calculation `c / 32` is the same as `c >> 5`.
 
-    ```C
+```c
     char c        = 'D'; // 0x44
     char *Font    = 0x6000;
     int FontHi    = (Font >> 8) & 0xFF;
     int FontLo    = (Font >> 0) & 0xFF;
     int AddressHi = FontHi + ((c >> 5) & 0x07);
     int AddressLo = FontLo + ((c << 3) & 0xF8);
-    ```
+```
 
 A naive glyph/32 calculation would be to use 5 shift right bit-shifts:
 
+```assembly
     68       PLA      ; pop c  = %PQRSTUVW to draw
     29 60    AND #60  ;        = %PQR00000 S=0, Optimization: implicit CLC
     4A       LSR      ; c /  2 = %0PQRSTUV
@@ -672,18 +673,23 @@ A naive glyph/32 calculation would be to use 5 shift right bit-shifts:
     4A       LSR      ; c /  8 = %000PQRST
     4A       LSR      ; c / 16 = %0000PQRS
     4A       LSR      ; c / 32 = %00000PQR
+```
 
 However we can save one instruction (and 2 cycles) if we optimize `c/32` to use the counter-intutive 6502's `ROL` instruction -- which only requires 4 instructions instead:
 
+```assembly
     68       PLA      ; pop c  = %PQRSTUVW to draw
     29 60    AND #C0  ;        = %PQR00000 S=0, Optimization: implicit CLC
     2A       ROL      ;        = %QR000000 C=P
     2A       ROL      ;        = %R000000P C=Q
     2A       ROL      ;        = %000000PQ C=R
     2A       ROL      ; c / 32 = %00000PQR C=0
+```
 
 Our prefix code to setup the source address becomes:
 
+```assembly
+    ; FUNC: DrawCharCol( c, col ) = $03BB
     ; FUNC: DrawCharCol( c, col ) = $03BB
     ; PARAM: A = glyph to draw
     ; PARAM: Y = column to draw at; $0 .. $27 (Columns 0 .. 39) (not modified)
@@ -703,9 +709,11 @@ Our prefix code to setup the source address becomes:
     34C:2A       ROL      ; c / 32 = %00000PQR C=0 and one more to get R
     34D:69 60    ADC #60  ; += FontHi; Carry = 0 since S=0 from above
     34F:8D 56 03 STA $356 ; AddressHi = FontHi + (c/32)
+```
 
 Recall we'll re-use our existing font drawing code at $0352:
 
+```assembly
     352:A2 00    LDX #0
     354:BD 00 00 LDA $0000,X  ; A = font[ offset + i ]
     357:91 F5    STA ($F5),Y  ; screen[col] = A
@@ -717,10 +725,13 @@ Recall we'll re-use our existing font drawing code at $0352:
     361:E0 08    CPX #8
     363:D0 EF    BNE $304
     365:60       RTS
+```
 
 We just need to touch up our entry point from $0352 to $033B:
 
+```assembly
     307:4C 3B 03    JMP $033B   ; DrawCharCol()
+```
 
 Enter in:
 
@@ -747,6 +758,7 @@ We now have the ability to print any of the 128 ASCII characters!
 
 Let's verify this by writing a character inspector. We'll use the arrow keys to select the glyph and ESC to exit.
 
+```assembly
     ; FUNC: DemoCharInspect() = $1000
     1000:A9 00       LDA #0    ; c=0
     1002:85 FE       STA $FE   ; save which glyph to draw
@@ -775,6 +787,7 @@ Let's verify this by writing a character inspector. We'll use the arrow keys to 
     1032:C9 9B    .5 CMP #9B   ; key == ESC ?
     1034:D0 DD       BNE .2    ;
     1036:60          RTS       ; yes, exit
+```
 
 Enter in this code:
 
@@ -794,6 +807,7 @@ We now have an ASCII char inspector!
 
 Let's fix it up to print the hex value of the current character we are inspecting:
 
+```assembly
     1010:20 37 10    JSR $1037
 
     1037:48          PHA            ; save c
@@ -824,6 +838,7 @@ Let's fix it up to print the hex value of the current character we are inspectin
     105C:34 35 36 37
     1060:38 39 41 42
     1064:43 44 45 46
+```
 
 Enter in:
 
@@ -844,6 +859,7 @@ And now we have our own DrawHexByte() function.
 
 Let's use IncCursorCol() to automatically advance the cusor.  We'll also add a space after the character but before the hex value to improve readability of the output.
 
+```assembly
     ; FUNC: PrintChar() = $0310
     ; PARAM: A = glyph to draw
     ; PARAM: Y = column to draw at; $0 .. $27 (Columns 0 .. 39) (not modified)
@@ -882,6 +898,7 @@ Let's use IncCursorCol() to automatically advance the cusor.  We'll also add a s
     105C:34 35 36 37
     1060:38 39 41 42
     1064:43 44 45 46
+```
 
 Enter in:
 
@@ -954,6 +971,7 @@ Enter these bytes:
 
 To select which row to draw at we'll pass that in the X register to our DrawCharColRow() routine:
 
+```assembly
     ; FUNC: DrawCharColRow() = $0320
     ; PARAM: A = glyph to draw
     ; PARAM: Y = column to draw at; $0 .. $27 (Columns 0 .. 39) (not modified)
@@ -977,6 +995,7 @@ To select which row to draw at we'll pass that in the X register to our DrawChar
     334:65 E6     ADC $E6
     336:85 F6     STA $F6
     338:60        RTS
+```
 
 Enter in:
 
@@ -1001,6 +1020,7 @@ Unfortunately, our usage of the X and Y registers are not intuitive. This is due
 
 We could map the X-register to the natural column (x-axis), and the Y-register to the natural row (y-axis).  Alas, we're stuck with the X=row and Y=col unless we wanted to add extra code to "swap" the two.
 
+```assembly
     ; FUNC: CursorColRow() = $0379
     ; PARAM: Y = col
     ; PARAM: X = row
@@ -1010,6 +1030,7 @@ We could map the X-register to the natural column (x-axis), and the Y-register t
     37E:65 F5     ADC $F5
     381:85 F5     STA $F5
     383:60
+```
 
 Enter:
 
@@ -1019,6 +1040,7 @@ Or are? Since we're using a function to calculate the destinatin address let's f
 
 We'll need to change the `X` offset in CursorRow() to `Y`;
 
+```assembly
     ; FUNC: CursorRow2( row ) = $033B
     ; PARAM: Y = row
     ; NOTES: Version 2 !
@@ -1031,9 +1053,11 @@ We'll need to change the `X` offset in CursorRow() to `Y`;
     334:65 E6     ADC $E6
     336:85 F6     STA $F6
     338:60        RTS
+```
 
 And change the low byte to add `X` instead:
 
+```assembly
     ; FUNC: CursorColRow2( col, row ) = $0379
     ; PARAM: X = col
     ; PARAM: Y = row
@@ -1044,6 +1068,7 @@ And change the low byte to add `X` instead:
     37E:65 F5     ADC $F5
     381:85 F5     STA $F5
     383:60
+```
 
 This is a little clunky but it is progress. Let's write the new CursorColRow() version with the CursorRow() inlined so we don't have to use a JSR.
 
@@ -1075,7 +1100,7 @@ Enter in:
 
 Now that we have the basic print char working lets extend it to print a C-style string (one that is zero terminated.)
 
-    ```assembly
+```assembly
     ; FUNC: DrawString( *text ) = $038E
     ; PARAM: X = High byte of string address
     ; PARAM: Y = Low  byte of string address
@@ -1088,11 +1113,11 @@ Now that we have the basic print char working lets extend it to print a C-style 
     39B:C0 28        CPY 40      ; col < 40?
     39D:90 F5        BCC .1
     39F:60        .2 RTS
-    ```
+```
 
 And our example to verify that it works:
 
-    ```assembly
+```assembly
     ; FUNC: DemoDrawString()
     1200:A2 03        LDX #3      ; col = 3
     1202:A0 02        LDY #2      ; row = 2
@@ -1102,7 +1127,7 @@ And our example to verify that it works:
     120B:4C 8E 03     JMP DrawString
     120E:          .3 ASC "Hello World",0
     120E:48 65 6C 6C 6F 20 57 6F 72 6C 64 00
-    ```
+```
 
 Enter:
 
@@ -1115,11 +1140,11 @@ Enter:
 
 Note: An easy way to get the hex bytes for a string is to use this tiny Javascript snippet to convert a text string to hex:
 
-    ```JavaScript
+```JavaScript
     var txt = "Hello World";
     for( var i=0; i < txt.length; ++i )
         console.log( txt.charCodeAt(i).toString(16) );
-    ```
+```
 
 # Recap
 
@@ -1203,7 +1228,7 @@ Since we already have a HGR 16-bit address table we can re-use it.
 
 Here's the Pseudo-code to copy the text screen to the HGR Screen:
 
-    ```C
+```c
     for( row = 0; row < 24; row++ )
     {
        SrcTextLo = HgrLo[ row ];
@@ -1219,11 +1244,11 @@ Here's the Pseudo-code to copy the text screen to the HGR Screen:
            IncCursorCol();
        }
     }
-    ```
+```
 
 And here is the assembly:
 
-    ```assembly
+```assembly
     ; FUNC: CopyTextToHGR() = $1300
     ; DATA:
     ;    $6000.$63FF  Font 7x8 Data
@@ -1252,7 +1277,7 @@ And here is the assembly:
     132C:E6 F3      INC row
     133E:D0 DA      BNE .1            ; allways
     1330:60      .3 RTS
-    ```assembly
+```
 
 Enter in:
 
@@ -1538,7 +1563,7 @@ Sweet !
 
 Here's the assembly to scroll the HGR screen up one pixel:
 
-
+```assembly
     ; FUNC: ScrollHgrUpPixel() = $1400
     1400:     LDX #27 ; 39 columns
     1402:  .1 LDA $2400,X : STA $2000,X  ; [  1] -> [  0]
@@ -1737,10 +1762,11 @@ Here's the assembly to scroll the HGR screen up one pixel:
     1882:     BMI .2   ; x < 0 ?
     1884:     JMP .1
     1887:  .2 RTS
+```
 
 The bulk of the ScrollHgrUpPixel() was generated with this Javascript program:
 
-    ```Javascript
+```Javascript
     var hgr = [];
     for( var y = 0; y < 193; ++y ) // Intentional 1 scanline too many!
         hgr[ y ] = 0x2000 + ((y/64)|0)*0x28 + ((y%8)|0)*0x400 + ((y/8)&7)*0x80;
@@ -1778,7 +1804,7 @@ The bulk of the ScrollHgrUpPixel() was generated with this Javascript program:
             address += 6; // 6 bytes per line
         }
     console.log( out );
-    ```
+```
 
 And who said Javascript was a useless language? :-)
 
