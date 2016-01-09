@@ -216,7 +216,7 @@ Alrighty then, let's get the font data!
 
 Here is a picture of the Apple //e character set:
 
-* [Apple //e character set](Apple2eFont7x8.png?raw=true)
+* ![Apple //e character set](Apple2eFont7x8.png?raw=true)
 
 If we wanted only uppercase ASCII we could get away with 64 glyphs:
 
