@@ -42,7 +42,7 @@ Fire up your favorite Apple emulator (*cough* AppleWin) or real hardware.
 
 Note: If you use:
 
-* [AppleWin](https://github.com/AppleWin/AppleWin) press F9 until you get a Monochrome screen, then press `Ctrl-F2` for Ctrl-Reset.
+* [AppleWin](https://github.com/AppleWin/AppleWin) press `F2` (to reboot), `Ctrl-F2` to Ctrl-Reset, and then press `F9` until you get a Monochrome screen.
 
 * [Apple 2 js](https://www.scullinsteel.com/apple2/) make sure you select:
 
