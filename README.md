@@ -1537,6 +1537,10 @@ And let's write a little demo ...
     1388:60           RTS
 ```
 
+Enter in:
+
+    1380:A0 C0 20 00 14 88 D0 FA 60
+
 And let's try it out:
 
     1300L
