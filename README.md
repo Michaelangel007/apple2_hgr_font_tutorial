@@ -30,10 +30,11 @@ Revision: 3, Jan 10, 2016.
 ## Copy text screen to HGR
 ## Exercise 1: ScrollHgrUpLine()
 ## Exercise 2: ScrollHgrUpPixel()
+## Conclusion
 ## Solution 1: ScrollHgrUpLine()
 ## Solution 2: ScrollHgrUpPixel()
 ## References
-## Utilities and Misc.
+## Misc. Utilities and Files
 ## TODO
 
 ## Introduction
@@ -1335,14 +1336,18 @@ Hey!  Homework?  Yes, the only (true) way to demonstrate you understand the theo
 
     * one scan line (1 pixel)
 
-
-    For scrolling up one pixel we can spot the patter if we inspect the memory flow of how pixels get shuffled around:
+    Hint: For scrolling up one pixel we can spot the pattern if we inspect the memory flow of how pixels get shuffled around:
 
         40 bytes from $2400.$2427 -> $2000.$2027
         40 bytes from $2800.$2827 -> $2400.$2427
         etc
 
-Hope this tutorial helped you understand the inner workings of a font blitter!
+    Don't forget that you only need to copy 191 rows, not 192, since the very bottom scanline should be "blank."
+
+
+## Conclusion
+
+Hope this HGR font tutorial helped you understand the inner workings of a font blitter!
 
 Happy (Apple ][ //e //c) Hacking!
 Michael "AppleWin Debug Dev"
@@ -1832,7 +1837,7 @@ That's all folks!  Now go write some cool font blitter code.
 * http://www.6502.org/tutorials/compare_instructions.html
 * http://www.6502.org/tutorials/6502opcodes.html
 
-## Utilties and Misc.
+## Misc. Utilities and Files
 
 * Convert [font image to C array](image_2_c.html)
 * Convert [C array to binary font](c_2_fontbin.c)
@@ -1845,5 +1850,4 @@ That's all folks!  Now go write some cool font blitter code.
 * Disk image FONT_HGR.DSK
 * Double Hi-Res
 * PDF of this document
-
 
