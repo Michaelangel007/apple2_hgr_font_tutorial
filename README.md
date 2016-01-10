@@ -32,6 +32,7 @@
 ## Solution 2: ScrollHgrUpPixel()
 ## References
 
+
 ## Introduction
 
 A lot of people in comp.sys.apple2.programmer and other places on the internet have wondered how to "print" text onto the Apple's High Resolution Graphics (HGR) screen. Here's a tutorial on "6502 Font Blitting."
@@ -40,15 +41,22 @@ A lot of people in comp.sys.apple2.programmer and other places on the internet h
 
 Fire up your favorite Apple emulator (*cough* AppleWin) or real hardware.
 
-Note: If you use:
+If you use:
 
 * [AppleWin](https://github.com/AppleWin/AppleWin) press `F2` (to reboot), `Ctrl-F2` to Ctrl-Reset, and then press `F9` until you get a Monochrome screen.
+
+* [Virtual II](http://www.virtualii.com/) press `Ctrl-F12` to reset.
+
+There are other emulators written in Javascript but they are poor due to 2 reasons:
+
+* Don't support paste -- you'll be forced to manually enter in the hex code. :-/
+* Don't emulate the half-pixel shift of real hardware at all.
 
 * [Apple 2 js](https://www.scullinsteel.com/apple2/) make sure you select:
 
     Options, [x] Green Screen
 
-* If you use [Virtual II](http://www.virtualii.com/) press `Ctrl-F12` to reset.
+* If you use [David's Caldwall A2 js](http://porkrind.org/a2/)
 
 
 ## Functions we want & will write
