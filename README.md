@@ -2,7 +2,7 @@
 
 # Table of Contents
 ## Introduction
-## Functions we want
+## Functions we want & will write
 ## Hard-Coded: A
 ## Quirks of the Apple HGR screen
 ### Non-Linear Memory
@@ -51,7 +51,7 @@ Note: If you use:
 * If you use [Virtual II](http://www.virtualii.com/) press `Ctrl-F12` to reset.
 
 
-## Functions we want
+## Functions we want & will write
 
 When we are done we will have 6502 assembly code that implements the equivalent of these C functions names:
 
