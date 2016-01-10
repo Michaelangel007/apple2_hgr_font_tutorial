@@ -66,6 +66,7 @@ When we are done we will have 6502 assembly code that implements the equivalent 
     void DrawHexByte( char c );
     void DrawString( char *text );
     void CopyTextToHGR();
+    void ScrollHgrUpPixel();
 ```
 
 ## Hard-Coded: A
@@ -1323,7 +1324,7 @@ Michael "AppleWin Debug Dev"
 Figure it out !  You have all the tools and knowledge.
 
 
-## Solution 2:: ScrollHgrUpPixel()
+## Solution 2: ScrollHgrUpPixel()
 
 There are many different ways to solve this depending if we want to prioritize space or speed.
 
