@@ -559,7 +559,7 @@ Assuming we want to draw the `A` glyph at the top-left of the screen we would ne
 
 For simplicity, we're going to "quantize" our destination Y so that we render font glyphs only on the start of every 8 rows and every 7 pixel columns.  If we then had the starting address we simply could move to the next scan line by successively adding $0400 to our destination screen pointer.
 
-How did I know $0400?  One quirk of the HGR screen is that every 8 successive scan lines start this many bytes away.
+How did I know to use $0400 when going to the next line?  One quirk of the HGR screen is that every 8 successive scan lines start this many bytes away.  Refer back to the `HGR Memory-mapped IO` table listed above.
 
 
 ## DrawChar() version 1
@@ -1449,6 +1449,8 @@ Michael "AppleWin Debug Dev"
 Figure it out !  You have all the tools and knowledge.
 
 
+
+
 ## Solution 2: ScrollHgrUpPixel()
 
 There are many different ways to solve this depending if we want to prioritize space or speed.
@@ -1675,11 +1677,11 @@ And let's try it out:
 
 Sweet !
 
-Here's the assembly to scroll the HGR screen up one pixel:
+Here's the (non-standard) assembly to scroll the HGR screen up one pixel:  (I'm using the non-conventional `:` as an assembler end-of-statement sepearator to logically group the byte copies together.)
 
 ```assembly
     ; FUNC: ScrollHgrUpPixel() = $1400
-    1400:     LDX #27 ; 39 columns
+    1400:     LDX #27 ; 39 columns       ; Src Y    Dst Y
     1402:  .1 LDA $2400,X : STA $2000,X  ; [  1] -> [  0]
     1408:     LDA $2800,X : STA $2400,X  ; [  2] -> [  1]
     140E:     LDA $2C00,X : STA $2800,X  ; [  3] -> [  2]
