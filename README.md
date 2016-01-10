@@ -3,39 +3,40 @@
 Revision: 3, Jan 10, 2016.
 
 # Table of Contents
-## Introduction
-## Functions we want & will write
-## Hard-Coded: A
-## Quirks of the Apple HGR screen
-### Non-Linear Memory
-### No FONT data in ROM
-### HGR bytes are reversed
-### Half-pixel shift
-## Font Data
-### Raw Font Data
-### Image to Font Data (Javascript)
-## Font -> Screen Memory Trace
-## DrawChar version 1
-## X Cursor Position
-### CursorCol()
-## DrawChar() version 2
-## DrawChar() version 3
-## Character Inspector
-## Character Inspector version 2
-## Character Inspector version 3
-## Y Cursor Position
-## Natural Params CursorColRow()
-## DrawString()
-## Recap
-## Copy text screen to HGR
-## Exercise 1: ScrollHgrUpLine()
-## Exercise 2: ScrollHgrUpPixel()
-## Conclusion
-## Solution 1: ScrollHgrUpLine()
-## Solution 2: ScrollHgrUpPixel()
-## References
-## Misc. Utilities and Files
-## TODO
+
+* Introduction
+* Functions we want & will write
+* Hard-Coded: A
+* Quirks of the Apple HGR screen
+ * Non-Linear Memory
+ * No FONT data in ROM
+ * HGR bytes are reversed
+ * Half-pixel shift
+* Font Data
+ * Raw Font Data
+ * Image to Font Data (Javascript)
+* Font -> Screen Memory Trace
+* DrawChar version 1
+ * X Cursor Position
+ * CursorCol()
+ * DrawChar() version 2
+ * DrawChar() version 3
+* Character Inspector
+ * Character Inspector version 2
+ * Character Inspector version 3
+* Y Cursor Position
+* Natural Params CursorColRow()
+* DrawString()
+* Recap
+* Copy text screen to HGR
+* Exercise 1: ScrollHgrUpLine()
+* Exercise 2: ScrollHgrUpPixel()
+* Conclusion
+ * Solution 1: ScrollHgrUpLine()
+ * Solution 2: ScrollHgrUpPixel()
+* References
+* Misc. Utilities and Files
+* TODO
 
 ## Introduction
 
