@@ -1,0 +1,47 @@
+<html>
+<head>
+</head>
+<body>
+    <pre id="hexdump"></pre>
+    <script>
+        var hgr = [];
+        for( var y = 0; y < 193; ++y ) // Intentional 1 scanline too many!
+            hgr[ y ] = 0x2000 + ((y/64)|0)*0x28 + ((y%8)|0)*0x400 + ((y/8)&7)*0x80;
+
+        for( var y = 0; y < 192; ++y )
+            console.log( "[" + y + "]: " + hgr[y].toString(16).toUpperCase() );
+
+        function byte2hex$( byte )
+        {
+            return ("0" + byte.toString(16)).toUpperCase().substr(-2)
+        }
+
+        var address = 0x1402, out = "";
+        for( var y = 0; y < 192/8; ++y )
+            for( var x = 0; x < 8; ++x )
+            {
+                var row = y*8 + x; // Assumes hgr[] has a dummy 193rd scanline!
+                var src = hgr[ row + 1 ];
+                var dst = hgr[ row + 0 ];
+            var mem = "BD "
+                    + byte2hex$( (src >> 0) & 0xFF ) + " "
+                    + byte2hex$( (src >> 8) & 0xFF ) + " "
+                    + "9D "
+                    + byte2hex$( (dst >> 0) & 0xFF ) + " "
+                    + byte2hex$( (dst >> 8) & 0xFF ) + " ";
+                var txt = "  "
+                     + "  LDA $" + src.toString(16).toUpperCase() + ",Y "
+                     + ": STA $" + dst.toString(16).toUpperCase() + ",Y "
+                     + " ; ["   + ("  " + (row+1)).substr(-3) 
+                     + "] -> [" + ("  " + (row  )).substr(-3) + "]"  + "\n";
+                if (row != 191)
+                    out += address.toString(16).toUpperCase() + ":" + mem + txt;
+                address += 6; // 6 bytes per line
+            }
+        console.log( out );
+        var pre = document.getElementById( "hexdump" );
+        pre.innerHTML = out;
+    </script>
+</body>
+</html>
+
