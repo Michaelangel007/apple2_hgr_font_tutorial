@@ -108,7 +108,7 @@ Magic? :-)
 
 Nah, just Computer Science. :-)
 
-The first question you probalby have is "How did I know what bytes to use?"  We'll get to that in a second.
+The first question you probably have is "How did I know what bytes to use?"  We'll get to that in a second.
 
 
 ## Quirks of the Apple HGR screen
@@ -181,7 +181,7 @@ Third, the video scanner for HGR mode scans bits in reverse. :-/ This means that
 
 We would only get:
 
- * 3 scanlines intead of the expected 4 (see the next point), and
+ * 3 scanlines instead of the expected 4 (see the next point), and
  * the image would be flipped along the left-right (X axis) like this: `/`
 
 On the Apple we need to flip each byte:
@@ -673,7 +673,7 @@ A naive glyph/32 calculation would be to use 5 shift right bit-shifts:
     4A       LSR      ; c / 32 = %00000PQR
 ```
 
-However we can save one instruction (and 2 cycles) if we optimize `c/32` to use the counter-intutive 6502's `ROL` instruction -- which only requires 4 instructions instead:
+However we can save one instruction (and 2 cycles) if we optimize `c/32` to use the counterintuitive 6502's `ROL` instruction -- which only requires 4 instructions instead:
 
 ```assembly
     68       PLA      ; pop c  = %PQRSTUVW to draw
@@ -776,12 +776,12 @@ Let's verify this by writing a character inspector. We'll use the arrow keys to 
     1021:A5 FE    .3 LDA $FE   ; c &= 0x7F
     1023:29 7F       AND #7F
     1025:85 FE       STA $FE
-    1027:10 DB       BPL .1    ; allways branch, draw prev char
+    1027:10 DB       BPL .1    ; always branch, draw prev char
     1029:C9 95    .4 CMP #95   ; key == --> ?
     102B:D0 05       BNE .5    ;
     102D:E6 FE       INC $FE   ; yes, ++c
     102F:18          CLC
-    1030:90 EF       BCC .3    ; allways branch, draw prev char
+    1030:90 EF       BCC .3    ; always branch, draw prev char
     1032:C9 9B    .5 CMP #9B   ; key == ESC ?
     1034:D0 DD       BNE .2    ;
     1036:60          RTS       ; yes, exit
@@ -1041,7 +1041,7 @@ Enter:
 
     379:20 28 03 18 98 65 F5 85 F5 60
 
-Or are? Since we're using a function to calculate the destinatin address let's fix the order.
+Or are? Since we're using a function to calculate the destination address let's fix the order.
 
 We'll need to change the `X` offset in CursorRow() to `Y`;
 
@@ -1227,7 +1227,7 @@ The text screen, like the HGR screen, is also non-linear, and also broken up int
 While the Apple's memory layout seems esoteric it has beautiful symmetry. For any given text row notice that:
 
 * the low  byte of the text address is the same low byte of the HGR address
-* the high byte of the text addres is 0x1C less then the high byte of the HGR address
+* the high byte of the text address is 0x1C less then the high byte of the HGR address
 
 Since we already have a HGR 16-bit address table we can re-use it.
 
@@ -1280,7 +1280,7 @@ And here is the assembly:
     1328:C0 28      CPY #$28          ; 40 is #$18
     132A:90 F7      BCC .2            ; Y < 40
     132C:E6 F3      INC row
-    133E:D0 DA      BNE .1            ; allways
+    133E:D0 DA      BNE .1            ; always
     1330:60      .3 RTS
 ```
 
@@ -1817,7 +1817,7 @@ The bulk of the ScrollHgrUpPixel() was generated with this Javascript program [s
 
 And who said Javascript was a useless language? :-)
 
-That's all folks!  No go write some cool font blitter code.
+That's all folks!  Now go write some cool font blitter code.
 
 
 ## References
