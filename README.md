@@ -1829,7 +1829,7 @@ That's all folks!  No go write some cool font blitter code.
 
 * Convert [font image to C array](image_2_c.html)
 * Convert [C array to binary font](c_2_fontbin.c)
-* [Raw Binary Font](font.bin)
+* [Raw Binary Font](font.bin) Within AppleWin's debugger: `bload font.bin,6000`
 
 # TODO
 
