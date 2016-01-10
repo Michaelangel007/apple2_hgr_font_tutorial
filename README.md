@@ -124,7 +124,7 @@ There are couple of things we need to discuss first. The preceeding example show
 
 First, we should notice that video memory is non-linear. :-( You'll want to get familiar with the HGR address for the various Y scanlines:
 
-"Understanding the Apple ||", page 5-14 has this table `HGR Memory-mapped IO`:
+"Understanding the Apple II", page 5-14 has this table `HGR Memory-mapped IO`:
 
 * https://archive.org/stream/understanding_the_apple_ii#page/n105/mode/2up
 
