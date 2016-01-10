@@ -49,7 +49,9 @@ If you use:
 
 * [AppleWin](https://github.com/AppleWin/AppleWin) press `F2` (to reboot), `Ctrl-F2` to Ctrl-Reset, and then press `F9` until you get a Monochrome screen.
 
-* [Jace](https://sites.google.com/site/brendanrobert/projects/jace) you'll need Java. [Download link](https://github.com/badvision/jace/archive/v2.0b.tar.gz)
+* [Jace](https://github.com/Michaelangel007/jace/blob/master/target/jace-2.0-SNAPSHOT-jar-with-dependencies.jar) press `Ctrl-Delete` to reset.
+
+ * You will also need the Java JRE.
 
 * [Virtual II](http://www.virtualii.com/) press `Ctrl-F12` to reset.
 
