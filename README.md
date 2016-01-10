@@ -33,6 +33,7 @@ Revision: 2
 ## Solution 1: ScrollHgrUpLine()
 ## Solution 2: ScrollHgrUpPixel()
 ## References
+## Utilities and Misc.
 ## TODO
 
 ## Introduction
@@ -1824,9 +1825,14 @@ That's all folks!  No go write some cool font blitter code.
 * http://www.6502.org/tutorials/compare_instructions.html
 * http://www.6502.org/tutorials/6502opcodes.html
 
+## Utilties and Misc.
+
+Convert [font image to C array](image_2_c.html)
+Convert [C array to binary font](c_to_fontbin.cpp)
+[Raw Binary Font](font.bin)
+
 # TODO
 
-* .bin of the font
 * Double Hi-Res
 * PDF of this doc
 
