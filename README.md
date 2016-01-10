@@ -1186,7 +1186,14 @@ We also have a mini HGR Y address lookup table:
     6420:00 00 01 01 02 02 03 03
     6428:00 00 01 01 02 02 03 03
 
-What's left?
+What's left? Quite a few things actually:
+
+ * Copy the 40-Column text screen to HGR
+ * Scroll the HGR screen up by 1 pixel
+ * Copy the 80-Column text screen to DHGR (Double High Resolution)
+ * Hook into the COUT so all text appears onto the HGR or DHGR screen
+
+Let's implement those first two.
 
 
 ## Copy text screen to HGR
