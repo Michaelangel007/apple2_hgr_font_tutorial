@@ -1097,7 +1097,7 @@ We'll split the table of addresses into Low and High bytes for easier access. We
 
 This is our mini HGR Y Address look-up table. "Funny" that it has 24 entries -- the same height as our text screen. :-)
 
-Enter these bytes (or `bload hgrtable.bin`):
+Enter these bytes (or save [hgrtable.bin](hgrtable.bin) and `bload hgrtable.bin`):
 
 Our `HgrLo` table:
 
