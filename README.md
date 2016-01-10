@@ -1,6 +1,6 @@
 #Apple ]\[ HGR Font Tutorial
 
-Revision: 9, Jan 10, 2016.
+Revision: 10, Jan 10, 2016.
 
 # Table of Contents
 
@@ -1097,7 +1097,7 @@ We'll split the table of addresses into Low and High bytes for easier access. We
 
 This is our mini HGR Y Address look-up table. "Funny" that it has 24 entries -- the same height as our text screen. :-)
 
-Enter these bytes:
+Enter these bytes (or `bload hgrtable.bin`):
 
 Our `HgrLo` table:
 
@@ -1110,6 +1110,8 @@ Our `HgrHi` table:
     6418:00 00 01 01 02 02 03 03
     6420:00 00 01 01 02 02 03 03
     6428:00 00 01 01 02 02 03 03
+
+To save this AppleWin press `F7`, at the debugger console `bsave "hgrtable.bin",6400:642F`, press `F7`.
 
 To select which row to draw at we'll pass that in the X register to our DrawCharColRow() routine:
 
@@ -1158,6 +1160,9 @@ Enter in:
 
     1100:A9 41 A0 01 A2 02 4C 20 03
     1100G
+
+![Screenshot 16](pics/hgrfont_16.png?raw=true)
+
 
 ## Natural Params CursorColRow()
 
