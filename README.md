@@ -1,5 +1,7 @@
 #Apple ]\[ HGR Font Tutorial
 
+Revision: 2
+
 # Table of Contents
 ## Introduction
 ## Functions we want & will write
@@ -31,7 +33,7 @@
 ## Solution 1: ScrollHgrUpLine()
 ## Solution 2: ScrollHgrUpPixel()
 ## References
-
+## TODO
 
 ## Introduction
 
@@ -1821,4 +1823,10 @@ That's all folks!  No go write some cool font blitter code.
 
 * http://www.6502.org/tutorials/compare_instructions.html
 * http://www.6502.org/tutorials/6502opcodes.html
+
+# TODO
+
+* .bin of the font
+* Double Hi-Res
+* PDF of this doc
 
