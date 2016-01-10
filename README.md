@@ -124,12 +124,11 @@ There are couple of things we need to discuss first. The preceeding example show
 
 First, we should notice that video memory is non-linear. :-( You'll want to get familiar with the HGR address for the various Y scanlines:
 
-"Understanding the Apple ||{, page 5-14 has this table:
+"Understanding the Apple ||", page 5-14 has this table `HGR Memory-mapped IO`:
+
 * https://archive.org/stream/understanding_the_apple_ii#page/n105/mode/2up
 
 With all the decimal cruft removed:
-
-`HGR Memory-mapped IO`:
 
 | Y   |Address| Y   |Address| Y   |Address| Screen Hole  |
 |----:|:-----:|----:|-------|----:|:-----:|:------------:|
