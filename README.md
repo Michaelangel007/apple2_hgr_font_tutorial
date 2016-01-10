@@ -45,6 +45,8 @@ If you use:
 
 * [AppleWin](https://github.com/AppleWin/AppleWin) press `F2` (to reboot), `Ctrl-F2` to Ctrl-Reset, and then press `F9` until you get a Monochrome screen.
 
+* [Jace](https://sites.google.com/site/brendanrobert/projects/jace) you'll need Java. [Download link](https://github.com/badvision/jace/archive/v2.0b.tar.gz)
+
 * [Virtual II](http://www.virtualii.com/) press `Ctrl-F12` to reset.
 
 There are other emulators written in Javascript but they are poor due to 2 reasons:
@@ -52,11 +54,13 @@ There are other emulators written in Javascript but they are poor due to 2 reaso
 * Don't support paste -- you'll be forced to manually enter in the hex code. :-/
 * Don't emulate the half-pixel shift of real hardware at all.
 
+
+
 * [Apple 2 js](https://www.scullinsteel.com/apple2/) make sure you select:
 
     Options, [x] Green Screen
 
-* If you use [David's Caldwall A2 js](http://porkrind.org/a2/)
+* [David's Caldwall's Apple 2 Javascript + WebGL](http://porkrind.org/a2/)
 
 
 ## Functions we want & will write
