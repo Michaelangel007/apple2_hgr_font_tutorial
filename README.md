@@ -1,6 +1,6 @@
 #Apple ]\[ HGR Font Tutorial
 
-Revision: 10, Jan 10, 2016.
+Revision: 11, Jan 10, 2016.
 
 # Table of Contents
 
@@ -1188,7 +1188,7 @@ Enter:
 
     379:20 28 03 18 98 65 F5 85 F5 60
 
-Or are? Since we're using a function to calculate the destination address let's fix the order.
+Or are we stuck? Since we're using a function to calculate the destination address let's fix the order.
 
 We'll need to change the `X` offset in CursorRow() to `Y`;
 
@@ -1293,6 +1293,8 @@ Enter:
     120E:48 65 6C 6C 6F 20 57 6F 72 6C 64 00
     1200G
 
+![Screenshot 17](pics/hgrfont_17.png?raw=true)
+
 Note: An easy way to get the hex bytes for a string is to use this tiny Javascript snippet to convert a text string to hex:
 
 ```JavaScript
@@ -1305,12 +1307,12 @@ Note: An easy way to get the hex bytes for a string is to use this tiny Javascri
 
 Here are all the routines we've entered in so far:
 
-    300:20 66 03 A9 00 A0 00 4C 3B 03 
+    300:20 66 03 A9 00 A0 00 4C 3B 03
     310:20 3B 03 4C 70 03
     320:48 20 28 03 68 4C 3B 03
     328:BD 00 64 18 65 E5 85 F5
     330:BD 18 64 18 65 E6 85 F6
-    33A:60       48 29 1F 0A 0A
+    33A:60 EA EA 48 29 1F 0A 0A
     340:0A 69 00 8D 55 03 68 29
     348:60 2A 2A 2A 2A 69 60 8D
     350:56 03 A2 00 BD 00 62 91
