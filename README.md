@@ -1,6 +1,6 @@
 #Apple ]\[ HGR Font Tutorial
 
-Revision: 2
+Revision: 3, Jan 10, 2016.
 
 # Table of Contents
 ## Introduction
@@ -1827,9 +1827,9 @@ That's all folks!  No go write some cool font blitter code.
 
 ## Utilties and Misc.
 
-Convert [font image to C array](image_2_c.html)
-Convert [C array to binary font](c_to_fontbin.cpp)
-[Raw Binary Font](font.bin)
+* Convert [font image to C array](image_2_c.html)
+* Convert [C array to binary font](c_2_fontbin.c)
+* [Raw Binary Font](font.bin)
 
 # TODO
 
