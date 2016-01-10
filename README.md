@@ -108,6 +108,8 @@ Voila!
 
 You should see an uppercase A appear in the top left of the HGR screen.
 
+![Screenshot 1](pics/hgrfont_01.png?raw=true)
+
 Magic? :-)
 
 Nah, just Computer Science. :-)
@@ -275,6 +277,8 @@ We would only get:
 
  * 3 scanlines instead of the expected 4 (see the next point), and
  * the image would be flipped along the left-right (X axis) like this: `/`
+
+![Screenshot 2](pics/hgrfont_02.png?raw=true)
 
 On the Apple we need to flip each byte:
 
