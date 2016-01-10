@@ -296,6 +296,8 @@ Enter in:
 
 And we see the correct: `\`
 
+![Screenshot 3](pics/hgrfont_03.png?raw=true)
+
 ### Half-pixel shift
 
 Fourth, we mentioned above that when we entered in $80 that the Apple didn't display any pixels for this byte.  This is because the Apple uses the high-bit as a flag to shift that group of 7 pixels over HALF a pixel. (Yes, half a pixel.) This means the monochrome *effective* resolution is a pseudo 560x192. We can't individually access every 560 pixels, only part of them so it is not a "true" 560 resolution. :-( What this means in practice is that we can use this half-pixel shift / byte to get very smooth slopes for Y, etc. :-)
@@ -310,16 +312,43 @@ For example this will give us a "sharp" `Y`:
     3700:8
     3B00:8
 
-If we change the 2nd and 4th scan line to:
+![Screenshot 4](pics/hgrfont_04.png?raw=true)
 
-    2700:92
-    2F00:8C
+If we change the 2nd and 4th scan line to use this half-pixel shift we can't just set the high bit as we won't get quite the correct image:
 
-We'll get a "smooth" `Y`. 
+Enter in:
+
+    2302:22
+    2702:A2 ;
+    2B02:14
+    2F02:88 ;
+    3302:8
+    3702:8
+    3B02:8
+
+![Screenshot 5](pics/hgrfont_05.png?raw=true)
+
+We actually _also_ need to moving the left-edge pixel over by 1 so it appears in the correct location when shifted:
+
+2304:22
+2704:92 ;
+2B04:14
+2F04:8C ;
+3304:8
+3704:8
+3B04:8
+
+Ah-ha! We've got "smooth" `Y`.
+
+![Screenshot 6](pics/hgrfont_06.png?raw=true)
 
 **Note**: The emulators `Virtual ][` and `Apple2js` are *broken* emulators. They do **not** emulate the half-pixel shift of real hardware at all.  This is another reason we won't worry about it for now.
 
- We're going to ignore the half-pixel shift since it is easy to touch up the font data later if we wish:
+ We're going to ignore the half-pixel shift since it is easy to touch up the font data later if we wish.
+
+At the beginning we said to view the HGR screen in monochrome; Notice how the extra colors make the Hi-Res text much harder to read. If you are running on real hardware the Apple Color Composite Monitor had a push-button on the front to toggle the screen between color and monochrome.  Now we know why!
+
+![Screenshot 7](pics/hgrfont_07.png?raw=true)
 
 
 ## Font Data
