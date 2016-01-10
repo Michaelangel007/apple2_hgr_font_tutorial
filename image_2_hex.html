@@ -1,0 +1,55 @@
+    <html>
+    <head>
+    <script>
+        function byte2hex$( byte )
+        {
+            return ("0" + byte.toString(16)).toUpperCase().substr(-2)
+        }
+
+        function OnLoad()
+        {
+            var image   = document.getElementById( "Apple2eFont7x8" );
+            var canvas  = document.createElement( "canvas" );
+            var context = canvas.getContext( "2d" );
+
+            canvas.width  = image.width;
+            canvas.height = image.height;
+            context.drawImage( image, 0, 0 );
+
+            var CW = 7, CH = 8; // Cell Width Height
+            var address = 0x6000, pixel, rgba, lines = "";
+            for( var ty = 0; ty < image.height/CH; ++ty )
+            {
+                for( var tx = 0; tx < image.width/CW; ++tx )
+                {
+                    var text = "";
+                    for( var y = 0; y < CH; ++y )
+                    {
+                        var hex = 0, mask = 0x1;
+                        for( var x = 0; x < CW; ++x, mask <<= 1 )
+                        {
+                            pixel = context.getImageData( tx*CW+x, ty*CH+y, 1, 1 );
+                            rgba  = pixel.data;
+                            hex  += rgba[0] ? mask : 0; // assume R=G=B
+                        }
+                        text += byte2hex$( hex ) + " ";
+                    }
+                    var c = (16*ty)+tx, d =       String.fromCharCode( c );
+                    if (c < 32)         d = "^" + String.fromCharCode( c + 0x40 );
+                    text += "; " + d + "\n";
+                    lines += "" + address.toString(16).toUpperCase() + ":" + text;
+                    address += 8;
+                }
+            }
+            console.log( lines );
+            var pre = document.getElementById( "hexdump" );
+            pre.innerHTML = lines;
+        }
+    </script>
+    </head>
+    <body onload="OnLoad()">
+        <img id="Apple2eFont7x8" src="Apple2eFont7x8.png">
+        <hr>
+        <pre id="hexdump"></pre>
+    </body>
+    </html>
