@@ -253,7 +253,7 @@ Ouch 1K of our precious 64K!  Now we know why all this data was in ROM.
 
 I've saved you the trouble of converting all the pixels to hex. You may want to mute your sound since the Apple will beep at the semi-colon "comments".
 
-Enter in:
+Enter in (or download [Raw Binary Font](font.bin) and with AppleWin press `F7`, type `bload font.bin`, press `F7`):
 
     6000:10 08 36 7F 3F 3F 7E 36  ; ^@
     6008:10 08 36 41 21 21 4A 36  ; ^A
