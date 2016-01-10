@@ -1760,7 +1760,7 @@ Here's the assembly to scroll the HGR screen up one pixel:
     1887:  .2 RTS
 ```
 
-The bulk of the ScrollHgrUpPixel() was generated with this Javascript program:
+The bulk of the ScrollHgrUpPixel() was generated with this Javascript program [scroll_hgr_up_pixel.html](scroll_hgr_up_pixel.html):
 
 ```Javascript
     var hgr = [];
@@ -1775,8 +1775,6 @@ The bulk of the ScrollHgrUpPixel() was generated with this Javascript program:
         return ("0" + byte.toString(16)).toUpperCase().substr(-2)
     }
 
-    var useX = false;
-
     var address = 0x1402, out = "";
     for( var y = 0; y < 192/8; ++y )
         for( var x = 0; x < 8; ++x )
@@ -1784,12 +1782,12 @@ The bulk of the ScrollHgrUpPixel() was generated with this Javascript program:
             var row = y*8 + x; // Assumes hgr[] has a dummy 193rd scanline!
             var src = hgr[ row + 1 ];
             var dst = hgr[ row + 0 ];
-            var mem = (useX ? "BD " : "?? " )
+            var mem = "BD "
                     + byte2hex$( (src >> 0) & 0xFF ) + " "
                     + byte2hex$( (src >> 8) & 0xFF ) + " "
-                    + (useX ? "9D "
+                    + "9D "
                     + byte2hex$( (dst >> 0) & 0xFF ) + " "
-                    + byte2hex$( (dst >> 8) & 0xFF ) + " "
+                    + byte2hex$( (dst >> 8) & 0xFF ) + " ";
             var txt = "  "
                  + "  LDA $" + src.toString(16).toUpperCase() + ",Y "
                  + ": STA $" + dst.toString(16).toUpperCase() + ",Y "
