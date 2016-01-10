@@ -1,6 +1,6 @@
 #Apple ]\[ HGR Font Tutorial
 
-Revision: 7, Jan 10, 2016.
+Revision: 8, Jan 10, 2016.
 
 # Table of Contents
 
@@ -330,15 +330,15 @@ Enter in:
 
 We actually _also_ need to moving the left-edge pixel over by 1 so it appears in the correct location when shifted:
 
-2304:22
-2704:92 ;
-2B04:14
-2F04:8C ;
-3304:8
-3704:8
-3B04:8
+    2304:22
+    2704:92 ;
+    2B04:14
+    2F04:8C ;
+    3304:8
+    3704:8
+    3B04:8
 
-Ah-ha! We've got "smooth" `Y`.
+Ah-ha! We've got a "smooth" `Y`.
 
 ![Screenshot 6](pics/hgrfont_06.png?raw=true)
 
@@ -346,7 +346,7 @@ Ah-ha! We've got "smooth" `Y`.
 
  We're going to ignore the half-pixel shift since it is easy to touch up the font data later if we wish.
 
-At the beginning we said to view the HGR screen in monochrome; Notice how the extra colors make the Hi-Res text much harder to read. If you are running on real hardware the Apple Color Composite Monitor had a push-button on the front to toggle the screen between color and monochrome.  Now we know why!
+At the beginning we said to view the HGR screen in monochrome. Notice how the extra colors make the Hi-Res text much harder to read. If you are running on real hardware the Apple Color Composite Monitor had a push-button on the front to toggle the screen between color and monochrome.  Now we know why!
 
 ![Screenshot 7](pics/hgrfont_07.png?raw=true)
 
@@ -367,7 +367,7 @@ Since the font data chews up memory anyways we'll "splurge" and use the full 128
 
     128 glyphs * 8 bytes/glyph = 1024 bytes = 1K of data.
 
-Ouch 1K of our precious 64K!  Now we know why all this data was in ROM.
+Ouch! We're using 1K of our precious 64K.  Now we know why all those font glyphs was in a ROM chip.
 
 
 ### Raw Font Data
@@ -567,11 +567,12 @@ If you were wondering how this data was generated, you see the great thing about
     </body>
     </html>
 ```
-Note: If you get a retarded _Uncaught SecurityError: Failed to execute 'getImageData' on 'CanvasRenderingContext2D': The canvas has been tainted by cross-origin data._ with Chrome you need to start it with the command line:
+Note: If you get a retarded `Uncaught SecurityError: Failed to execute 'getImageData' on 'CanvasRenderingContext2D': The canvas has been tainted by cross-origin data.` with Chrome you need to start it with the command line:
 
     --allow-file-access-from-files
 
-Another solution is to use a web browser that isn't "broken" such as Firefox, etc.
+Another solution is to use a web browser that isn't "broken" such as Firefox, etc. when trying to read _local_ files.
+
 
 ## Font -> Screen Memory Trace
 
