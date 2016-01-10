@@ -1294,8 +1294,8 @@ For our final trick we are going to copy the characters off the text screen onto
 
 The text screen, like the HGR screen, is also non-linear, and also broken up into a triad:
 
-|Row|Row2TextAddr|Row2HgrAddr|
-|--:|:----:|:------:|
+|Row|Text Addrress|HGR Address|
+|--:|:----:|:----:|
 | 0 | $400 |$2000|
 | 1 | $480 |$2080|
 | 2 | $500 |$2100|
@@ -1427,13 +1427,15 @@ Hey!  Homework?  Yes, the only (true) way to demonstrate you understand the theo
 
     * one scan line (1 pixel)
 
-    Hint: For scrolling up one pixel we can spot the pattern if we inspect the memory flow of how pixels get shuffled around:
+    Hint: For scrolling up one pixel we can spot the pattern if we inspect
+    the memory flow of how pixels get shuffled around:
 
         40 bytes from $2400.$2427 -> $2000.$2027
         40 bytes from $2800.$2827 -> $2400.$2427
         etc
 
-    Don't forget that you only need to copy 191 rows, not 192, since the very bottom scanline should be "blank."
+    Don't forget that you only need to copy 191 rows, not 192, since the
+    very bottom scanline should be "blank."
 
 
 ## Conclusion
