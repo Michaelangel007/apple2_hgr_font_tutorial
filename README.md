@@ -370,7 +370,9 @@ Enter in:
 If you were wondering how this data was generated, you see the great thing about computers is that they can automate all the tedious and boring crap, er, calculations for us. Here's a HTML + Javascript program I wrote to convert the [image to HEX](image_2_hex.html):
 
 ```javascript
+     <!DOCTYPE HTML>
     <html>
+    <head>
         <script>
             function byte2hex$( byte )
             {
@@ -417,6 +419,7 @@ If you were wondering how this data was generated, you see the great thing about
                 pre.innerHTML = lines;
             }
         </script>
+    </head>
     <body onload="OnLoad()">
         <img id="Apple2eFont7x8" src="Apple2eFont7x8.png">
         <hr>
@@ -424,7 +427,11 @@ If you were wondering how this data was generated, you see the great thing about
     </body>
     </html>
 ```
+Note: If you get a retarded _Uncaught SecurityError: Failed to execute 'getImageData' on 'CanvasRenderingContext2D': The canvas has been tainted by cross-origin data._ with Chrome you need to start it with the command line:
 
+    --allow-file-access-from-files
+
+Another solution is to use a web browser that isn't "broken" such as Firefox, etc.
 
 ## Font -> Screen Memory Trace
 
