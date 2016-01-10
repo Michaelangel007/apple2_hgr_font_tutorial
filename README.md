@@ -652,6 +652,7 @@ We're almost ready to run this! We just need to initialize one variable -- where
 
 And with any luck you should see the at sign `@` in the top-left.
 
+![Screenshot 8](pics/hgrfont_08.png?raw=true)
 
 ## X Cursor Position
 
@@ -663,6 +664,8 @@ Enter in:
     300G
     306:2
     300G
+
+![Screenshot 9](pics/hgrfont_09.png?raw=true)
 
 This works because we are using the 6502 Indirect Zero-Page Y addressing mode to store the destination pixels with the `STA` instruction.  Since the Y-register must _always_ be used in this addressing mode we get a column offset "for free." :-)
 
@@ -753,6 +756,9 @@ And to draw the new glyph, enter in:
     300G
 
 We should see the last character of the 3 `@@@` change to `D`.
+
+![Screenshot 10](pics/hgrfont_10.png?raw=true)
+
 
 ## DrawChar() version 3
 
