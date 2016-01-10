@@ -874,12 +874,16 @@ Enter in:
 
 We should now see an closed apple glyph!
 
+![Screenshot 11](pics/hgrfont_11.png?raw=true)
+
 To change which glyph is printed:
 
     304:41
     300G
 
 And we should see an `A` printed.
+
+![Screenshot 12](pics/hgrfont_12.png?raw=true)
 
 We now have the ability to print any of the 128 ASCII characters!
 
@@ -932,6 +936,8 @@ Enter in this code:
 
 We now have an ASCII char inspector!
 
+![Screenshot 13](pics/hgrfont_13.png?raw=true)
+
 
 ## Character Inspector version 2
 
@@ -983,6 +989,8 @@ Enter in:
     1000G
 
 And now we have our own DrawHexByte() function.
+
+![Screenshot 14](pics/hgrfont_14.png?raw=true)
 
 
 ## Character Inspector version 3
@@ -1042,6 +1050,8 @@ Enter in:
     1058:30 31 32 33 34 35 36 37
     1060:38 39 41 42 43 44 45 46
     1000G
+
+![Screenshot 15](pics/hgrfont_15.png?raw=true)
 
 
 ## Y Cursor Position
