@@ -1,6 +1,6 @@
 #Apple ]\[ HGR Font Tutorial
 
-Revision: 6, Jan 10, 2016.
+Revision: 7, Jan 10, 2016.
 
 # Table of Contents
 
