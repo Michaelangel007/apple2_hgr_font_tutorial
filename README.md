@@ -684,7 +684,7 @@ Here's the C pseudo-code of the assembly code:
 ```c
     char  c      = '@'; // 0x40;
     int   col    = 0;
-    char  FONT[] = { ... }; // our font data glyphs
+    char  FONT[] = { ... };      // our font data glyphs starting at 0x6000
     char *screen = 0x2000 + col; // destination
     char *font   = 0x6200;       // eventually want: &FONT[ c*8 ]
     for( y = 0; y < 8; y++, screen += 0x400 )
@@ -711,7 +711,7 @@ After drawing a character with `DrawChar()` it is handy if we can advance both:
     370:C8     INY
     371:18     CLC
     372:A5 F6  LDA $F6
-    374:E9 1F  SBC #1F
+    374:E9 1F  SBC #$1F
     376:85 F6  STA $F6
     378:60     RTS
 ```
