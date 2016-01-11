@@ -1,6 +1,6 @@
 #Apple ]\[ HGR Font Tutorial
 
-Revision: 17, Jan 10, 2016.
+Revision: 18, Jan 10, 2016.
 
 # Table of Contents
 
@@ -614,15 +614,15 @@ Before we can start a simple `DrawChar(char c)` function, we also first need to 
 Here's the disassembly of our (hard-coded) DrawChar() program:
 
 ```assembly
-    ; FUNC: DrawChar() = $0300
+    ; FUNC: DrawChar()
     ; NOTES: A, X, Y is destroyed
-            .ORG $300
+            .ORG $0300
     300:    JSR ScreenPtrToTempPtr
     303:    LDA #00      ; glyph 'c' to draw (not used yet)
     305:    LDY #00      ; Y = column to draw at (hard-coded)
     307:    JMP _DrawChar
 
-            .ORG $352
+            .ORG $0352
     352: _DrawChar
     352:    LDX #0
     354: .1 LDA $6200,X  ; A = font[ offset + i ]
@@ -705,10 +705,11 @@ After drawing a character with `DrawChar()` it is handy if we can advance both:
 * the pointer to the screen where the next glyph will be drawn
 
 ```assembly
-    ; FUNC: IncCursorCol() = $0370
+    ; FUNC: IncCursorCol()
     ; OUTPUT: Y-Register (column) is incremented
     ; Increment the cursor column and move the destination screen pointer back
     ; up 8 scan lines previously to what it was when DrawChar() was called.
+               .ORG $0370
     370:C8     INY
     371:18     CLC
     372:A5 F6  LDA $F6
@@ -829,10 +830,11 @@ However we can save one instruction (and 2 cycles) if we optimize `c/32` to use 
 Our prefix code to setup the source address becomes:
 
 ```assembly
-    ; FUNC: DrawCharCol( c, col ) = $033B
+    ; FUNC: DrawCharCol( c, col )
     ; PARAM: A = glyph to draw
     ; PARAM: Y = column to draw at; $0 .. $27 (Columns 0 .. 39) (not modified)
     ; NOTES: X is destroyed
+                 .ORG $033B
     33B:48       PHA      ; push c = %PQRSTUVW to draw
     33C:29 1F    AND #1F  ;        = %000STUVW R=0, Optimization: implicit CLC
     33E:0A       ASL      ; c * 2    %00STUVW0
@@ -850,7 +852,7 @@ Our prefix code to setup the source address becomes:
     34F:8D 56 03 STA $356 ; AddressHi = FontHi + (c/32)
 ```
 
-Recall we'll re-use our existing font drawing code at $0352:
+Recall we'll re-use our existing font drawing code `_DrawChar` at $0352:
 
 ```assembly
     352:A2 00    LDX #0
@@ -1235,11 +1237,12 @@ And change the low byte to add `X` instead:
 This is a little clunky but it is progress. Let's write the new SetCursorColRow() version with the CursorRow() inlined so we don't have to use a JSR.
 
 ```assembly
-    ; FUNC: SetCursorColRow( col, row ) = $0379
+    ; FUNC: SetCursorColRow( col, row )
     ; PARAM: X = column to draw at; $0 .. $27 (Columns 0 .. 39) (not modified)
     ; PARAM: Y = row    to draw at; $0 .. $17 (Rows 0 .. 23) (not modified)
     ; NOTES: Version 3! X and Y is swapped from earlier version!
     ; [$F5] = HgrLo[ Y ] + ScreenLo + X
+                  .ORG $0379
     379:86 F5     STX $F5
     37B:B9 00 64  LDA HgrLo,Y ; HgrLo[ row ]
     37E:18        CLC
@@ -1268,6 +1271,7 @@ Now that we have the basic print char working lets extend it to print a C-style 
     ; FUNC: DrawString( *text ) = $038E
     ; PARAM: X = High byte of string address
     ; PARAM: Y = Low  byte of string address
+                     .ORG $038E
     38E:84 F0        STY $F0
     390:86 F1        STX $F1
     392:A0 00        LDY #0
