@@ -60,16 +60,21 @@ If you use:
 
 There are other emulators written in Javascript but they are poor due to 2 reasons:
 
-* Don't support paste -- you'll be forced to manually enter in the hex code. :-/  Yeah, right!
-* Don't emulate the half-pixel shift of real hardware at all.
+* Don't support paste -- you'll be forced to manually enter in the hex code. :-/  (Yeah, right!
+* Don't emulate the half-pixel shift of real hardware at all -- not an issue, but you won't see the full effect for one section.
 
-
+Some emulators that run in the browser:
 
 * [Apple 2 js](https://www.scullinsteel.com/apple2/) make sure you select:
 
-    Options, [x] Green Screen
+ * Options, [x] Green Screen
 
 * [David's Caldwall's Apple 2 Javascript + WebGL](http://porkrind.org/a2/)
+
+
+**Note**: If you are using an emulator -- I've added "comments" in the lines of machine code you would paste  by having a semi-colon and a description at the end of the line.  
+
+ * **You may want to mute your sound** since the Apple will beep at the semi-colon "comments" as that part of the input is not tehcnically valid input.  (The rest of the line WILL be processed.)
 
 
 ## Functions we want & will write
