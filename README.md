@@ -610,46 +610,45 @@ Before we can start a simple `DrawChar(char c)` function, we also first need to 
     $F6 High byte (16-bit address) Working pointer to screen byte
 
 ```assembly
-                 HgrLo    EQU $E5
-                 HgrHi    EQU $E6
-                 TmpLo    EQU $F5
-                 TmpHi    EQU $F6
+                  HgrLo   EQU $E5
+                  HgrHi   EQU $E6
+                  TmpLo   EQU $F5
+                  TmpHi   EQU $F6
+                  Font    EQU $6000
 ```
-
 
 Here's the disassembly of our (hard-coded) DrawChar() program:
 
 ```assembly
     ; FUNC: DrawChar()
     ; NOTES: A, X, Y is destroyed
-                          ORG $0300
-    300:20 66 03 DrawChar JSR HgrToTmpPtr
-    303:A9 00             LDA #00         ; glyph 'c' to draw (not used yet)
-    305:A0 00             LDY #00         ; Y = column to draw at (hard-coded)
-    307:4C 52 03          JMP _DrawChar
-
-                          ORG $0352
-    352:         _DrawChar
-    352:A2 00             LDX #0          ; next instruction is Self-Modifying!
-    354:BD 00 00 LoadFont LDA $0000,X     ; A = font[ offset + i ]
-    357:91 F5             STA (TmpLo),Y   ; screen[col] = A
-    359:18                CLC
-    35A:A5 F6             LDA TmpHi
-    35C:69 04             ADC #4          ; screen += 0x400
-    35E:85 F6             STA TmpHi
-    360:E8                INX
-    361:E0 08             CPX #8
-    363:D0 EF             BNE LoadFont
-    365:60                RTS
-
+                      ORG $0300
+    0300:         DrawChar
+    0300:20 66 03    JSR HgrToTmpPtr
+    0303:A9 00       LDA #00        ; glyph 'c' to draw (not used yet)
+    0305:A0 00       LDY #00        ; Y = column to draw at (hard-coded)
+    0307:4C 52 03    JMP _DrawChar
+                     ORG $0352
+    0352:         _DrawChar
+    0352:A2 00       LDX #0         ; next instruction is Self-Modifying!
+    0354:         _LoadFont         ; A = font[ offset ]
+    0354:BD 00 62    LDA Font+#$200$,X
+    0357:91 F5       STA (TmpLo),Y  ; screen[col] = A
+    0359:18          CLC
+    035A:A5 F6       LDA TmpHi
+    035C:69 04       ADC #4         ; screen += 0x400
+    035E:85 F6       STA TmpHi
+    0360:E8          INX
+    0361:E0 08       CPX #8
+    0363:D0 EF       BNE _LoadFont
+    0365:60          RTS
     ; FUNC: HgrToTmpPtr()
-                          ORG $0366
-    366:          HgrToTmpPtr
-    366:A5 E5             LDA HgrLo       ; Copy initial screen
-    368:85 F5             STA TmpLo       ; destination pointer
-    36A:A5 E6             LDA HgrHi       ; to working pointer
-    36C:85 F6             STA TmpHi
-    36D:60                RTS
+    0366:          HgrToTmpPtr
+    0366:A5 E5       LDA HgrLo      ; Copy initial screen
+    0368:85 F5       STA TmpLo      ; destination pointer
+    036A:A5 E6       LDA HgrHi      ; to working pointer
+    036C:85 F6       STA TmpHi
+    036D:60          RTS
 ```
 
 Enter in:
@@ -687,7 +686,9 @@ Enter in:
 
 This works because we are using the 6502 Indirect Zero-Page Y addressing mode to store the destination pixels with the `STA` instruction.  Since the Y-register must _always_ be used in this addressing mode we get a column offset "for free." :-)
 
-    357: STA ($F5),Y  ; screen[col] = A
+```assembly
+    0357:91 F5       STA (TmpLo),Y  ; screen[col] = A
+```
 
 Here's the C pseudo-code of the assembly code:
 
@@ -705,30 +706,37 @@ Here's the C pseudo-code of the assembly code:
 
 Since the Y-register controls the column we can inline this function and have the caller take care of setting the Y-Register before calling DrawChar().
 
+```assmebly
     LDY #column
+```
 
 After drawing a character with `DrawChar()` it is handy if we can advance both:
 
 * the column of the cursor
 * the pointer to the screen where the next glyph will be drawn
 
+Notice how after 8 scan lines we end up with and `Tmp` address of $4xxx (or $6xxx if we were drawing to HGR page 2.)  This means we need to subtract off $20 from the top byte of the 16-bit address to the temp destination screen pointer.
+
 ```assembly
     ; FUNC: IncCursorCol()
     ; OUTPUT: Y-Register (column) is incremented
     ; Increment the cursor column and move the destination screen pointer back
     ; up 8 scan lines previously to what it was when DrawChar() was called.
-               ORG $0370
-    370:C8     IncCursorCol INY
-    371:18                  CLC
-    372:A5 F6               LDA $F6
-    374:E9 1F               SBC #$1F
-    376:85 F6               STA $F6
-    378:60                  RTS
+    ; Version 1
+                     ORG $0370
+    0370:         IncCursorCol1
+    0370:C8          INY
+    0371:18          CLC
+    0372:A5 F6       LDA TmpHi
+    0374:E9 1F       SBC #$1F
+    0376:85 F6       STA TmpHi
+    0378:60          RTS
 ```
 
 Enter in:
 
     370:C8 18 A5 F6 E9 1F 85 F6 60
+
 
 ## DrawChar() version 2
 
@@ -972,8 +980,10 @@ We now have an ASCII char inspector!
 Let's fix it up to print the hex value of the current character we are inspecting:
 
 ```assembly
-    1010:20 37 10    JSR $1037
-
+                     ORG $1010
+    1010:20 37 10    JSR Patch
+                     ORG $1037
+    1037:         Patch
     1037:48          PHA            ; save c
     1038:20 3B 03    JSR DrawCharCol
     103B:68          PLA            ; restore c so we can print it in hex
@@ -997,7 +1007,7 @@ Let's fix it up to print the hex value of the current character we are inspectin
     104A:AA          TAX            ;
     104B:20 66 03    JSR HgrToTmpPtr
     104E:BD 58 10    LDA NIB2HEX,X  ; nibble to ASCII
-    1051:C8          INY            ; IncCursorCol()
+    1051:C8          INY            ; partial IncCursorCol()
     1052:20 3B 03    JSR DrawCharCol
     1055:60          RTS
                      ORG $0358
@@ -1044,6 +1054,8 @@ Let's use IncCursorCol() to automatically advance the cusor.  We'll also add a s
 And the new code to draw a space before the hex num:
 
 ```assembly
+                     ORG $1037
+    1037:         Patch
     1037:48          PHA            ; save c
     1038:20 10 03    JSR PrintChar  ;
     103B:A9 20       LDA ' '        ; Draw whitespace
@@ -1075,10 +1087,19 @@ And the new code to draw a space before the hex num:
     1064:43 44 45 46
 ```
 
+Here's the full updated version.
+
 Enter in:
 
     310:20 3B 03 4C 70 03
-    1037:48
+
+    1000:A9 00 85 FE A9 00 85 F5
+    1008:A9 20 85 F6 A5 FE A0 00
+    1010:20 37 10 AD 00 C0 10 FB
+    1018:8D 10 C0 C9 88 D0 0A C6
+    1020:FE A5 FE 29 7F 85 FE 10
+    1028:DB C9 95 D0 05 E6 FE 18
+    1030:90 EF C9 9B D0 DD 60 48
     1038:20 10 03 A9 20 20 10 03
     1040:68 48 6A 6A 6A 6A 20 4D
     1048:10 68 4C 4D 10 29 0F AA
