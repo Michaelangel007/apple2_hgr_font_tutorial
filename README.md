@@ -1,6 +1,6 @@
 #Apple ]\[ HGR Font Tutorial
 
-Revision: 12, Jan 10, 2016.
+Revision: 13, Jan 10, 2016.
 
 # Table of Contents
 
@@ -1473,13 +1473,13 @@ That's why I turned 50% scanlines on, for better readability:
 
 
 
-Using one of the newer emulators with NTSC emulation, unfortunately, doesn't help with readaibility:.
+Using one of the newer emulators with NTSC emulation, unfortunately, doesn't help with readaibility: :-/
 
-* NTSC Alpha:
+* NTSC Alpha (with tweaked Palette):
 
 ![Screenshot Tweaked](pics/ntsc_tweaked.png?raw=true)
 
- * NTSC Sheldon - which unfortunately has WAY too much ghosting:
+ * NTSC Sheldon -- which unfortunately has WAY too much ghosting: :-(
 
 ![Screenshot Sheldon](pics/ntsc_sheldon.png?raw=true)
 
