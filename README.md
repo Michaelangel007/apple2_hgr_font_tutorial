@@ -1135,15 +1135,16 @@ To select which row to draw at we'll pass that in the X register to our DrawChar
     ; PARAM: Y = column to draw at; $0 .. $27 (Columns 0 .. 39) (not modified)
     ; PARAM: X = row    to draw at; $0 .. $17 (Rows 0 .. 23) (destroyed)
     320:48        PHA
-    321:20 28 03  JSR CursorRow()
+    321:20 28 03  JSR SetCursorRow
     324:68        PLA
     325:4C 3B 03  JMP DrawCharCol()
 
-    ; FUNC: CursorRow( row ) = $0328
+    ; FUNC: SetCursorRow( row )
     ; PARAM: X = row    to draw at; $0 .. $17 (Rows 0 .. 23) (not modified)
     ; INPUT : $E5,$E6 initial pointer to the destination screen scanline
     ;         Note: Must start at every 8 scanlines.
     ; OUTPUT: $F5,$F5 working pointer to the destination screen scanline
+                  ORG $0328
     328:BD 00 64  LDA $6400,X   ; HgrLo[ row ]
     32B:18        CLC
     32C:65 E5     ADC $E5
@@ -1188,15 +1189,16 @@ Unfortunately, our usage of the X and Y registers are not intuitive. This is due
 We could map the X-register to the natural column (x-axis), and the Y-register to the natural row (y-axis).  Alas, we're stuck with the X=row and Y=col unless we wanted to add extra code to "swap" the two.
 
 ```assembly
-    ; FUNC: SetCursorColRowYX() = $0379
+    ; FUNC: SetCursorColRowYX()
     ; PARAM: Y = col
     ; PARAM: X = row
-    379:20 28 03  JSR CursorRow
+                  ORG $0379
+    379:20 28 03  JSR SetCursorRow
     37C:18        CLC
     37D:98        TYA
     37E:65 F5     ADC $F5
     381:85 F5     STA $F5
-    383:60
+    383:60        RTS
 ```
 Or are we stuck? Since we're using a function to calculate the destination address let's fix the order.
 
@@ -1224,7 +1226,7 @@ And change the low byte to add `X` instead:
     ; PARAM: X = col
     ; PARAM: Y = row
     ; NOTES: Version 2 !
-    379:20 28 03  JSR CursorRow
+    379:20 28 03  JSR SetCursorRow
     37C:18        CLC
     37D:88        TXA         ; changed from: TYA
     37E:65 F5     ADC $F5
@@ -1232,7 +1234,7 @@ And change the low byte to add `X` instead:
     383:60
 ```
 
-This is a little clunky but it is progress. Let's write the new SetCursorColRow() version with the CursorRow() inlined so we don't have to use a JSR.
+This is a little clunky but it is progress. Let's write the new SetCursorColRow() version with the SetCursorRow() inlined so we don't have to use a JSR.
 
 ```assembly
     ; FUNC: SetCursorColRow( col, row )
