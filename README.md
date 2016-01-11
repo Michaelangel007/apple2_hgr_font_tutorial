@@ -843,22 +843,22 @@ Our prefix code to setup the source address becomes:
     ; PARAM: Y = column to draw at; $0 .. $27 (Columns 0 .. 39) (not modified)
     ; NOTES: X is destroyed
                           ORG $033B
-    33B:48        DrawCharCol
-    33B:                  PHA      ; push c = %PQRSTUVW to draw
-    33C:29 1F             AND #1F  ;        = %000STUVW R=0, Optimization: implicit CLC
-    33E:0A                ASL      ; c * 2    %00STUVW0
-    33F:0A                ASL      ; c * 4    %0STUVW00
-    340:0A                ASL      ; c * 8    %STUVW000
-    341:69 00             ADC #00  ; += FontLo; Carry = 0 since R=0 from above
-    343:8D 55 03          STA $355 ; AddressLo = FontLo + (c*8)
-    346:68                PLA      ; pop c  = %PQRSTUVW to draw
-    347:29 60             AND #60  ;        = %PQR00000 S=0, Optimization: implicit CLC
-    349:2A                ROL      ;        = %QR000000 C=P
-    34A:2A                ROL      ;        = %R000000P C=Q
-    34B:2A                ROL      ;        = %000000PQ C=R
-    34C:2A                ROL      ; c / 32 = %00000PQR C=0 and one more to get R
-    34D:69 60             ADC #60  ; += FontHi; Carry = 0 since S=0 from above
-    34F:8D 56 03          STA $356 ; AddressHi = FontHi + (c/32)
+    33B:          DrawCharCol
+    33B:48                PHA         ; push c = %PQRSTUVW to draw
+    33C:29 1F             AND #1F     ;        = %000STUVW R=0, Optimization: implicit CLC
+    33E:0A                ASL         ; c * 2    %00STUVW0
+    33F:0A                ASL         ; c * 4    %0STUVW00
+    340:0A                ASL         ; c * 8    %STUVW000
+    341:69 00             ADC #00     ; += FontLo; Carry = 0 since R=0 from above
+    343:8D 55 03          STA _Font+1 ; AddressLo = FontLo + (c*8)
+    346:68                PLA         ; pop c  = %PQRSTUVW to draw
+    347:29 60             AND #60     ;        = %PQR00000 S=0, Optimization: implicit CLC
+    349:2A                ROL         ;        = %QR000000 C=P
+    34A:2A                ROL         ;        = %R000000P C=Q
+    34B:2A                ROL         ;        = %000000PQ C=R
+    34C:2A                ROL         ; c / 32 = %00000PQR C=0 and one more to get R
+    34D:69 60             ADC #60     ; += FontHi; Carry = 0 since S=0 from above
+    34F:8D 56 03          STA _Font+2 ; AddressHi = FontHi + (c/32)
 ```
 
 Recall we'll re-use our existing font drawing code `_DrawChar` at $0352:
@@ -867,7 +867,7 @@ Recall we'll re-use our existing font drawing code `_DrawChar` at $0352:
                           ORG $0352
     352:          _DrawChar
     352:A2 00             LDX #0          ; next instruction is Self-Modifying!
-    354:BD 00 00  _Draw   LDA $0000,X     ; A = font[ offset + i ]
+    354:BD 00 00  _Font   LDA $0000,X     ; A = font[ offset + i ]
     357:91 F5             STA (TmpLo),Y   ; screen[col] = A
     359:18                CLC
     35A:A5 F6             LDA TmpHi
@@ -875,7 +875,7 @@ Recall we'll re-use our existing font drawing code `_DrawChar` at $0352:
     35E:85 F6             STA TmpHi
     360:E8                INX
     361:E0 08             CPX #8
-    363:D0 EF             BNE _Draw
+    363:D0 EF             BNE _Font
     365:60                RTS
 ```
 
