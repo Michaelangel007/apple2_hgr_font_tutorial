@@ -56,6 +56,8 @@ If you use:
 
  * You will also need the Java JRE.
 
+ * On OSX, Jace has an copy-paste bug and won't paste in the first line of the clipboard. :-/
+
 * [Virtual II](http://www.virtualii.com/) press `Ctrl-F12` to reset.
 
 There are other emulators written in Javascript but they are poor due to 2 reasons:
@@ -74,7 +76,7 @@ Some emulators that run in the browser:
 
 **Note**: If you are using an emulator -- I've added "comments" in the lines of machine code you would paste  by having a semi-colon and a description at the end of the line.  
 
- * **You may want to mute your sound** since the Apple will beep at the semi-colon "comments" as that part of the input is not tehcnically valid input.  (The rest of the line WILL be processed.)
+ * **You may want to mute your sound** since the Apple will beep at the semi-colon "comments" as that part of the input is not tehcnically valid input.  (The rest of the line WILL be processed, though.)
 
 
 ## Functions we want & will write
