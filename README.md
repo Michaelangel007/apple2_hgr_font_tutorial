@@ -374,7 +374,7 @@ Ouch! We're using 1K of our precious 64K.  Now we know why all those font glyphs
 
 I've saved you the trouble of converting all the pixels to hex. You may want to mute your sound since the Apple will beep at the semi-colon "comments".
 
-Enter in (or download [Raw Binary Font](font.bin) and with AppleWin press `F7`, type `bload font.bin`, press `F7`):
+Enter in (or download [Raw Binary Font](font.bin) and with AppleWin press `F7`, type `bload font.bin,6000`, press `F7`):
 
     6000:10 08 36 7F 3F 3F 7E 36  ; ^@
     6008:10 08 36 41 21 21 4A 36  ; ^A
@@ -1097,7 +1097,7 @@ We'll split the table of addresses into Low and High bytes for easier access. We
 
 This is our mini HGR Y Address look-up table. "Funny" that it has 24 entries -- the same height as our text screen. :-)
 
-Enter these bytes (or save [hgrtable.bin](hgrtable.bin) and `bload hgrtable.bin`):
+Enter these bytes (or save [hgrtable.bin](hgrtable.bin) and `bload hgrtable.bin,6400`):
 
 Our `HgrLo` table:
 
