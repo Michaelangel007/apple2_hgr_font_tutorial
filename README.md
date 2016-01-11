@@ -2074,9 +2074,9 @@ That's all folks!  Now go write some cool font blitter code.
 
 # TODO
 
-* Screenshots
-* Binary code for 300.bin and 1000.bin so you can load it directly into the emulator
-* Disk image FONT_HGR.DSK
+* ~~Screenshots~~ Done!
+* ~~Binary code for 300.bin and 1000.bin so you can load it directly into the emulator~~ Done!
+* Disk image: `HGR_FONT.DSK` (In progress)
 * Double Hi-Res
-* PDF of this document
+* PDF of this document (As a work-around use Chrome and Print to PDF)
 
