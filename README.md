@@ -865,9 +865,9 @@ Recall we'll re-use our existing font drawing code `_DrawChar` at $0352:
 
 ```assembly
                           ORG $0352
-    352:          _DrawChar
+    352:         _DrawChar
     352:A2 00             LDX #0          ; next instruction is Self-Modifying!
-    354:BD 00 00  _Font   LDA $0000,X     ; A = font[ offset + i ]
+    354:BD 00 00 LoadFont LDA $0000,X     ; A = font[ offset + i ]
     357:91 F5             STA (TmpLo),Y   ; screen[col] = A
     359:18                CLC
     35A:A5 F6             LDA TmpHi
@@ -980,6 +980,7 @@ Let's fix it up to print the hex value of the current character we are inspectin
 
     ; FUNC: DrawHexByte( c ) = $103C
     ; PARAM: A = byte to print in hex
+    103C:         DrawHexByte
     103C:48          PHA            ; save low nibble
     103D:6A          ROR            ; shift high nibble
     103E:6A          ROR            ; to low nibble
@@ -991,6 +992,7 @@ Let's fix it up to print the hex value of the current character we are inspectin
 
     ; FUNC: DrawHexNib() = $1048
     ; PARAM: A = nibble to print as hex char
+    1048:         DrawHexNib
     1048:29 0F       AND #F         ; base 16
     104A:AA          TAX            ;
     104B:20 66 03    JSR HgrToTmpPtr
@@ -998,7 +1000,7 @@ Let's fix it up to print the hex value of the current character we are inspectin
     1051:C8          INY            ; IncCursorCol()
     1052:20 3B 03    JSR DrawCharCol
     1055:60          RTS
-                     ORG $358
+                     ORG $0358
     1058:30 31 32 33 NIB2HEX ASC "0123456789ABCDEF"
     105C:34 35 36 37
     1060:38 39 41 42
@@ -1034,9 +1036,9 @@ Let's use IncCursorCol() to automatically advance the cusor.  We'll also add a s
     ;         Must start at every 8 scanlines.
     ; OUTPUT: The Y-Register (cursor column) is automatically incremented.
                      ORG $0310
-    310          PrintChar
-    310:20 3B 03     JSR DrawCharCol
-    313:4C 70 03     JMP IncCursorCol
+    0310:         PrintChar
+    0310:20 3B 03    JSR DrawCharCol
+    0313:4C 70 03    JMP IncCursorCol
 ```
 
 And the new code to draw a space before the hex num:
@@ -1050,6 +1052,7 @@ And the new code to draw a space before the hex num:
 
     ; FUNC: DrawHexByte( c )
     ; PARAM: A = byte to print in hex
+    1041:         DrawHexByte
     1041:48          PHA            ; save low nibble
     1042:6A          ROR            ; shift high nibble
     1043:6A          ROR            ; to low nibble
@@ -1061,11 +1064,12 @@ And the new code to draw a space before the hex num:
 
     ; FUNC: $1048 = DrawHexNib()
     ; PARAM: A = nibble to print as hex char
+    1048:         DrawHexNib
     104D:29 0F       AND #F         ; base 16
     104F:AA          TAX            ;
-    1050:BD 58 10    LDA $1058,X    ; nibble to ASCII
+    1050:BD 58 10    LDA NIB2HEX ,X ; nibble to ASCII
     1053:4C 10 03    JMP PrintChar  ;
-    1058:30 31 32 33 ASC "0123456789ABCDEF"
+    1058:30 31 32 33 NIB2HEX ASC "0123456789ABCDEF"
     105C:34 35 36 37
     1060:38 39 41 42
     1064:43 44 45 46
@@ -1190,11 +1194,12 @@ Enter in:
 Now we can print a char at any location:
 
 ```assembly
-                   ORG $1100
-    1100:A9 41     LDA #41 ; A-register = char
-    1102:A0 01     LDY #1  ; Y-register = col 1 (2nd column)
-    1104:A2 02     LDX #2  ; X-register = row 2 (3rd row)
-    1106:4C 20 03  JSR DrawCharColRow
+                    ORG $1100
+                    DrawXY
+    1100:A9 41          LDA #41 ; A-register = char
+    1102:A0 01          LDY #1  ; Y-register = col 1 (2nd column)
+    1104:A2 02          LDX #2  ; X-register = row 2 (3rd row)
+    1106:4C 20 03       JSR DrawCharColRow
 ```
 
 Enter in:
@@ -1217,13 +1222,14 @@ We could map the X-register to the natural column (x-axis), and the Y-register t
     ; FUNC: SetCursorColRowYX()
     ; PARAM: Y = col
     ; PARAM: X = row
-                  ORG $0379
-    379:20 28 03  JSR SetCursorRow
-    37C:18        CLC
-    37D:98        TYA
-    37E:65 F5     ADC $F5
-    381:85 F5     STA $F5
-    383:60        RTS
+                     ORG $0379
+    379:         SetCursorColRowYX
+    379:20 28 03     JSR SetCursorRow
+    37C:18           CLC
+    37D:98           TYA
+    37E:65 F5        ADC $F5
+    381:85 F5        STA $F5
+    383:60           RTS
 ```
 Or are we stuck? Since we're using a function to calculate the destination address let's fix the order.
 
@@ -1233,17 +1239,17 @@ We'll need to change the `X` offset in SetCursorColRowXY() to `Y`;
     ; FUNC: SetCursorColRow2( row ) = $0328
     ; PARAM: Y = row
     ; NOTES: Version 2 !
-    328:              ORG $0328
-    328:          SetCursorColRow2
-    328:B9 00 64      LDA $6400,Y ; changed from: ,X
-    32B:18            CLC
-    32C:65 E5         ADC $E5
-    32E:85 F5         STA $F5
-    330:B9 18 64      LDA $6418,Y ; changed from: ,X
-    333:18            CLC
-    334:65 E6         ADC $E6
-    336:85 F6         STA $F6
-    338:60            RTS
+    328:             ORG $0328
+    328:         SetCursorColRow2
+    328:B9 00 64     LDA HgrLoY,Y ; changed from: ,X
+    32B:18           CLC
+    32C:65 E5        ADC HgrLo
+    32E:85 F5        STA TmpLo
+    330:B9 18 64     LDA HgrHiY,Y ; changed from: ,X
+    333:18           CLC
+    334:65 E6        ADC HgrHi
+    336:85 F6        STA TmpHi
+    338:60           RTS
 ```
 
 And change the low byte to add `X` instead:
@@ -1253,11 +1259,13 @@ And change the low byte to add `X` instead:
     ; PARAM: X = col
     ; PARAM: Y = row
     ; NOTES: Version 2 !
-    379:20 28 03  JSR SetCursorRow
-    37C:18        CLC
-    37D:88        TXA         ; changed from: TYA
-    37E:65 F5     ADC $F5
-    381:85 F5     STA $F5
+                     ORG $0379
+    379:         SetCursorColRow2
+    379:20 28 03     JSR SetCursorRow
+    37C:18           CLC
+    37D:88           TXA         ; changed from: TYA
+    37E:65 F5        ADC $F5
+    381:85 F5        STA $F5
     383:60
 ```
 
@@ -1269,18 +1277,19 @@ This is a little clunky but it is progress. Let's write the new SetCursorColRow(
     ; PARAM: Y = row    to draw at; $0 .. $17 (Rows 0 .. 23) (not modified)
     ; NOTES: Version 3! X and Y is swapped from earlier version!
     ; [$F5] = HgrLoY[ Y ] + ScreenLo + X
-                  ORG $0379
-    379:86 F5     STX $F5
-    37B:B9 00 64  LDA HgrLoY,Y ; HgrLoY[ row ]
-    37E:18        CLC
-    37F:65 E5     ADC $E5
-    381:65 F5     ADC $F5      ; add column
-    383:85 F5     STA $F5
-    385:B9 18 64  LDA HgrHiY,Y ; HgrHiY[ row ]
-    388:18        CLC
-    389:65 E6     ADC $E6
-    38B:85 F6     STA $F6
-    38D:60        RTS
+                     ORG $0379
+    379:         SetCursorColRow
+    379:86 F5        STX TmpLo
+    37B:B9 00 64     LDA HgrLoY,Y ; HgrLoY[ row ]
+    37E:18           CLC
+    37F:65 E5        ADC HgrLo
+    381:65 F5        ADC TmpLo      ; add column
+    383:85 F5        STA TmpLo
+    385:B9 18 64     LDA HgrHiY,Y ; HgrHiY[ row ]
+    388:18           CLC
+    389:65 E6        ADC HgrHi
+    38B:85 F6        STA TmpHi
+    38D:60           RTS
 ```
 
 Enter in:
@@ -1299,6 +1308,7 @@ Now that we have the basic print char working lets extend it to print a C-style 
     ; PARAM: X = High byte of string address
     ; PARAM: Y = Low  byte of string address
                      ORG $038E
+    38E:          DrawString
     38E:84 F0        STY $F0
     390:86 F1        STX $F1
     392:A0 00        LDY #0
@@ -1314,6 +1324,8 @@ And our example to verify that it works:
 
 ```assembly
     ; FUNC: DemoDrawString()
+                      ORG $1200
+    1200:          DemoDrawString
     1200:A2 03        LDX #3      ; col = 3
     1202:A0 02        LDY #2      ; row = 2
     1204:20 79 03     JSR SetCursorColRow
@@ -1489,6 +1501,7 @@ And here is the assembly:
     ;    $6000.$63FF  Font 7x8 Data
     ;    $6400.$642F  HgrLoY, HgrHiY table for every 8 scanlines
                     ORG $1300
+    1300:        CopyTextToHgr
     1300:A9 00      LDA #0
     1302:85 F3      STA row
     1304:85 E5      STA $E5
