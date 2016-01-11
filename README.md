@@ -1,6 +1,6 @@
 #Apple ]\[ HGR Font Tutorial
 
-Revision: 14, Jan 10, 2016.
+Revision: 15, Jan 10, 2016.
 
 # Table of Contents
 
@@ -15,8 +15,9 @@ Revision: 14, Jan 10, 2016.
 * Font Data
  * Raw Font Data
  * Image to Font Data (Javascript)
-* Font -> Screen Memory Trace
-* DrawChar version 1
+* DrawChar()
+ * Font -> Screen Memory Trace
+ * DrawChar() version 1
  * X Cursor Position
  * CursorCol()
  * DrawChar() version 2
@@ -38,7 +39,7 @@ Revision: 14, Jan 10, 2016.
 * Misc. Utilities and Files
 * TODO
 
-## Introduction
+# Introduction
 
 A lot of people in comp.sys.apple2.programmer and other places on the internet have wondered how to "print" text onto the Apple's High Resolution Graphics (HGR) screen. Here's a tutorial on "6502 Font Blitting."
 
@@ -58,7 +59,7 @@ If you use:
 
 There are other emulators written in Javascript but they are poor due to 2 reasons:
 
-* Don't support paste -- you'll be forced to manually enter in the hex code. :-/
+* Don't support paste -- you'll be forced to manually enter in the hex code. :-/  Yeah, right!
 * Don't emulate the half-pixel shift of real hardware at all.
 
 
@@ -240,7 +241,7 @@ Here's the [Javascript source code](list_hgr_table.html) to generate this table:
 
 Second, each glyph in the Apple font is in a 7x8 cell -- the leading line on the bottom is usually blank but we'll store that too so that we have a true "underline" and bottom descender on 'j', 'y', etc. 
 
-Unfortunately, the data for the TEXT ROM 25123 hardware chip is *not* accessible from the 6502. :-/ This means you will need to manually enter in the 8 bytes/character. :-( The good news is that I've already done this so you can copy / paste. :-)
+Unfortunately, the data for the TEXT ROM 25123 hardware chip is **not** accessible from the 6502. :-/ This means you will need to manually enter in the 8 bytes/character. :-( The good news is that I've already done this so you can copy / paste. :-)
 
  You can find a picture of the Apple ][ ROM text font on Page 8-9, diagram 8.4 of "Understanding the Apple ]\["
 https://archive.org/stream/understanding_the_apple_ii#page/n203/mode/2up
@@ -576,6 +577,8 @@ Note: If you get a retarded `Uncaught SecurityError: Failed to execute 'getImage
 
 Another solution is to use a web browser that isn't "broken" such as Firefox, etc. when trying to read _local_ files.
 
+
+# DrawChar()
 
 ## Font -> Screen Memory Trace
 
