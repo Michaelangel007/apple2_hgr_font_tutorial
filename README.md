@@ -1,6 +1,6 @@
 #Apple ]\[ HGR Font Tutorial
 
-Revision: 21, Jan 11, 2016.
+Revision: 22, Jan 11, 2016.
 
 # Table of Contents
 
@@ -741,12 +741,15 @@ Enter in:
 
 ### Introduction to Optimization
 
-One tip for beginner 6502 assembly programmers. It is tempting just to always clear the carry before do any addition or subtraction.  Unfortunately, for subtraction we'll have an off-by-one bug so we need to subtract 1 less then the value.  This makes reading the code a little unintuitive. The `Rule of Thumb` is to change the carry before we do the operation depending on whether we are `adding` or `subtracting`:
+One tip for beginner 6502 assembly programmers. It is tempting just to always clear the carry flag `CLC` before doing any addition or subtraction.  Unfortunately, for subtraction we'll have an off-by-one bug (fencepost error) so we need to subtract _ONE less then the value._  This makes reading the code a little unintuitive. Is there a way to remedy this? Yes.
 
 | Op | Carry | Opcode |
 |----|:-----:|:------:|
 | +  | Clear | CLC    |
 | -  | Set   | SEC    |
+
+We change the carry flag state _before_ we do the operation depending on whether we are `adding` or `subtracting`.  
+ The `Rule of Thumb` is `CLC before ADD` and `SEC before SUB`.  A mnemonic to help you remember is that both `SEC` and `SUB` start with `S`.
 
 ```assembly
     ; FUNC: IncCursorCol()
@@ -825,7 +828,7 @@ Nope. Bummer. :-(
 The lessons?
 
 * Verify our assumptions and Profile!
-* Even though we "failed" _this_ time, we shouldn't be afraid to experiment with "out-the-box" thinking using the 6502 instructions; sometimes there are clear "wins".  It isn't always exactly clear if we should optimize to minimize space (with the potential to run slower) or to optimize for higher performance (at the cost of more code.)
+* Even though we "failed" _this_ time, we shouldn't be afraid to experiment with "out-the-box" thinking using the 6502 instructions; sometimes there are clear "wins" but you won't know unless you try!  Also, it isn't always obvious if we should optimize to minimize space (with the potential to run slower) or to optimize for higher performance (at the cost of more code.) The "proper" solutiond depends on the context of your needs.    With 8-bit CPU's we tend to focus on `code density` -- cram as much code in as little space as possible.  Graphics / Rendering unfortunately "needs" to run as fast as possible so this means unrolling loops, etc., to run "flat out" even though we lose valuable memory.
 
 We'll briefly touch upon this topic of optimization again with `bit-shifts` and `memcpy()`.
 
