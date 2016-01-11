@@ -618,18 +618,16 @@ How did I know to use $0400 when going to the next line?  One quirk of the HGR s
 
 Before we can start a simple `DrawChar(char c)` function, we also first need to assign some zero page memory locations for our static and temporary variables:
 
-    $E5 Low  byte (16-bit address) Pointer to screen destination
-    $E6 High byte (16-bit Address) Pointer to screen destination
-    $F5 Low  byte (16-bit address) Working pointer to screen byte
-    $F6 High byte (16-bit address) Working pointer to screen byte
-
 ```assembly
-                  HgrLo   EQU $E5
-                  HgrHi   EQU $E6
-                  TmpLo   EQU $F5
-                  TmpHi   EQU $F6
+                  HgrLo   EQU $E5 ; Low  byte (16-bit address) Pointer to screen destination
+                  HgrHi   EQU $E6 ; High byte (16-bit Address) Pointer to screen destination
+                  TmpLo   EQU $F5 ; Low  byte (16-bit address) Working pointer to screen byte
+                  TmpHi   EQU $F6 ; High byte (16-bit address) Working pointer to screen byte
+
                   Font    EQU $6000
 ```
+
+Since we also had our font data, we need a symbol for that.
 
 Here's the disassembly of our (hard-coded) DrawChar() program:
 
@@ -665,6 +663,7 @@ Here's the disassembly of our (hard-coded) DrawChar() program:
     036D:60          RTS
 ```
 
+
 Enter in:
 
     300:20 66 03 A9 00 A0 00 4C 52 03
@@ -681,6 +680,22 @@ We're almost ready to run this! We just need to initialize one variable -- where
 And with any luck you should see the at sign `@` in the top-left.
 
 ![Screenshot 8](pics/hgrfont_08.png?raw=true)
+
+If you are using AppleWin, you can enter these symbols into the debugger to make the disassembly more readable. Press `F7`, then type in (paste with `Ctrl-V`):
+
+    sym HgrLo = E5
+    sym HgrHi = E6
+    sym TmpLo = F5
+    sym TmpHi = F6
+    sym DrawChar    = 0300
+    sym _DrawChar   = 0352
+    sym _LoadFont   = 0354
+    sym HgrToTmpPtr = 0366
+    sym Font        = 6000
+    352L
+
+When you are done with the debugger, press `F7` to return to emulator.
+
 
 ## X Cursor Position
 
