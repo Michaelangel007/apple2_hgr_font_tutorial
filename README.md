@@ -1,6 +1,6 @@
 #Apple ]\[ HGR Font Tutorial
 
-Revision: 18, Jan 10, 2016.
+Revision: 19, Jan 10, 2016.
 
 # Table of Contents
 
@@ -203,8 +203,6 @@ With all the decimal cruft removed:
 Don't worry if the address pattern makes no sense right now -- we'll reveal that later.
 
 Here's the [Javascript source code](list_hgr_table.html) to generate this table:
-
-```Javascript
 
 ```Javascript
     function int2pad( n, pad )
