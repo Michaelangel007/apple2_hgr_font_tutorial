@@ -979,6 +979,7 @@ Let's fix it up to print the hex value of the current character we are inspectin
     1051:C8          INY            ; IncCursorCol()
     1052:20 3B 03    JSR $033B      ; DrawCharCol()
     1055:60          RTS
+                     .ORG $358
     1058:30 31 32 33 ASC "0123456789ABCDEF"
     105C:34 35 36 37
     1060:38 39 41 42
@@ -1015,9 +1016,11 @@ Let's use IncCursorCol() to automatically advance the cusor.  We'll also add a s
     ; OUTPUT: The Y-Register (cursor column) is automatically incremented.
     310:20 3B 03     JSR DrawCharCol
     313:4C 70 03     JMP IncCursorCol
+```
 
-    1010:20 37 10    JSR $1037
+And the new code to draw a space before the hex num:
 
+```assembly
     1037:48          PHA            ; save c
     1038:20 10 03    JSR PrintChar  ;
     103B:A9 20       LDA ' '        ; Draw whitespace
@@ -1050,7 +1053,6 @@ Let's use IncCursorCol() to automatically advance the cusor.  We'll also add a s
 Enter in:
 
     310:20 3B 03 4C 70 03
-    1010:20 37 10
     1037:48
     1038:20 10 03 A9 20 20 10 03
     1040:68 48 6A 6A 6A 6A 20 4D
