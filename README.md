@@ -842,22 +842,23 @@ Our prefix code to setup the source address becomes:
     ; PARAM: A = glyph to draw
     ; PARAM: Y = column to draw at; $0 .. $27 (Columns 0 .. 39) (not modified)
     ; NOTES: X is destroyed
-                 ORG $033B
-    33B:48       PHA      ; push c = %PQRSTUVW to draw
-    33C:29 1F    AND #1F  ;        = %000STUVW R=0, Optimization: implicit CLC
-    33E:0A       ASL      ; c * 2    %00STUVW0
-    33F:0A       ASL      ; c * 4    %0STUVW00
-    340:0A       ASL      ; c * 8    %STUVW000
-    341:69 00    ADC #00  ; += FontLo; Carry = 0 since R=0 from above
-    343:8D 55 03 STA $355 ; AddressLo = FontLo + (c*8)
-    346:68       PLA      ; pop c  = %PQRSTUVW to draw
-    347:29 60    AND #60  ;        = %PQR00000 S=0, Optimization: implicit CLC
-    349:2A       ROL      ;        = %QR000000 C=P
-    34A:2A       ROL      ;        = %R000000P C=Q
-    34B:2A       ROL      ;        = %000000PQ C=R
-    34C:2A       ROL      ; c / 32 = %00000PQR C=0 and one more to get R
-    34D:69 60    ADC #60  ; += FontHi; Carry = 0 since S=0 from above
-    34F:8D 56 03 STA $356 ; AddressHi = FontHi + (c/32)
+                          ORG $033B
+    33B:48        DrawCharCol
+    33B:                  PHA      ; push c = %PQRSTUVW to draw
+    33C:29 1F             AND #1F  ;        = %000STUVW R=0, Optimization: implicit CLC
+    33E:0A                ASL      ; c * 2    %00STUVW0
+    33F:0A                ASL      ; c * 4    %0STUVW00
+    340:0A                ASL      ; c * 8    %STUVW000
+    341:69 00             ADC #00  ; += FontLo; Carry = 0 since R=0 from above
+    343:8D 55 03          STA $355 ; AddressLo = FontLo + (c*8)
+    346:68                PLA      ; pop c  = %PQRSTUVW to draw
+    347:29 60             AND #60  ;        = %PQR00000 S=0, Optimization: implicit CLC
+    349:2A                ROL      ;        = %QR000000 C=P
+    34A:2A                ROL      ;        = %R000000P C=Q
+    34B:2A                ROL      ;        = %000000PQ C=R
+    34C:2A                ROL      ; c / 32 = %00000PQR C=0 and one more to get R
+    34D:69 60             ADC #60  ; += FontHi; Carry = 0 since S=0 from above
+    34F:8D 56 03          STA $356 ; AddressHi = FontHi + (c/32)
 ```
 
 Recall we'll re-use our existing font drawing code `_DrawChar` at $0352:
@@ -881,7 +882,7 @@ Recall we'll re-use our existing font drawing code `_DrawChar` at $0352:
 We just need to touch up our entry point from $0352 ScreenPtrToTempPtr() to $033B DrawCharCol():
 
 ```assembly
-    307:4C 3B 03    JMP $033B   ; DrawCharCol()
+    307:4C 3B 03         JMP DrawCharCol
 ```
 
 Enter in:
@@ -914,34 +915,40 @@ We now have the ability to print any of the 128 ASCII characters!
 Let's verify this by writing a character inspector. We'll use the arrow keys to select the glyph and ESC to exit.
 
 ```assembly
-    ; FUNC: DemoCharInspect() = $1000
-    1000:A9 00       LDA #0    ; c=0
-    1002:85 FE       STA $FE   ; save which glyph to draw
-    1004:A9 00    .1 LDA #0    ; screen = 0x2000
-    1006:85 F5       STA $F5   ;
-    1008:A9 20       LDA #20   ;
-    100A:85 F6       STA $F6   ;
-    100C:A5 FE       LDA $FE   ; A = glyph c
-    100E:A0 00       LDY #00   ; Y = col
-    1010:20 3B 03    JSR $033B ; DrawCharCol()
-    1013:AD 00 C0 .2 LDA $C000 ; read A=key
-    1016:10 FB       BMI .2    ; no key?
-    1018:8D 10 C0    STA $C010 ; debounce key
-    101B:C9 88       CMP #88   ; key == <-- ?
-    101D:D0 0A       BNE .4    ;
-    101F:C6 FE       DEC $FE   ; yes, --c
-    1021:A5 FE    .3 LDA $FE   ; c &= 0x7F
+    ; FUNC: DemoCharInspect()
+                  KEYBOARD    EQU $C000
+                  KEYSTROBE   EQU $C010
+                  glyph       EQU $FE
+
+                     ORG $1000
+    1000:         DemoCharInspect
+    1000:A9 00       LDA #0       ; glyph=0
+    1002:85 FE       STA glyph    ; save which glyph to draw
+    1004:A9 00    .1 LDA #0       ; screen = 0x2000
+    1006:85 F5       STA HgrLo    ;
+    1008:A9 20       LDA #20      ;
+    100A:85 F6       STA HgrHi    ;
+    100C:A5 FE       LDA glyph    ; A = glyph
+    100E:A0 00       LDY #00      ; Y = col
+    1010:20 3B 03    JSR DrawCharCol
+    1013:AD 00 C0 .2 LDA KEYBOARD ; read A=key
+    1016:10 FB       BMI .2       ; no key?
+    1018:8D 10 C0    STA KEYSTROBE; debounce key
+    101B:C9 88       CMP #88      ; key == <-- ?
+    101D:D0 0A       BNE .4       ;
+    101F:C6 FE       DEC glyph    ; yes, --glyph
+    1021:A5 FE    .3 LDA glyph    ; glyph &= 0x7F
     1023:29 7F       AND #7F
-    1025:85 FE       STA $FE
-    1027:10 DB       BPL .1    ; always branch, draw prev char
-    1029:C9 95    .4 CMP #95   ; key == --> ?
-    102B:D0 05       BNE .5    ;
-    102D:E6 FE       INC $FE   ; yes, ++c
+    1025:85 FE       STA glyph
+    1027:10 DB       BPL .1       ; always branch, draw prev char
+    1029:C9 95    .4 CMP #95      ; key == --> ?
+    102B:D0 05       BNE .5       ;
+    102D:E6 FE       INC glyph    ; yes, ++glyph
     102F:18          CLC
-    1030:90 EF       BCC .3    ; always branch, draw prev char
-    1032:C9 9B    .5 CMP #9B   ; key == ESC ?
-    1034:D0 DD       BNE .2    ;
-    1036:60          RTS       ; yes, exit
+    1030:90 EF       BCC .3       ; always branch, draw prev char
+    1032:C9 9B    .5 CMP #9B      ; key == ESC ?
+    1034:D0 DD       BNE .2       ;
+    1036:60          RTS          ; yes, exit
 ```
 
 Enter in this code:
@@ -968,7 +975,7 @@ Let's fix it up to print the hex value of the current character we are inspectin
     1010:20 37 10    JSR $1037
 
     1037:48          PHA            ; save c
-    1038:20 3B 03    JSR $033B      ; DrawCharCol()
+    1038:20 3B 03    JSR DrawCharCol
     103B:68          PLA            ; restore c so we can print it in hex
 
     ; FUNC: DrawHexByte( c ) = $103C
@@ -989,7 +996,7 @@ Let's fix it up to print the hex value of the current character we are inspectin
     104B:20 66 03    JSR HgrToTmpPtr
     104E:BD 58 10    LDA NIB2HEX,X  ; nibble to ASCII
     1051:C8          INY            ; IncCursorCol()
-    1052:20 3B 03    JSR $033B      ; DrawCharCol()
+    1052:20 3B 03    JSR DrawCharCol
     1055:60          RTS
                      ORG $358
     1058:30 31 32 33 NIB2HEX ASC "0123456789ABCDEF"
@@ -1222,18 +1229,20 @@ Or are we stuck? Since we're using a function to calculate the destination addre
 We'll need to change the `X` offset in SetCursorColRowXY() to `Y`;
 
 ```assembly
-    ; FUNC: SetCursorColRow2( row ) = $033B
+    ; FUNC: SetCursorColRow2( row ) = $0328
     ; PARAM: Y = row
     ; NOTES: Version 2 !
-    328:B9 00 64  LDA $6400,Y ; changed from: ,X
-    32B:18        CLC
-    32C:65 E5     ADC $E5
-    32E:85 F5     STA $F5
-    330:B9 18 64  LDA $6418,Y ; changed from: ,X
-    333:18        CLC
-    334:65 E6     ADC $E6
-    336:85 F6     STA $F6
-    338:60        RTS
+    328:              ORG $0328
+    328:          SetCursorColRow2
+    328:B9 00 64      LDA $6400,Y ; changed from: ,X
+    32B:18            CLC
+    32C:65 E5         ADC $E5
+    32E:85 F5         STA $F5
+    330:B9 18 64      LDA $6418,Y ; changed from: ,X
+    333:18            CLC
+    334:65 E6         ADC $E6
+    336:85 F6         STA $F6
+    338:60            RTS
 ```
 
 And change the low byte to add `X` instead:
