@@ -503,7 +503,10 @@ Enter in (or download [Raw Binary Font](font.bin) and with AppleWin press `F7`, 
     63E0:08 08 08 08 08 08 08 08  ; |
     63E8:0E 18 18 30 18 18 0E 00  ; }
     63F0:2C 1A 00 00 00 00 00 00  ; ~
-    63F8:00 2A 14 2A 14 2A 00 00  ; 
+    63F8:00 2A 14 2A 14 2A 00 00  ;
+
+(To save this: `BSAVE FONT.BIN,A$6000,L$400`)
+
 
 ### Image to Font Data (Javascript)
 
@@ -1327,6 +1330,8 @@ Here are all the routines we've entered in so far:
     390:86 F1 A0 00 B1 F0 F0 07
     398:20 10 03 C0 28 90 F5 60
 
+(To save this: `BSAVE CODE_0300.BIN,A$300,L$A0`)
+
 We also have a mini HGR Y address lookup table:
 
     6400:00 80 00 80 00 80 00 80
@@ -1335,6 +1340,8 @@ We also have a mini HGR Y address lookup table:
     6418:00 00 01 01 02 02 03 03
     6420:00 00 01 01 02 02 03 03
     6428:00 00 01 01 02 02 03 03
+
+(To save this: `BSAVE HGR_TABLE.BIN,A$6400,L$30`)
 
 What's left? Quite a few things actually:
 
@@ -1552,7 +1559,7 @@ Hey!  Homework?  Yes, the only (true) way to demonstrate you understand the theo
 
 Hope this HGR font tutorial helped you understand the inner workings of a font blitter!
 
-Happy (Apple ][ //e //c) Hacking!
+Happy (Apple ]\[ //e //c) Hacking!
 Michael "AppleWin Debug Dev"
 
 
@@ -1569,7 +1576,7 @@ There are many different ways to solve this depending if we want to prioritize s
 
 We could manually unroll every loop such as this monstrosity (we trade space for speed):
 
-Enter this:
+Enter this (or download [hgr_scroll_up.bin](hgr_scroll_up.bin) or `BRUN HGR_SCROLL_UP`):
 
     1400:A2 27
     1402:BD 00 24 9D 00 20
@@ -1767,25 +1774,36 @@ Enter this:
     1881:CA 30 03 4C 02 14
     1887:60
 
+
 And let's write a little demo ...
 
 ```assembly
-    1380:A0 C0        LDY #C0
-    1382:20 00 14  .1 JSR ScrollHgrUpPixel
-    1385:88           DEY
-    1386:D0 FA        BNE .1
-    1388:60           RTS
+    13F7:A0 C0        LDY #C0
+    13F9:20 00 14  .1 JSR ScrollHgrUpPixel
+    13FC:88           DEY
+    13FD:D0 FA        BNE .1
+    13FF:60           RTS
 ```
 
 Enter in:
 
-    1380:A0 C0 20 00 14 88 D0 FA 60
+    13F7:A0 C0 20 00 14 88 D0 FA 60
+
+(To save to disk type `BSAVE HGR_SCROLL_UP.BIN,A$13F7,L$490`)
 
 And let's try it out:
 
     1300L
     1300G
-    1380G
+    1400G
+    1400G
+    1400G
+
+![Screenshot 21](pics/hgrfont_21.png?raw=true)
+
+And for the finale:
+
+    13F7G
 
 Sweet !
 
