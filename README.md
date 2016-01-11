@@ -1,6 +1,6 @@
 #Apple ]\[ HGR Font Tutorial
 
-Revision: 11, Jan 10, 2016.
+Revision: 12, Jan 10, 2016.
 
 # Table of Contents
 
@@ -1145,7 +1145,8 @@ Enter in:
 
     320:48 20 28 03 68 4C 3B 03
     328:BD 00 64 18 65 E5 85 F5
-    330:BD 18 64 18 65 E6 85 F6 60
+    330:BD 18 64 18 65 E6 85 F6
+    338:60
 
 Now we can print a char at any location:
 
@@ -1154,7 +1155,7 @@ Now we can print a char at any location:
     1102:A0 01    ; Y-register = col 1 (2nd column)
     1104:A2 02    ; X-register = row 2 (3rd row)
     1106:4C 20 03 ; DrawCharColRow( c, col )
-````
+```
 
 Enter in:
 
@@ -1312,7 +1313,7 @@ Here are all the routines we've entered in so far:
     320:48 20 28 03 68 4C 3B 03
     328:BD 00 64 18 65 E5 85 F5
     330:BD 18 64 18 65 E6 85 F6
-    33A:60 EA EA 48 29 1F 0A 0A
+    338:60 EA EA 48 29 1F 0A 0A
     340:0A 69 00 8D 55 03 68 29
     348:60 2A 2A 2A 2A 69 60 8D
     350:56 03 A2 00 BD 00 62 91
@@ -1343,6 +1344,7 @@ What's left? Quite a few things actually:
  * Hook into the COUT so all text appears onto the HGR or DHGR screen
 
 Let's implement those first two.
+
 
 
 ## Copy text screen to HGR
@@ -1380,12 +1382,13 @@ The text screen, like the HGR screen, is also non-linear, and also broken up int
 |22 | $750 |$2350|
 |23 | $7D0 |$23D0|
 
+
 While the Apple's memory layout seems esoteric it has beautiful symmetry. For any given text row notice that:
 
 * the low  byte of the text address is the same low byte of the HGR address
 * the high byte of the text address is 0x1C less then the high byte of the HGR address
 
-Since we already have a HGR 16-bit address table we can re-use it.
+But since we already have a HGR 16-bit address table we can re-use it.
 
 Here's the Pseudo-code to copy the text screen to the HGR Screen:
 
@@ -1425,7 +1428,7 @@ And here is the assembly:
     1310:A2 00      LDX #0
     1312:86 F2      STX col
     1314:20 79 03   JSR CursorColRow3 ; A = HgrHi[ row ]
-    1317:18         CLC
+    1317:18         CLC               ; Convert HgrHi to TextHi byte
     1318:E9 1B      SBC #$1B          ; A -= 0x1C
     131A:85 F8      STA $F8
     131C:B9 00 64   LDA $6400, Y      ; A = HgrLo[ row ]
@@ -1458,6 +1461,17 @@ And now for the moment of truth! Don't worry if you can't see what you are typin
 
 Voila!
 
+![Screenshot 18](pics/hgrfont_18.png?raw=true)
+
+In case you were wondering why I turned 50% scanlines `on` this is how the HGR screen would normally look like in color:
+
+![Screenshot 19](pics/hgrfont_19.png?raw=true)
+
+That's why I turned 50% scanlines on, for better readability:
+
+![Screenshot 20](pics/hgrfont_20.png?raw=true)
+
+
 And just to prove that it copied the bottom 4 text rows as well:
 
     C052
@@ -1465,6 +1479,8 @@ And just to prove that it copied the bottom 4 text rows as well:
 And to restore the bottom 4 text rows
 
     C053
+
+
 
 
 ## Exercise 1: ScrollHgrUpPixel()
