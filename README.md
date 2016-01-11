@@ -616,13 +616,13 @@ Here's the disassembly of our (hard-coded) DrawChar() program:
 ```assembly
     ; FUNC: DrawChar()
     ; NOTES: A, X, Y is destroyed
-            .ORG $0300
+            ORG $0300
     300:    JSR ScreenPtrToTempPtr
     303:    LDA #00      ; glyph 'c' to draw (not used yet)
     305:    LDY #00      ; Y = column to draw at (hard-coded)
     307:    JMP _DrawChar
 
-            .ORG $0352
+            ORG $0352
     352: _DrawChar
     352:    LDX #0
     354: .1 LDA $6200,X  ; A = font[ offset + i ]
@@ -709,7 +709,7 @@ After drawing a character with `DrawChar()` it is handy if we can advance both:
     ; OUTPUT: Y-Register (column) is incremented
     ; Increment the cursor column and move the destination screen pointer back
     ; up 8 scan lines previously to what it was when DrawChar() was called.
-               .ORG $0370
+               ORG $0370
     370:C8     INY
     371:18     CLC
     372:A5 F6  LDA $F6
@@ -834,7 +834,7 @@ Our prefix code to setup the source address becomes:
     ; PARAM: A = glyph to draw
     ; PARAM: Y = column to draw at; $0 .. $27 (Columns 0 .. 39) (not modified)
     ; NOTES: X is destroyed
-                 .ORG $033B
+                 ORG $033B
     33B:48       PHA      ; push c = %PQRSTUVW to draw
     33C:29 1F    AND #1F  ;        = %000STUVW R=0, Optimization: implicit CLC
     33E:0A       ASL      ; c * 2    %00STUVW0
@@ -977,12 +977,12 @@ Let's fix it up to print the hex value of the current character we are inspectin
     1048:29 0F       AND #F         ; base 16
     104A:AA          TAX            ;
     104B:20 66 03    JSR ScreenPtrToTempPtr
-    104E:BD 58 10    LDA $1058,X    ; nibble to ASCII
+    104E:BD 58 10    LDA NIB2HEX,X  ; nibble to ASCII
     1051:C8          INY            ; IncCursorCol()
     1052:20 3B 03    JSR $033B      ; DrawCharCol()
     1055:60          RTS
-                     .ORG $358
-    1058:30 31 32 33 ASC "0123456789ABCDEF"
+                     ORG $358
+    1058:30 31 32 33 NIB2HEX ASC "0123456789ABCDEF"
     105C:34 35 36 37
     1060:38 39 41 42
     1064:43 44 45 46
@@ -1242,7 +1242,7 @@ This is a little clunky but it is progress. Let's write the new SetCursorColRow(
     ; PARAM: Y = row    to draw at; $0 .. $17 (Rows 0 .. 23) (not modified)
     ; NOTES: Version 3! X and Y is swapped from earlier version!
     ; [$F5] = HgrLo[ Y ] + ScreenLo + X
-                  .ORG $0379
+                  ORG $0379
     379:86 F5     STX $F5
     37B:B9 00 64  LDA HgrLo,Y ; HgrLo[ row ]
     37E:18        CLC
@@ -1268,10 +1268,10 @@ Enter in:
 Now that we have the basic print char working lets extend it to print a C-style string (one that is zero terminated.)
 
 ```assembly
-    ; FUNC: DrawString( *text ) = $038E
+    ; FUNC: DrawString( *text )
     ; PARAM: X = High byte of string address
     ; PARAM: Y = Low  byte of string address
-                     .ORG $038E
+                     ORG $038E
     38E:84 F0        STY $F0
     390:86 F1        STX $F1
     392:A0 00        LDY #0
@@ -1461,7 +1461,7 @@ And here is the assembly:
     ; DATA:
     ;    $6000.$63FF  Font 7x8 Data
     ;    $6400.$642F  HgrLo, HgrHi table for every 8 scanlines
-                    .ORG $1300
+                    ORG $1300
     1300:A9 00      LDA #0
     1302:85 F3      STA row
     1304:85 E5      STA $E5
@@ -1821,7 +1821,8 @@ Sweet !
 Here's the (non-standard) assembly to scroll the HGR screen up one pixel:  (I'm using the non-conventional `:` as an assembler end-of-statement sepearator to logically group the byte copies together.)
 
 ```assembly
-    ; FUNC: ScrollHgrUpPixel() = $1400
+    ; FUNC: ScrollHgrUpPixel()
+              ORG $1400
     1400:     LDX #27 ; 39 columns       ; Src Y    Dst Y
     1402:  .1 LDA $2400,X : STA $2000,X  ; [  1] -> [  0]
     1408:     LDA $2800,X : STA $2400,X  ; [  2] -> [  1]
