@@ -1457,7 +1457,7 @@ Here's the Pseudo-code to copy the text screen to the HGR Screen:
 And here is the assembly:
 
 ```assembly
-    ; FUNC: CopyTextToHGR() = $1300
+    ; FUNC: CopyTextToHGR()
     ; DATA:
     ;    $6000.$63FF  Font 7x8 Data
     ;    $6400.$642F  HgrLo, HgrHi table for every 8 scanlines
@@ -1468,7 +1468,7 @@ And here is the assembly:
     1306:A9 20      LDA #20             ; Dest = HGR1 = $2000
     1308:85 E6      STA $E6
     130A:A4 F3   .1 LDY row             ; Y = row
-    130C:C0 18      CPY #$18            ; 24 is #$18
+    130C:C0 18      CPY #$18            ; 24 rows is #$18
     130E:B0 20      BCS .3              ; Y >= 24
     1310:A2 00      LDX #0
     1312:86 F2      STX col             ; X = col
@@ -1481,7 +1481,7 @@ And here is the assembly:
     1321:A4 F2      LDY col
     1323:B1 F7   .2 LDA ($F7),Y
     1325:20 10 03   JSR PrintChar
-    1328:C0 28      CPY #$28            ; 40 is #$18
+    1328:C0 28      CPY #$28            ; 40 cols is #$28
     132A:90 F7      BCC .2              ; Y < 40
     132C:E6 F3      INC row
     133E:D0 DA      BNE .1              ; always
