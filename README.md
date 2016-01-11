@@ -1188,7 +1188,7 @@ We could map the X-register to the natural column (x-axis), and the Y-register t
     383:60
 ```
 
-Enter:
+Enter in:
 
     379:20 28 03 18 98 65 F5 85 F5 60
 
@@ -1287,7 +1287,7 @@ And our example to verify that it works:
     120E:48 65 6C 6C 6F 20 57 6F 72 6C 64 00
 ```
 
-Enter:
+Enter in:
 
     38E:84 F0 86 F1 A0 00 B1 F0
     396:F0 07 20 10 03 C0 28 90 F5 60
