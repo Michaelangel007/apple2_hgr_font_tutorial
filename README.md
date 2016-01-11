@@ -616,12 +616,13 @@ Here's the disassembly of our (hard-coded) DrawChar() program:
 ```assembly
     ; FUNC: DrawChar() = $0300
     ; NOTES: A, X, Y is destroyed
+            .ORG $300
     300:    JSR ScreenPtrToTempPtr
     303:    LDA #00      ; glyph 'c' to draw (not used yet)
     305:    LDY #00      ; Y = column to draw at (hard-coded)
     307:    JMP _DrawChar
 
-    307     .ORG $0352
+            .ORG $352
     352: _DrawChar:
     352:    LDX #0
     354: .1 LDA $6200,X  ; A = font[ offset + i ]
@@ -828,7 +829,6 @@ However we can save one instruction (and 2 cycles) if we optimize `c/32` to use 
 Our prefix code to setup the source address becomes:
 
 ```assembly
-    ; FUNC: DrawCharCol( c, col ) = $03BB
     ; FUNC: DrawCharCol( c, col ) = $03BB
     ; PARAM: A = glyph to draw
     ; PARAM: Y = column to draw at; $0 .. $27 (Columns 0 .. 39) (not modified)
@@ -1046,7 +1046,6 @@ Let's use IncCursorCol() to automatically advance the cusor.  We'll also add a s
     1060:38 39 41 42
     1064:43 44 45 46
 ```
-
 
 Enter in:
 
