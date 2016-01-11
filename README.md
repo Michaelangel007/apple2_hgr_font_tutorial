@@ -1,6 +1,6 @@
 #Apple ]\[ HGR Font Tutorial
 
-Revision: 24, Jan 11, 2016.
+Revision: 25, Jan 11, 2016.
 
 # Table of Contents
 
@@ -2267,6 +2267,8 @@ That's all folks!  Now go write some cool font blitter code.
 * ~~Screenshots~~ Done!
 * ~~Binary code for 300.bin and 1000.bin so you can load it directly into the emulator~~ Done!
 * Disk image: `HGR_FONT.DSK` (In progress)
+* Re-engineer Codepage 437 Font to 7x8 cells.
+ ![font_codepage_437.png](font_codepage_437.png)
 * Double Hi-Res
 * PDF of this document (As a work-around use Chrome and Print to PDF)
 
