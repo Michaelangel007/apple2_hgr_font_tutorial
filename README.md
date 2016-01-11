@@ -1388,14 +1388,14 @@ While the Apple's memory layout seems esoteric it has beautiful symmetry. For an
 * the low  byte of the text address is the same low byte of the HGR address
 * the high byte of the text address is 0x1C less then the high byte of the HGR address
 
-Technically, to conver the HGR high byte address to a Text high byte address, we only need to map these 4 high bytes:
+Technically, to convert the HGR high byte address to a Text high byte address, we only need to map these 4 high bytes:
 
-| Text High Byte | HGR High Byte |
-|:----------:|:----------------:|
-| $4 = %0100 | $20 = %0010_0000 |
-| $5 = %0101 | $21 = %0010_0001 |
-| $6 = %0110 | $22 = %0010_0010 |
-| $7 = %0111 | $23 = %0010_0011 |
+| HGR High Byte    | Text High Byte  |
+|:----------------:|:---------------:|
+| $20 = %0010_0000 | $4 = %0000_0100 |
+| $21 = %0010_0001 | $5 = %0000_0101 |
+| $22 = %0010_0010 | $6 = %0000_0110 |
+| $23 = %0010_0011 | $7 = %0000_0111 |
 
 Which we could do via:
 
@@ -1415,7 +1415,7 @@ But we'll save a byte and use the normal subtraction instead:
 
 If we care about absolute speed we could see which one takes the fewer clock cycles.
 
-But since we already have a HGR 16-bit address table we can re-use it.
+There is also the reverse conversion -- to convert a Text address to a HGR address which could be done with the same `AND #3, OR #20`, but since we don't have a Text Y table address and already have a HGR 16-bit address table we will  re-use that.
 
 Here's the Pseudo-code to copy the text screen to the HGR Screen:
 
