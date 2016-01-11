@@ -1,6 +1,6 @@
 #Apple ]\[ HGR Font Tutorial
 
-Revision: 15, Jan 10, 2016.
+Revision: 16, Jan 10, 2016.
 
 # Table of Contents
 
@@ -584,9 +584,9 @@ Another solution is to use a web browser that isn't "broken" such as Firefox, et
 
 OK, so now that we have the font data, how do we draw a character "on screen" ?
 
-Remember we need to transfer 8 consecutive bytes (1 byte / scanline) to 8 different scanlines.
+Remember we need to transfer 8 consecutive bytes (1 byte / scanline) to 8 different scanlines scattered all over memory.
 
-Assuming we want to draw the `A` glyph at the top-left of the screen we would need to transfer bytes from the (source) font glyph memory locations to the (destination) screen memory locations:
+Assuming we want to draw the `A` glyph at the top-left of the screen we would need to transfer bytes from the (source) font glyph memory locations to these (destination) HGR screen memory locations:
 
     ($6208) -> $2000
     ($6209) -> $2400
@@ -666,10 +666,13 @@ If we wanted to draw in columns 1 and 2 instead of column 0 then we need to set 
 
 Enter in:
 
+```
     306:1
     300G
+
     306:2
     300G
+```
 
 ![Screenshot 9](pics/hgrfont_09.png?raw=true)
 
@@ -695,7 +698,7 @@ Since the Y-register controls the column we can inline this function and have th
 
     LDY #column
 
-After DrawChar() it is handy if we can advance both:
+After drawing a character with `DrawChar()` it is handy if we can advance both:
 
 * the column of the cursor
 * the pointer to the screen where the next glyph will be drawn
@@ -751,7 +754,7 @@ Recall that our font has this memory layout:
 | :  |   : |     : |
 | _  | $5F | $62F8 |
 
-The 6502 stores and loads 16-bit addresses in little-endian format so for glyph `D`, we need to store the bytes of the address `$6220` in reverse order.
+The 6502 stores and loads 16-bit addresses in little-endian format so for glyph `D` we need to store the bytes of the address `$6220` in reverse order.
 
 Enter in:
 
@@ -1099,7 +1102,7 @@ The HGR screen address is broken up a triad. Every 64 scan lines the offset chan
 |176| $2350 |$23|$50|
 |184| $23D0 |$23|$D0|
 
-We'll split the table of addresses into Low and High bytes for easier access. We'll also subtract off the hard-coded graphics page 1 high byte = $20 and instead use relative offsets to make it work with either graphics page 1 or 2.
+We'll split this table of 16-bit addresses into Low and High bytes for easier access. We'll also subtract off the hard-coded graphics page 1 high byte = $20 and instead use relative offsets to make it work with either graphics page 1 or 2.
 
 This is our mini HGR Y Address look-up table. "Funny" that it has 24 entries -- the same height as our text screen. :-)
 
