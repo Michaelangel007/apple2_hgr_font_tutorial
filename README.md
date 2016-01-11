@@ -238,7 +238,13 @@ Here's the [Javascript source code](list_hgr_table.html) to generate this table:
 
 ### No FONT data in ROM
 
-Second, each glyph in the Apple font is in a 7x8 cell -- the leading line on the bottom is usually blank but we'll store that too so that we have a true "underline" and bottom descender on 'j', 'y', etc. 
+Second, each glyph in the Apple font is in a 7x8 cell -- the leading line on the bottom is usually blank but we'll store that too so that we have a true "underline" and bottom descender on 'j', 'y', etc. How do we know this?
+
+The `TEXT` screen is 40x24 characters. The high resolution graphics `HGR` screen is 280x192.
+
+    Char Width  (px/character) = Screen Width  (px) / Columns (characters) = 280/40 = 7
+
+    Char Height (px/character) = Screen Height (px) / Rows    (characters) = 192/24 = 8
 
 Unfortunately, the data for the TEXT ROM 25123 hardware chip is **not** accessible from the 6502. :-/ This means you will need to manually enter in the 8 bytes/character. :-( The good news is that I've already done this so you can copy / paste. :-)
 
@@ -328,7 +334,7 @@ Enter in:
 
 ![Screenshot 5](pics/hgrfont_05.png?raw=true)
 
-We actually _also_ need to move the right-edge pixel of these 2 scanlins over left by 1 pixel so it appears in the correct location when shifted:
+We actually _also_ need to move the right-edge pixel of these 2 scanlines over left by 1 pixel so it appears in the correct location when shifted:
 
     2304:22
     2704:92 ;
