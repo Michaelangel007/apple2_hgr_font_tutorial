@@ -623,7 +623,7 @@ Here's the disassembly of our (hard-coded) DrawChar() program:
     307:    JMP _DrawChar
 
             .ORG $352
-    352: _DrawChar:
+    352: _DrawChar
     352:    LDX #0
     354: .1 LDA $6200,X  ; A = font[ offset + i ]
     357:    STA ($F5),Y  ; screen[col] = A
@@ -829,7 +829,7 @@ However we can save one instruction (and 2 cycles) if we optimize `c/32` to use 
 Our prefix code to setup the source address becomes:
 
 ```assembly
-    ; FUNC: DrawCharCol( c, col ) = $03BB
+    ; FUNC: DrawCharCol( c, col ) = $033B
     ; PARAM: A = glyph to draw
     ; PARAM: Y = column to draw at; $0 .. $27 (Columns 0 .. 39) (not modified)
     ; NOTES: X is destroyed
@@ -974,7 +974,7 @@ Let's fix it up to print the hex value of the current character we are inspectin
     ; PARAM: A = nibble to print as hex char
     1048:29 0F       AND #F         ; base 16
     104A:AA          TAX            ;
-    104B:20 66 03    JSR $0366      ; update dest screen pointer
+    104B:20 66 03    JSR ScreenPtrToTempPtr
     104E:BD 58 10    LDA $1058,X    ; nibble to ASCII
     1051:C8          INY            ; IncCursorCol()
     1052:20 3B 03    JSR $033B      ; DrawCharCol()
