@@ -1047,6 +1047,7 @@ Let's use IncCursorCol() to automatically advance the cusor.  We'll also add a s
     1064:43 44 45 46
 ```
 
+
 Enter in:
 
     310:20 3B 03 4C 70 03
@@ -1062,6 +1063,9 @@ Enter in:
 
 ![Screenshot 15](pics/hgrfont_15.png?raw=true)
 
+Our final version is:
+
+(To save this, `BSAVE CHAR_INSPECT.BIN,A$1000,L$68`)
 
 ## Y Cursor Position
 
