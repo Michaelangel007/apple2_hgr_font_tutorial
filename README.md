@@ -329,7 +329,7 @@ Enter in:
 
 ![Screenshot 5](pics/hgrfont_05.png?raw=true)
 
-We actually _also_ need to moving the left-edge pixel over by 1 so it appears in the correct location when shifted:
+We actually _also_ need to move the right-edge pixel of these 2 scanlins over left by 1 pixel so it appears in the correct location when shifted:
 
     2304:22
     2704:92 ;
