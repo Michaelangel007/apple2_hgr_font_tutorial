@@ -26,7 +26,7 @@ Revision: 17, Jan 10, 2016.
  * Character Inspector version 2
  * Character Inspector version 3
 * Y Cursor Position
-* Natural Params CursorColRow()
+* Natural Params SetCursorColRow()
 * DrawString()
 * Recap
 * Copy text screen to HGR
@@ -80,7 +80,7 @@ When we are done we will have 6502 assembly code that implements the equivalent 
     void DrawCharCol( char c, int col )
     void DrawCharColRow( char c, int col, int row );
     void SetCursorRow( int row );
-    void SetCursorColRow( int col, int row );
+    void SetCursorColRow3( int col, int row );
     void SetCursorCol( int col );
     void IncCursorCol();
     void DrawHexByte( char c );
@@ -1179,7 +1179,7 @@ Enter in:
 ![Screenshot 16](pics/hgrfont_16.png?raw=true)
 
 
-## Natural Params CursorColRow()
+## Natural Params SetCursorColRow()
 
 Unfortunately, our usage of the X and Y registers are not intuitive. This is due to the limited addressing modes of the 6502. :-/ If the 6502 had a symmetrical indirect zero-page X addressing mode:
 
@@ -1188,7 +1188,7 @@ Unfortunately, our usage of the X and Y registers are not intuitive. This is due
 We could map the X-register to the natural column (x-axis), and the Y-register to the natural row (y-axis).  Alas, we're stuck with the X=row and Y=col unless we wanted to add extra code to "swap" the two.
 
 ```assembly
-    ; FUNC: CursorColRow() = $0379
+    ; FUNC: SetCursorColRowYX() = $0379
     ; PARAM: Y = col
     ; PARAM: X = row
     379:20 28 03  JSR CursorRow
@@ -1198,17 +1198,12 @@ We could map the X-register to the natural column (x-axis), and the Y-register t
     381:85 F5     STA $F5
     383:60
 ```
-
-Enter in:
-
-    379:20 28 03 18 98 65 F5 85 F5 60
-
 Or are we stuck? Since we're using a function to calculate the destination address let's fix the order.
 
-We'll need to change the `X` offset in CursorRow() to `Y`;
+We'll need to change the `X` offset in SetCursorColRowXY() to `Y`;
 
 ```assembly
-    ; FUNC: CursorRow2( row ) = $033B
+    ; FUNC: SetCursorColRow2( row ) = $033B
     ; PARAM: Y = row
     ; NOTES: Version 2 !
     328:B9 00 64  LDA $6400,Y ; changed from: ,X
@@ -1225,7 +1220,7 @@ We'll need to change the `X` offset in CursorRow() to `Y`;
 And change the low byte to add `X` instead:
 
 ```assembly
-    ; FUNC: CursorColRow2( col, row ) = $0379
+    ; FUNC: SetCursorColRow2( col, row ) = $0379
     ; PARAM: X = col
     ; PARAM: Y = row
     ; NOTES: Version 2 !
@@ -1237,21 +1232,21 @@ And change the low byte to add `X` instead:
     383:60
 ```
 
-This is a little clunky but it is progress. Let's write the new CursorColRow() version with the CursorRow() inlined so we don't have to use a JSR.
+This is a little clunky but it is progress. Let's write the new SetCursorColRow() version with the CursorRow() inlined so we don't have to use a JSR.
 
 ```assembly
-    ; FUNC: CursorColRow3( col, row ) = $0379
+    ; FUNC: SetCursorColRow( col, row ) = $0379
     ; PARAM: X = column to draw at; $0 .. $27 (Columns 0 .. 39) (not modified)
     ; PARAM: Y = row    to draw at; $0 .. $17 (Rows 0 .. 23) (not modified)
     ; NOTES: Version 3! X and Y is swapped from earlier version!
-    ; [$F5] = HgrLo[ Y ] + [$E5] + X
+    ; [$F5] = HgrLo[ Y ] + ScreenLo + X
     379:86 F5     STX $F5
-    37B:B9 00 64  LDA $6400,Y ; HgrLo[ row ]
+    37B:B9 00 64  LDA HgrLo,Y ; HgrLo[ row ]
     37E:18        CLC
     37F:65 E5     ADC $E5
-    381:65 F5     ADC $F5
+    381:65 F5     ADC $F5     ; add column
     383:85 F5     STA $F5
-    385:B9 18 64  LDA $6418,Y ; HgrHi[ row ]
+    385:B9 18 64  LDA HgrHi,Y ; HgrHi[ row ]
     388:18        CLC
     389:65 E6     ADC $E6
     38B:85 F6     STA $F6
@@ -1290,7 +1285,7 @@ And our example to verify that it works:
     ; FUNC: DemoDrawString()
     1200:A2 03        LDX #3      ; col = 3
     1202:A0 02        LDY #2      ; row = 2
-    1204:20 79 03     JSR CursorColRow3
+    1204:20 79 03     JSR SetCursorColRow
     1207:A2 12        LDX >.3     ; High
     1209:A0 0E        LDY <.3     ; Low
     120B:4C 8E 03     JMP DrawString
@@ -1442,7 +1437,7 @@ Here's the Pseudo-code to copy the text screen to the HGR Screen:
     {
        SrcTextLo = HgrLo[ row ];
        SrcTextHi = HgrHi[ row ] - 0x1C;
-    // CursorColRow( 0, row ) which does:
+    // SetCursorColRow( 0, row ) which does:
        DstHgrLo  = HgrLo[ row ]
        DstHgrHi  = HgrHi[ row ]
 
@@ -1462,29 +1457,30 @@ And here is the assembly:
     ; DATA:
     ;    $6000.$63FF  Font 7x8 Data
     ;    $6400.$642F  HgrLo, HgrHi table for every 8 scanlines
+                    .ORG $1300
     1300:A9 00      LDA #0
     1302:85 F3      STA row
     1304:85 E5      STA $E5
-    1306:A9 20      LDA #20           ; Dest = HGR1 = $2000
+    1306:A9 20      LDA #20             ; Dest = HGR1 = $2000
     1308:85 E6      STA $E6
-    130A:A4 F3   .1 LDY row
-    130C:C0 18      CPY #$18          ; 24 is #$18
-    130E:B0 20      BCS .3            ; Y >= 24
+    130A:A4 F3   .1 LDY row             ; Y = row
+    130C:C0 18      CPY #$18            ; 24 is #$18
+    130E:B0 20      BCS .3              ; Y >= 24
     1310:A2 00      LDX #0
-    1312:86 F2      STX col
-    1314:20 79 03   JSR CursorColRow3 ; A = HgrHi[ row ]
-    1317:18         CLC               ; Convert HgrHi to TextHi byte
-    1318:E9 1B      SBC #$1B          ; A -= 0x1C
+    1312:86 F2      STX col             ; X = col
+    1314:20 79 03   JSR SetCursorColRow ; A = HgrHi[ row ]
+    1317:18         CLC                 ; Convert HgrHi to TextHi byte
+    1318:E9 1B      SBC #$1B            ; A -= 0x1C
     131A:85 F8      STA $F8
-    131C:B9 00 64   LDA $6400, Y      ; A = HgrLo[ row ]
+    131C:B9 00 64   LDA $6400, Y        ; A = HgrLo[ row ]
     131F:85 F7      STA $F7
     1321:A4 F2      LDY col
     1323:B1 F7   .2 LDA ($F7),Y
     1325:20 10 03   JSR PrintChar
-    1328:C0 28      CPY #$28          ; 40 is #$18
-    132A:90 F7      BCC .2            ; Y < 40
+    1328:C0 28      CPY #$28            ; 40 is #$18
+    132A:90 F7      BCC .2              ; Y < 40
     132C:E6 F3      INC row
-    133E:D0 DA      BNE .1            ; always
+    133E:D0 DA      BNE .1              ; always
     1330:60      .3 RTS
 ```
 
