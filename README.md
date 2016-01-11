@@ -565,7 +565,7 @@ If you were wondering how this data was generated, you see the great thing about
     <body onload="OnLoad()">
         <img id="Apple2eFont7x8" src="Apple2eFont7x8.png">
         <hr>
-        <pre id="hexdump"></pre>
+        <pre id="hexdump"></pre>IncCursorCol
     </body>
     </html>
 ```
@@ -609,37 +609,47 @@ Before we can start a simple `DrawChar(char c)` function, we also first need to 
     $F5 Low  byte (16-bit address) Working pointer to screen byte
     $F6 High byte (16-bit address) Working pointer to screen byte
 
+```assembly
+                 HgrLo    EQU $E5
+                 HgrHi    EQU $E6
+                 TmpLo    EQU $F5
+                 TmpHi    EQU $F6
+```
+
+
 Here's the disassembly of our (hard-coded) DrawChar() program:
 
 ```assembly
     ; FUNC: DrawChar()
     ; NOTES: A, X, Y is destroyed
-            ORG $0300
-    300:    JSR ScreenPtrToTempPtr
-    303:    LDA #00      ; glyph 'c' to draw (not used yet)
-    305:    LDY #00      ; Y = column to draw at (hard-coded)
-    307:    JMP _DrawChar
+                          ORG $0300
+    300:20 66 03 DrawChar JSR HgrToTmpPtr
+    303:A9 00             LDA #00         ; glyph 'c' to draw (not used yet)
+    305:A0 00             LDY #00         ; Y = column to draw at (hard-coded)
+    307:4C 52 03          JMP _DrawChar
 
-            ORG $0352
-    352: _DrawChar
-    352:    LDX #0
-    354: .1 LDA $6200,X  ; A = font[ offset + i ]
-    357:    STA ($F5),Y  ; screen[col] = A
-    359:    CLC
-    35A:    LDA $F6
-    35C:    ADC #4
-    35E:    STA $F6
-    360:    INX
-    361:    CPX #8
-    363:    BNE .1
-    365:    RTS
+                          ORG $0352
+    352:         _DrawChar
+    352:A2 00             LDX #0          ; next instruction is Self-Modifying!
+    354:BD 00 00 LoadFont LDA $0000,X     ; A = font[ offset + i ]
+    357:91 F5             STA (TmpLo),Y   ; screen[col] = A
+    359:18                CLC
+    35A:A5 F6             LDA TmpHi
+    35C:69 04             ADC #4          ; screen += 0x400
+    35E:85 F6             STA TmpHi
+    360:E8                INX
+    361:E0 08             CPX #8
+    363:D0 EF             BNE LoadFont
+    365:60                RTS
 
-    ; FUNC: ScreenPtrToTempPtr() = $0366
-    366:    LDA $E5      ; Copy initial screen
-    368:    STA $F5      ; destination pointer
-    36A:    LDA $E6      ; to working pointer
-    36C:    STA $F6
-    36D:    RTS
+    ; FUNC: HgrToTmpPtr()
+                          ORG $0366
+    366:          HgrToTmpPtr
+    366:A5 E5             LDA HgrLo       ; Copy initial screen
+    368:85 F5             STA TmpLo       ; destination pointer
+    36A:A5 E6             LDA HgrHi       ; to working pointer
+    36C:85 F6             STA TmpHi
+    36D:60                RTS
 ```
 
 Enter in:
@@ -708,12 +718,12 @@ After drawing a character with `DrawChar()` it is handy if we can advance both:
     ; Increment the cursor column and move the destination screen pointer back
     ; up 8 scan lines previously to what it was when DrawChar() was called.
                ORG $0370
-    370:C8     INY
-    371:18     CLC
-    372:A5 F6  LDA $F6
-    374:E9 1F  SBC #$1F
-    376:85 F6  STA $F6
-    378:60     RTS
+    370:C8     IncCursorCol INY
+    371:18                  CLC
+    372:A5 F6               LDA $F6
+    374:E9 1F               SBC #$1F
+    376:85 F6               STA $F6
+    378:60                  RTS
 ```
 
 Enter in:
@@ -853,17 +863,19 @@ Our prefix code to setup the source address becomes:
 Recall we'll re-use our existing font drawing code `_DrawChar` at $0352:
 
 ```assembly
-    352:A2 00    LDX #0
-    354:BD 00 00 LDA $0000,X  ; A = font[ offset + i ]
-    357:91 F5    STA ($F5),Y  ; screen[col] = A
-    359:18       CLC
-    35A:A5 F6    LDA $F6
-    35C:69 04    ADC #4       ; screen += 0x400
-    35E:85 F6    STA $F6
-    360:E8       INX
-    361:E0 08    CPX #8
-    363:D0 EF    BNE $304
-    365:60       RTS
+                          ORG $0352
+    352:          _DrawChar
+    352:A2 00             LDX #0          ; next instruction is Self-Modifying!
+    354:BD 00 00  _Draw   LDA $0000,X     ; A = font[ offset + i ]
+    357:91 F5             STA (TmpLo),Y   ; screen[col] = A
+    359:18                CLC
+    35A:A5 F6             LDA TmpHi
+    35C:69 04             ADC #4          ; screen += 0x400
+    35E:85 F6             STA TmpHi
+    360:E8                INX
+    361:E0 08             CPX #8
+    363:D0 EF             BNE _Draw
+    365:60                RTS
 ```
 
 We just need to touch up our entry point from $0352 ScreenPtrToTempPtr() to $033B DrawCharCol():
@@ -974,7 +986,7 @@ Let's fix it up to print the hex value of the current character we are inspectin
     ; PARAM: A = nibble to print as hex char
     1048:29 0F       AND #F         ; base 16
     104A:AA          TAX            ;
-    104B:20 66 03    JSR ScreenPtrToTempPtr
+    104B:20 66 03    JSR HgrToTmpPtr
     104E:BD 58 10    LDA NIB2HEX,X  ; nibble to ASCII
     1051:C8          INY            ; IncCursorCol()
     1052:20 3B 03    JSR $033B      ; DrawCharCol()
@@ -1008,12 +1020,14 @@ And now we have our own DrawHexByte() function.
 Let's use IncCursorCol() to automatically advance the cusor.  We'll also add a space after the character but before the hex value to improve readability of the output.
 
 ```assembly
-    ; FUNC: PrintChar() = $0310
+    ; FUNC: PrintChar()
     ; PARAM: A = glyph to draw
     ; PARAM: Y = column to draw at; $0 .. $27 (Columns 0 .. 39) (not modified)
     ; INPUT : $F5,$F6 pointer to the destination screen scanline
     ;         Must start at every 8 scanlines.
     ; OUTPUT: The Y-Register (cursor column) is automatically incremented.
+                     ORG $0310
+    310          PrintChar
     310:20 3B 03     JSR DrawCharCol
     313:4C 70 03     JMP IncCursorCol
 ```
@@ -1113,13 +1127,13 @@ This is our mini HGR Y Address look-up table. "Funny" that it has 24 entries -- 
 
 Enter these bytes (or save [hgrtable.bin](hgrtable.bin) and `bload hgrtable.bin,6400`):
 
-Our `HgrLo` table:
+Our `HgrLoY` table:
 
     6400:00 80 00 80 00 80 00 80
     6408:28 A8 28 A8 28 A8 28 A8
     6410:50 D0 50 D0 50 D0 50 D0
 
-Our `HgrHi` table:
+Our `HgrHiY` table:
 
     6418:00 00 01 01 02 02 03 03
     6420:00 00 01 01 02 02 03 03
@@ -1130,14 +1144,16 @@ To save this AppleWin press `F7`, at the debugger console `bsave "hgrtable.bin",
 To select which row to draw at we'll pass that in the X register to our DrawCharColRow() routine:
 
 ```assembly
-    ; FUNC: DrawCharColRow() = $0320
+    ; FUNC: DrawCharColRow()
     ; PARAM: A = glyph to draw
     ; PARAM: Y = column to draw at; $0 .. $27 (Columns 0 .. 39) (not modified)
     ; PARAM: X = row    to draw at; $0 .. $17 (Rows 0 .. 23) (destroyed)
-    320:48        PHA
-    321:20 28 03  JSR SetCursorRow
-    324:68        PLA
-    325:4C 3B 03  JMP DrawCharCol()
+                      ORG $0320
+    320:          DrawCharColRow
+    320:48            PHA
+    321:20 28 03      JSR SetCursorRow
+    324:68            PLA
+    325:4C 3B 03      JMP DrawCharCol
 
     ; FUNC: SetCursorRow( row )
     ; PARAM: X = row    to draw at; $0 .. $17 (Rows 0 .. 23) (not modified)
@@ -1145,14 +1161,14 @@ To select which row to draw at we'll pass that in the X register to our DrawChar
     ;         Note: Must start at every 8 scanlines.
     ; OUTPUT: $F5,$F5 working pointer to the destination screen scanline
                   ORG $0328
-    328:BD 00 64  LDA $6400,X   ; HgrLo[ row ]
+    328:BD 00 64  LDA HgrLoY,X   ; HgrLoY[ row ]
     32B:18        CLC
-    32C:65 E5     ADC $E5
-    32E:85 F5     STA $F5
-    330:BD 18 64  LDA $6418,X   ; HgrHi[ row ]
+    32C:65 E5     ADC HgrLo
+    32E:85 F5     STA TmpLo
+    330:BD 18 64  LDA HgrHiY,X   ; HgrHiY[ row ]
     333:18        CLC
-    334:65 E6     ADC $E6
-    336:85 F6     STA $F6
+    334:65 E6     ADC HgrHi
+    336:85 F6     STA TmpHi
     338:60        RTS
 ```
 
@@ -1166,10 +1182,11 @@ Enter in:
 Now we can print a char at any location:
 
 ```assembly
-    1100:A9 41    ; A-register = char
-    1102:A0 01    ; Y-register = col 1 (2nd column)
-    1104:A2 02    ; X-register = row 2 (3rd row)
-    1106:4C 20 03 ; DrawCharColRow( c, col )
+                   ORG $1100
+    1100:A9 41     LDA #41 ; A-register = char
+    1102:A0 01     LDY #1  ; Y-register = col 1 (2nd column)
+    1104:A2 02     LDX #2  ; X-register = row 2 (3rd row)
+    1106:4C 20 03  JSR DrawCharColRow
 ```
 
 Enter in:
@@ -1241,15 +1258,15 @@ This is a little clunky but it is progress. Let's write the new SetCursorColRow(
     ; PARAM: X = column to draw at; $0 .. $27 (Columns 0 .. 39) (not modified)
     ; PARAM: Y = row    to draw at; $0 .. $17 (Rows 0 .. 23) (not modified)
     ; NOTES: Version 3! X and Y is swapped from earlier version!
-    ; [$F5] = HgrLo[ Y ] + ScreenLo + X
+    ; [$F5] = HgrLoY[ Y ] + ScreenLo + X
                   ORG $0379
     379:86 F5     STX $F5
-    37B:B9 00 64  LDA HgrLo,Y ; HgrLo[ row ]
+    37B:B9 00 64  LDA HgrLoY,Y ; HgrLoY[ row ]
     37E:18        CLC
     37F:65 E5     ADC $E5
-    381:65 F5     ADC $F5     ; add column
+    381:65 F5     ADC $F5      ; add column
     383:85 F5     STA $F5
-    385:B9 18 64  LDA HgrHi,Y ; HgrHi[ row ]
+    385:B9 18 64  LDA HgrHiY,Y ; HgrHiY[ row ]
     388:18        CLC
     389:65 E6     ADC $E6
     38B:85 F6     STA $F6
@@ -1417,7 +1434,7 @@ Technically, to convert the HGR high byte address to a Text high byte address, w
 Which we could do via:
 
 ```assembly
-    LDA HgrHi, Y      ; Y is row
+    LDA HgrHiY, Y     ; Y is row
     AND #7            ; strip off top 6 bits
     OR  #4            ; Set text page 1 = $0400
 ````
@@ -1425,8 +1442,8 @@ Which we could do via:
 But we'll save a byte and use the normal subtraction instead:
 
 ```assembly
-    LDA HgrHi, Y      ; Y is row
-    CLC               ; Convert HgrHi to TextHi byte
+    LDA HgrHiY, Y     ; Y is row
+    CLC               ; Convert HgrHiY to TextHiY byte
     SBC #$1B          ; A -= 0x1C
 ```
 
@@ -1439,11 +1456,11 @@ Here's the Pseudo-code to copy the text screen to the HGR Screen:
 ```c
     for( row = 0; row < 24; row++ )
     {
-       SrcTextLo = HgrLo[ row ];
-       SrcTextHi = HgrHi[ row ] - 0x1C;
+       SrcTextLo = HgrLoY[ row ];
+       SrcTextHi = HgrHiY[ row ] - 0x1C;
     // SetCursorColRow( 0, row ) which does:
-       DstHgrLo  = HgrLo[ row ]
-       DstHgrHi  = HgrHi[ row ]
+       DstHgrLo  = HgrLoY[ row ]
+       DstHgrHi  = HgrHiY[ row ]
 
        for( col = 0; col < 40; col++ )
        {
@@ -1460,7 +1477,7 @@ And here is the assembly:
     ; FUNC: CopyTextToHGR()
     ; DATA:
     ;    $6000.$63FF  Font 7x8 Data
-    ;    $6400.$642F  HgrLo, HgrHi table for every 8 scanlines
+    ;    $6400.$642F  HgrLoY, HgrHiY table for every 8 scanlines
                     ORG $1300
     1300:A9 00      LDA #0
     1302:85 F3      STA row
@@ -1472,11 +1489,11 @@ And here is the assembly:
     130E:B0 20      BCS .3              ; Y >= 24
     1310:A2 00      LDX #0
     1312:86 F2      STX col             ; X = col
-    1314:20 79 03   JSR SetCursorColRow ; A = HgrHi[ row ]
-    1317:18         CLC                 ; Convert HgrHi to TextHi byte
+    1314:20 79 03   JSR SetCursorColRow ; A = HgrHiY[ row ]
+    1317:18         CLC                 ; Convert HgrHiY to TextHiY byte
     1318:E9 1B      SBC #$1B            ; A -= 0x1C
     131A:85 F8      STA $F8
-    131C:B9 00 64   LDA $6400, Y        ; A = HgrLo[ row ]
+    131C:B9 00 64   LDA $6400, Y        ; A = HgrLoY[ row ]
     131F:85 F7      STA $F7
     1321:A4 F2      LDY col
     1323:B1 F7   .2 LDA ($F7),Y
