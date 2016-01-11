@@ -1,6 +1,6 @@
 #Apple ]\[ HGR Font Tutorial
 
-Revision: 13, Jan 10, 2016.
+Revision: 14, Jan 10, 2016.
 
 # Table of Contents
 
@@ -1387,6 +1387,33 @@ While the Apple's memory layout seems esoteric it has beautiful symmetry. For an
 
 * the low  byte of the text address is the same low byte of the HGR address
 * the high byte of the text address is 0x1C less then the high byte of the HGR address
+
+Technically, to conver the HGR high byte address to a Text high byte address, we only need to map these 4 high bytes:
+
+| Text High Byte | HGR High Byte |
+|:----------:|:----------------:|
+| $4 = %0100 | $20 = %0010_0000 |
+| $5 = %0101 | $21 = %0010_0001 |
+| $6 = %0110 | $22 = %0010_0010 |
+| $7 = %0111 | $23 = %0010_0011 |
+
+Which we could do via:
+
+```assembly
+    LDA HgrHi, Y      ; Y is row
+    AND #7            ; strip off top 6 bits
+    OR  #4            ; Set text page 1 = $0400
+````
+
+But we'll save a byte and use the normal subtraction instead:
+
+```assembly
+    LDA HgrHi, Y      ; Y is row
+    CLC               ; Convert HgrHi to TextHi byte
+    SBC #$1B          ; A -= 0x1C
+```
+
+If we care about absolute speed we could see which one takes the fewer clock cycles.
 
 But since we already have a HGR 16-bit address table we can re-use it.
 
