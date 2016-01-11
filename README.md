@@ -1155,28 +1155,29 @@ To select which row to draw at we'll pass that in the X register to our DrawChar
     ; PARAM: A = glyph to draw
     ; PARAM: Y = column to draw at; $0 .. $27 (Columns 0 .. 39) (not modified)
     ; PARAM: X = row    to draw at; $0 .. $17 (Rows 0 .. 23) (destroyed)
-                      ORG $0320
-    320:          DrawCharColRow
-    320:48            PHA
-    321:20 28 03      JSR SetCursorRow
-    324:68            PLA
-    325:4C 3B 03      JMP DrawCharCol
+                        ORG $0320
+    0320:           DrawCharColRow
+    0320:48             PHA
+    0321:20 28 03       JSR SetCursorRow
+    0324:68             PLA
+    0325:4C 3B 03       JMP DrawCharCol
 
     ; FUNC: SetCursorRow( row )
     ; PARAM: X = row    to draw at; $0 .. $17 (Rows 0 .. 23) (not modified)
     ; INPUT : $E5,$E6 initial pointer to the destination screen scanline
     ;         Note: Must start at every 8 scanlines.
     ; OUTPUT: $F5,$F5 working pointer to the destination screen scanline
-                  ORG $0328
-    328:BD 00 64  LDA HgrLoY,X   ; HgrLoY[ row ]
-    32B:18        CLC
-    32C:65 E5     ADC HgrLo
-    32E:85 F5     STA TmpLo
-    330:BD 18 64  LDA HgrHiY,X   ; HgrHiY[ row ]
-    333:18        CLC
-    334:65 E6     ADC HgrHi
-    336:85 F6     STA TmpHi
-    338:60        RTS
+                        ORG $0328
+    0328:           SetCursorRow
+    0328:BD 00 64       LDA HgrLoY,X   ; HgrLoY[ row ]
+    032B:18             CLC
+    032C:65 E5          ADC HgrLo
+    032E:85 F5          STA TmpLo
+    0330:BD 18 64       LDA HgrHiY,X   ; HgrHiY[ row ]
+    0333:18             CLC
+    0334:65 E6          ADC HgrHi
+    0336:85 F6          STA TmpHi
+    0338:60             RTS
 ```
 
 Enter in:
