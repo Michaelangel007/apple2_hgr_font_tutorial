@@ -1,6 +1,6 @@
 #Apple ]\[ HGR Font Tutorial
 
-Revision: 20, Jan 11, 2016.
+Revision: 21, Jan 11, 2016.
 
 # Table of Contents
 
@@ -20,6 +20,7 @@ Revision: 20, Jan 11, 2016.
  * DrawChar() version 1
  * X Cursor Position
  * CursorCol()
+ * Introduction to Optimization
  * DrawChar() version 2
  * DrawChar() version 3
 * Character Inspector
@@ -726,16 +727,107 @@ Notice how after 8 scan lines we end up with and `Tmp` address of $4xxx (or $6xx
                      ORG $0370
     0370:         IncCursorCol1
     0370:C8          INY
-    0371:18          CLC
-    0372:A5 F6       LDA TmpHi
-    0374:E9 1F       SBC #$1F
-    0376:85 F6       STA TmpHi
-    0378:60          RTS
+    0371:18          CLC            ; Note:
+    0372:A5 F6       LDA TmpHi      ;     (To the astute reader)
+    0374:E9 1F       SBC #$1F       ; <-- ???
+    0376:85 F6       STA TmpHi      ;     Shouldn't this be #20 ?!
+    0378:60          RTS            ;     We'll discuss this next.
 ```
 
 Enter in:
 
     370:C8 18 A5 F6 E9 1F 85 F6 60
+
+
+### Introduction to Optimization
+
+One tip for beginner 6502 assembly programmers. It is tempting just to always clear the carry before do any addition or subtraction.  Unfortunately, for subtraction we'll have an off-by-one bug so we need to subtract 1 less then the value.  This makes reading the code a little unintuitive. The `Rule of Thumb` is to change the carry before we do the operation depending on whether we are `adding` or `subtracting`:
+
+| Op | Carry | Opcode |
+|----|:-----:|:------:|
+| +  | Clear | CLC    |
+| -  | Set   | SEC    |
+
+```assembly
+    ; FUNC: IncCursorCol()
+    ; OUTPUT: Y-Register (column) is incremented
+    ; Increment the cursor column and move the destination screen pointer back
+    ; up 8 scan lines previously to what it was when DrawChar() was called.
+    ; Version 2
+                     ORG $0370
+    0370:         IncCursorCol
+    0370:C8          INY
+    0371:38          SEC            ; CLC SBC #1F
+    0372:A5 F6       LDA TmpHi      ; was not obvious that we really
+    0374:E9 20       SBC #$20       ; meant A - #$20 !!
+    0376:85 F6       STA TmpHi
+    0378:60          RTS
+```
+
+One thing when writing 6502 assembly is to pay attention to _all_ optimization opportunities due to the slow ~1 MHz of the 6502.  Since we only need to modify the upper few bits instead of doing a bulky subtraction `SEC SBC` we might be tempted to see if there is a faster and/or smaller alternative.  We just need to be careful that our optimization is "shuffling" the bits _behaves_ around in the _exact_ same way at the end of the day. i.e. The Right Place at the Right Time.
+
+The problem is we want to see if we can _simply_ the transform of TmpHi after 8 scanlines (basically reset the cursor back to the orginal scanline before we drew all 8 scanlines of the glyph):
+
+    Tmp   = Hgr + (8 * $0400)
+
+Since we only care about the high byte:
+
+    TmpHi = HgrHi + (8 * $04)
+          = HgrHi + $20
+
+|Y  |TmpHi|Final| (T and $1F) | (T and $1F) or $20 |
+|--:|:---:|:---:|:---:|:---:|
+|  0| $40 | $20 | $00 | $20 |
+|  8| $40 | $20 | $00 | $20 |
+| 16| $41 | $21 | $01 | $21 |
+| 24| $41 | $21 | $01 | $21 |
+| 32| $42 | $22 | $02 | $22 |
+| 40| $42 | $22 | $02 | $22 |
+| 48| $43 | $23 | $03 | $23 |
+| 56| $43 | $23 | $03 | $23 |
+| 64| $40 | $20 | $00 | $20 |
+
+Hmm, we would need to replace `SEC SBC` with `AND OR` which we might think would be a littler faster and takes less code to boot but let's verify our assumption:
+
+```assembly
+    ; FUNC: IncCursorCol()
+    ; OUTPUT: Y-Register (column) is incremented
+    ; Increment the cursor column and move the destination screen pointer back
+    ; up 8 scan lines previously to what it was when DrawChar() was called.
+                     ORG $0370
+    0370:         IncCursorCol
+    0370:C8          INY
+    0371:A5 F6       LDA TmpHi
+    0373:29 1F       AND #%00011111 ; Requires an extra OR
+    0375:09 20       ORA #20        ; Hard-code to HGR page 1
+    0377:85 F6       STA TmpHi
+    0379:60          RTS
+```
+
+
+Hmm, so the code _isn't_ any smaller **on a 6502 CPU**.  It _might_ be on _other_ CPUs.
+`
+Second, is it any faster?
+
+```assembly
+    SEC    ; 2 cycles
+    SBC #n ; 2 cycles
+```
+
+vs
+
+```assembly
+    AND #n ; 2 cycles
+    ORA #m ; 2 cycles
+```
+Nope. Bummer. :-(
+
+The lessons?
+
+* Verify our assumptions and Profile!
+* Even though we "failed" _this_ time, we shouldn't be afraid to experiment with "out-the-box" thinking using the 6502 instructions; sometimes there are clear "wins".  It isn't always exactly clear if we should optimize to minimize space (with the potential to run slower) or to optimize for higher performance (at the cost of more code.)
+
+We'll briefly touch upon this topic of optimization again with `bit-shifts` and `memcpy()`.
 
 
 ## DrawChar() version 2
