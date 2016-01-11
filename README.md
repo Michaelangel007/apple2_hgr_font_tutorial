@@ -1,6 +1,6 @@
 #Apple ]\[ HGR Font Tutorial
 
-Revision: 23, Jan 11, 2016.
+Revision: 24, Jan 11, 2016.
 
 # Table of Contents
 
@@ -365,7 +365,7 @@ Here is a picture of the Apple //e character set:
 
 * ![Apple //e character set](Apple2eFont7x8.png?raw=true)
 
-If we wanted only uppercase ASCII we could get away with 64 glyphs:
+If we wanted only uppercase ASCII we could get away with 4 rows of 16 characters (symbols, numbers, letters) = 64 glyphs:
 
     64 glyphs * 8 bytes/glyph = 512 bytes.
 
