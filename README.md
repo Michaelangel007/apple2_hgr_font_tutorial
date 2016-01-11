@@ -77,7 +77,7 @@ When we are done we will have 6502 assembly code that implements the equivalent 
 
 ```c
     void DrawChar();
-    void DrawCharCol( char c, int col )
+    void DrawCharCol( char c, int col );
     void DrawCharColRow( char c, int col, int row );
     void SetCursorRow( int row );
     void SetCursorColRow3( int col, int row );
