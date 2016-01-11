@@ -1472,6 +1472,18 @@ That's why I turned 50% scanlines on, for better readability:
 ![Screenshot 20](pics/hgrfont_20.png?raw=true)
 
 
+
+Using one of the newer emulators with NTSC emulation, unfortunately, doesn't help with readaibility:.
+
+* NTSC Alpha:
+
+![Screenshot Tweaked](pics/ntsc_tweaked.png?raw=true)
+
+ * NTSC Sheldon - which unfortunately has WAY too much ghosting:
+
+![Screenshot Sheldon](pics/ntsc_sheldon.png?raw=true)
+
+
 And just to prove that it copied the bottom 4 text rows as well:
 
     C052
@@ -1479,8 +1491,6 @@ And just to prove that it copied the bottom 4 text rows as well:
 And to restore the bottom 4 text rows
 
     C053
-
-
 
 
 ## Exercise 1: ScrollHgrUpPixel()
