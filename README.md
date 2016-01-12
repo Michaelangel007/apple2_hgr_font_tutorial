@@ -123,12 +123,12 @@ Magic? :-)
 
 Nah, just Computer Science. :-)
 
-The first question you probably have is "How did I know what bytes to use?"  We'll get to that in a second.
+The first question you probably have is _"How did I know what bytes to use?"_  We'll get to that in a second.
 
 
 ## Quirks of the Apple HGR screen
 
-There are couple of things we need to discuss first. The preceeding example showed that the Apple's HGR screen behaves a little "funky." The Apple's, shall we say, esoteric use of hardware, is one of the reasons us fans love (or hate) it.
+There are couple of things we need to discuss first. The preceeding example showed that the Apple's HGR screen behaves a little "funky." The Apple's, shall we say, esoteric use of hardware, is one of the reasons us fans love (or hate) it.  "There are 4 lights!" Er, There are 4 things that stand out:
 
 
 ### Non-Linear Memory
