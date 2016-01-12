@@ -1,6 +1,6 @@
 #Apple ]\[ HGR Font Tutorial
 
-Revision: 25, Jan 11, 2016.
+Revision: 26, Jan 11, 2016.
 
 # Table of Contents
 
@@ -253,7 +253,7 @@ The `TEXT` screen is 40x24 characters. The high resolution graphics `HGR` screen
 
     Char Height (px/character) = Screen Height (px) / Rows    (characters) = 192/24 = 8
 
-Unfortunately, the data for the TEXT ROM 25123 hardware chip is **not** accessible from the 6502. :-/ This means you will need to manually enter in the 8 bytes/character. :-( The good news is that I've already done this so you can copy / paste. :-)
+Unfortunately, the data for the TEXT ROM 25123 hardware chip is **not** accessible from the 6502 unlike say the [IBM PC BIOS Character Sets](http://nerdlypleasures.blogspot.com/2015/04/ibm-character-fonts.html).:-/ T his means you will need to manually enter in the 8 bytes/character. :-( The good news is that I've already done this so you can copy / paste. :-)
 
  You can find a picture of the Apple ][ ROM text font on Page 8-9, diagram 8.4 of "Understanding the Apple ]\["
 https://archive.org/stream/understanding_the_apple_ii#page/n203/mode/2up
