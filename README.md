@@ -141,6 +141,10 @@ First, we should notice that video memory is non-linear. :-( You'll want to get 
 
 With all the decimal cruft removed:
 
+<hr>
+
+    Table 1: HGR Y Address for every scanline
+
 | Y   |Address| Y   |Address| Y   |Address| Screen Hole  |
 |----:|:-----:|----:|-------|----:|:-----:|:------------:|
 |   0 | $2000 |  64 | $2028 | 128 | $2050 | $2078..$207F |
@@ -208,6 +212,8 @@ With all the decimal cruft removed:
 |  62 | $3B80 | 126 | $3BA8 | 190 | $3BD0 | $3BF8..$3BFF |
 |  63 | $3F80 | 127 | $3FA8 | 191 | $3FD0 | $3FF8..$3FFF |
 
+<hr>
+
 Don't worry if the address pattern makes no sense right now -- we'll reveal that later.
 
 Here's the [Javascript source code](list_hgr_table.html) to generate this table:
@@ -253,7 +259,7 @@ The `TEXT` screen is 40x24 characters. The high resolution graphics `HGR` screen
 
     Char Height (px/character) = Screen Height (px) / Rows    (characters) = 192/24 = 8
 
-Unfortunately, the data for the TEXT ROM 25123 hardware chip is **not** accessible from the 6502 unlike say the [IBM PC BIOS Character Sets](http://nerdlypleasures.blogspot.com/2015/04/ibm-character-fonts.html).:-/ T his means you will need to manually enter in the 8 bytes/character. :-( The good news is that I've already done this so you can copy / paste. :-)
+Unfortunately, the data for the TEXT ROM 25123 hardware chip is **not** accessible from the 6502 unlike say the [IBM PC BIOS Character Sets](http://nerdlypleasures.blogspot.com/2015/04/ibm-character-fonts.html). :-/ T his means you will need to manually enter in the 8 bytes/character. :-( The good news is that I've already done this so you can copy / paste. :-)
 
  You can find a picture of the Apple ][ ROM text font on Page 8-9, diagram 8.4 of "Understanding the Apple ]\["
 https://archive.org/stream/understanding_the_apple_ii#page/n203/mode/2up
@@ -609,7 +615,7 @@ Assuming we want to draw the `A` glyph at the top-left of the screen we would ne
     ($620E) -> $3800
     ($620F) -> $3C00
 
-For simplicity, we're going to "quantize" our destination Y so that we render font glyphs only on the start of every 8 rows and every 7 pixel columns.  If we then had the starting address we simply could move to the next scan line by successively adding $0400 to our destination screen pointer.
+For simplicity, we're going to "quantize" our destination Y so that we render font glyphs only on the start of every 8 rows and every 7 pixel columns. (See Table 2 down below in section `Y Cursor Position`).  If we then had the starting address we simply could move to the next scan line by successively adding $0400 to our destination screen pointer.
 
 How did I know to use $0400 when going to the next line?  One quirk of the HGR screen is that every 8 successive scan lines start this many bytes away.  Refer back to the `HGR Memory-mapped IO` table listed above.
 
@@ -806,17 +812,37 @@ Since we only care about the high byte:
     TmpHi = HgrHi + (8 * $04)
           = HgrHi + $20
 
-|Y  |TmpHi|Final| (T and $1F) | (T and $1F) or $20 |
-|--:|:---:|:---:|:---:|:---:|
-|  0| $40 | $20 | $00 | $20 |
-|  8| $40 | $20 | $00 | $20 |
-| 16| $41 | $21 | $01 | $21 |
-| 24| $41 | $21 | $01 | $21 |
-| 32| $42 | $22 | $02 | $22 |
-| 40| $42 | $22 | $02 | $22 |
-| 48| $43 | $23 | $03 | $23 |
-| 56| $43 | $23 | $03 | $23 |
-| 64| $40 | $20 | $00 | $20 |
+    Legend:
+        Initial = destination HGR address before we draw the glyph
+        TmpHi   = destination HGR address after drawing all 8 lines
+        Final   = destination HGR address set back to initial value
+
+|Y  |Initial|TmpHi|Final| (T and $1F) | (T and $1F) or $20 |
+|--:|:-----:|:---:|:---:|:---:|:---:|
+|  0| $2000 | $40 | $20 | $00 | $20 |
+|  8| $2080 | $40 | $20 | $00 | $20 |
+| 16| $2100 | $41 | $21 | $01 | $21 |
+| 24| $2180 | $41 | $21 | $01 | $21 |
+| 32| $2200 | $42 | $22 | $02 | $22 |
+| 40| $2280 | $42 | $22 | $02 | $22 |
+| 48| $2300 | $43 | $23 | $03 | $23 |
+| 56| $2380 | $43 | $23 | $03 | $23 |
+| 64| $2028 | $40 | $20 | $00 | $20 |
+| 72| $20A8 | $40 | $20 | $00 | $20 |
+| 80| $2128 | $41 | $21 | $01 | $21 |
+| 88| $21A8 | $41 | $21 | $01 | $21 |
+| 96| $2228 | $42 | $22 | $02 | $22 |
+|104| $22A8 | $42 | $22 | $02 | $22 |
+|112| $2328 | $43 | $23 | $03 | $23 |
+|120| $23A8 | $43 | $23 | $03 | $23 |
+|128| $2050 | $40 | $20 | $00 | $20 |
+|136| $20D0 | $40 | $20 | $00 | $20 |
+|144| $2150 | $41 | $21 | $01 | $21 |
+|152| $21D0 | $41 | $21 | $01 | $21 |
+|160| $2250 | $42 | $22 | $02 | $22 |
+|168| $22D0 | $42 | $22 | $02 | $22 |
+|176| $2350 | $43 | $23 | $03 | $23 |
+|184| $23D0 | $43 | $23 | $03 | $23 |
 
 Hmm, we would need to replace `SEC SBC` with `AND OR` which we might think would be a littler faster and takes less code to boot but let's verify our assumption:
 
@@ -826,7 +852,7 @@ Hmm, we would need to replace `SEC SBC` with `AND OR` which we might think would
     ; Increment the cursor column and move the destination screen pointer back
     ; up 8 scan lines previously to what it was when DrawChar() was called.
                      ORG $0370
-    0370:         IncCursorCol
+    0370:         IncCursorCol3
     0370:C8          INY
     0371:A5 F6       LDA TmpHi
     0373:29 1F       AND #%00011111 ; Requires an extra OR
@@ -860,6 +886,19 @@ The lessons?
 
 We'll briefly touch upon this topic of optimization again with `bit-shifts` and `memcpy()`.
 
+Wait, you say! There IS a way to solve this problem -- and it doesn't take lateral thinking.  What we _really_ are doing is just _restoring_ TmpHi back to its previous value!  We need to **save** TmpHi when we set the `rows to draw` to 0, and **restore** it after drawing 8 rows.
+
+```assembly
+    LDX #0
+    LDA TmpHi   ; new bytes = 2
+    STA SaveHi  ; new bytes = 4
+    ...
+    CPX #8
+    BNE _LoadFont
+    LDA SaveHi  ; new bytes = 6
+    STA TmpHi   ; new bytes = 8
+
+```
 
 ## DrawChar() version 2
 
@@ -1247,6 +1286,10 @@ The secret to getting high speed graphics rendering on the Apple is to use a loo
 
 The HGR screen address is broken up a triad. Every 64 scan lines the offset change by $28.
 
+<hr>
+
+    Table 2: HGR Y Address for evey 8 scanlines
+
 |  Y|Address|Hi |Lo |
 |---:|------|---|---|
 |  0| $2000 |$20|$00|
@@ -1275,6 +1318,8 @@ The HGR screen address is broken up a triad. Every 64 scan lines the offset chan
 |168| $22D0 |$22|$D0|
 |176| $2350 |$23|$50|
 |184| $23D0 |$23|$D0|
+
+<hr>
 
 We'll split this table of 16-bit addresses into Low and High bytes for easier access. We'll also subtract off the hard-coded graphics page 1 high byte = $20 and instead use relative offsets to make it work with either graphics page 1 or 2.
 
@@ -1516,7 +1561,7 @@ Here are all the routines we've entered in so far:
     358:F5 18 A5 F6 69 04 85 F6
     360:E8 E0 08 D0 EF 60 A5 E5
     368:85 F5 A5 E6 85 F6 60
-    370:C8 18 A5 F6 E9 1F 85 F6
+    370:C8 38 A5 F6 E9 20 85 F6
     378:60 86 F5 B9 00 64 18 65
     380:E5 65 F5 85 F5 B9 18 64
     388:18 65 E6 85 F6 60 84 F0
