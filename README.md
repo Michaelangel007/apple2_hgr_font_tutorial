@@ -1,6 +1,6 @@
 #Apple ]\[ HGR Font Tutorial
 
-Revision: 27, Jan 11, 2016.
+Revision: 28, Jan 12, 2016.
 
 # Table of Contents
 
@@ -265,8 +265,10 @@ The `TEXT` screen is 40x24 characters. The high resolution graphics `HGR` screen
 
 Unfortunately, the data for the TEXT ROM 25123 hardware chip is **not** accessible from the 6502 unlike say the [IBM PC BIOS Character Sets](http://nerdlypleasures.blogspot.com/2015/04/ibm-character-fonts.html). :-/ T his means you will need to manually enter in the 8 bytes/character. :-( The good news is that I've already done this so you can copy / paste. :-)
 
- You can find a picture of the Apple ][ ROM text font on Page 8-9, diagram 8.4 of "Understanding the Apple ]\["
+ You can find a picture of the Apple ][ ROM text font on Page 8-9, Figure 8.4 of "Understanding the Apple ]\["
 https://archive.org/stream/understanding_the_apple_ii#page/n203/mode/2up
+
+![Apple 1 Font](pics/apple1_font.png)
 
  We're actually going to use the Apple //e ROM text font since it has lower case and the famous "Mouse Text" glyphs.
 
