@@ -38,7 +38,7 @@ Revision: 27, Jan 11, 2016.
  * Solution 2: ScrollHgrUpPixel()
 * References
 * Misc. Utilities and Files
-* TODO
+* TODO:
 
 # Introduction
 
@@ -2311,13 +2311,13 @@ That's all folks!  Now go write some cool font blitter code.
 * Convert [C array to binary font](c_2_fontbin.c)
 * [Raw Binary Font](font.bin) Within AppleWin's debugger: `bload font.bin,6000`
 
-# TODO
+# TODO:
 
-* ~~Screenshots~~ Done!
-* ~~Binary code for 300.bin and 1000.bin so you can load it directly into the emulator~~ Done!
-* Disk image: `HGR_FONT.DSK` (In progress)
-* Re-engineer Codepage 437 Font to 7x8 cells.
- ![font_codepage_437.png](font_codepage_437.png)
-* Double Hi-Res
-* PDF of this document (As a work-around use Chrome and Print to PDF)
+- [x] Screenshots!
+- [ ] Cleanup all assembly for consistent indentation and alignment (IN PROGRESS)
+- [ ] Binary code for 300.bin and 1000.bin so you can load it directly into the emulator
+- [ ] Disk image: `HGR_FONT.DSK` (In progress)
+- [ ] Re-engineer Codepage 437 Font to 7x8 cells: ![font_codepage_437.png](font_codepage_437.png)
+- [ ] Double Hi-Res
+- [ ] PDF of this document (As a work-around use Chrome and Print to PDF)
 
