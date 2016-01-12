@@ -2317,7 +2317,8 @@ That's all folks!  Now go write some cool font blitter code.
 - [ ] Cleanup all assembly for consistent indentation and alignment (IN PROGRESS)
 - [ ] Binary code for 300.bin and 1000.bin so you can load it directly into the emulator
 - [ ] Disk image: `HGR_FONT.DSK` (In progress)
-- [ ] Re-engineer Codepage 437 Font to 7x8 cells: ![font_codepage_437.png](font_codepage_437.png)
+- [ ] Re-engineer Codepage 437 Font to 7x8 cells:
+ ![font_codepage_437_8x8.png](font_codepage_437_8x8.png)
 - [ ] Double Hi-Res
 - [ ] PDF of this document (As a work-around use Chrome and Print to PDF)
 
