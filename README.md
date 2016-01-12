@@ -272,6 +272,7 @@ https://archive.org/stream/understanding_the_apple_ii#page/n203/mode/2up
 
  We're actually going to use the Apple //e ROM text font since it has lower case and the famous "Mouse Text" glyphs.
 
+![Apple 2e Font](pics/apple2e_font.png)
 
 ### HGR bytes are reversed
 
