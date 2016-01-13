@@ -1604,7 +1604,7 @@ For our final trick we are going to copy the characters off the text screen onto
 
 The text screen, like the HGR screen, is also non-linear, and also broken up into a triad:
 
-|Row|Text Addrress|HGR Address|
+|Row|Text Address|HGR Address|
 |--:|:----:|:-----:|
 | 0 | $400 | $2000 |
 | 1 | $480 | $2080 |
