@@ -2640,12 +2640,12 @@ That's all folks!  Now go write some cool font blitter code.
 
 - [x] Screenshots!
 - [x] Cleanup all assembly for consistent indentation and alignment
-- [ ] Binary code for 300.bin and 1000.bin so you can load it directly into the emulator
-- [ ] Disk image: `HGR_FONT.DSK` (In progress)
 - [x] Count cycles of old and new DrawCharCol Address Calculation
+- [ ] Binary code for 300.bin and 1000.bin so you can load it directly into the emulator (In progress)
+- [ ] Disk image: `HGR_FONT.DSK` (In progress)
 - [ ] Alternative fonts
 - [ ] Re-engineer Codepage 437 Font to 7x8 cells:
- ![font_codepage_437_8x8.png](font_codepage_437_8x8.png)
+ ![font_codepage_437_8x8.png](font_codepage_437_8x8.png) (In progress)
 - [ ] Double Hi-Res
 - [ ] PDF of this document (As a work-around use Chrome and Print to PDF)
 
