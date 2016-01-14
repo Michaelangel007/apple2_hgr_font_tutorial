@@ -1123,7 +1123,7 @@ We'll assign unique letters to each bit of `c`:
     +-------------------------------+
       7   6   5   4   3   2   1   0   bit position
 
-You see what I did there? :-) I put the low bits in `lowercase` and the High bits in `Uppercase` as a visual mnemonic to remember which bits belong to which part of the address.
+You see what I did there? :-) I put the low bits in `lowercase` and the High bits in `Uppercase` as a **visual mnemonic** to help remember which bits belong to which part of the address.
 
 IF this is confusing, remember, we are calculating a 16-bit offset:
 
