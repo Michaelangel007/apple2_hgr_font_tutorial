@@ -1973,8 +1973,8 @@ But we'll save a byte and use the normal subtraction instead:
 
 ```assembly
     LDA HgrHiY, Y     ; Y is row
-    CLC               ; Convert HgrHiY to TextHiY byte
-    SBC #$1B          ; A -= 0x1C
+    SEC               ; Convert HgrHiY to TextHiY byte
+    SBC #$1C          ; A -= 0x1C
 ```
 
 If we care about absolute speed we could see which one takes the fewer clock cycles.
