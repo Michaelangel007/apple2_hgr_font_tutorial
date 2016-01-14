@@ -1221,6 +1221,7 @@ However, there are still 2 more optimizations we can make:
 ```assembly
     033B:69 00       ADC #<Font     ; += FontLo; Carry = 0 since R=0 from above
 ```
+
 2. It is "funny" how we end up shifting and rotating in the **same** direction: Left! :-)  It would nice to _leverage this work_ for both the high and low byte address calculation. That is the technical term for _"Don't do dumb (redundant) work"_ or in the immortal words of Back to the Future: "Think, McFly!" :-)
 
     Given: c
