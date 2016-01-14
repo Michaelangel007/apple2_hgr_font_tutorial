@@ -1,6 +1,6 @@
 #Apple ]\[ //e HGR Font 6502 Assembly Language Tutorial
 
-Revision: 36, Jan 14, 2016.
+Revision: 37, Jan 14, 2016.
 
 # Table of Contents
 
@@ -1359,7 +1359,7 @@ Here is a comparison between the original and final version (clock cycle timings
 
 Much better!!!
 
-We need to (again) touch up our `PrintChar`entry point at $0310 calling `_DrawChar2` ($034C) to call `DrawCharCol` ($033A):
+We need to (again) touch up our `DrawChar` entry point at $0310 calling `_DrawChar2` ($034C) to call `DrawCharCol` ($033A):
 
 ```assembly
     310:4C 3A 03         JMP DrawCharCol
@@ -2795,6 +2795,4 @@ That's all folks!  Now go write some cool font blitter code.
  ![font_codepage_437_8x8.png](font_codepage_437_8x8.png) (In progress)
 - [ ] Double Hi-Res
 - [ ] PDF of this document (As a work-around use Chrome and Print to PDF)
-- [ ] Fix mis-lable: We need to (again) touch up our `PrintChar` entry point at $0310 calling `_DrawChar2` ($034C)
-
 
