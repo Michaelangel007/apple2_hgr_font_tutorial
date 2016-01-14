@@ -1290,7 +1290,7 @@ That might look like something like this:
     STA _LoadFont+2
 ```
 
-Hmm, that seems like an **aweul lot of work** just for some `bit-shuffling`!! For one thing we're doing a shift and `stuvw` is not taking advantage of it.  Can we not we make use of the fact that we will eventually be doing `AND #1F` and `AND #E0` ?
+Hmm, that seems like an **awful lot of work** just for some `bit-shuffling`!! For one thing we're doing a shift and `stuvw` is not taking advantage of it.  Can we not we make use of the fact that we will eventually be doing `AND #1F` and `AND #E0` ?
 
 The **lateral** thinking is to _use partial results_.
 
@@ -1328,7 +1328,8 @@ Let's code this up:
     0346:2A          ROL            ; C=s A=%00000PQR and 1 last ROL to get R
     0347:69 60       ADC #>Font     ; += FontHi; Carry=0 since s=0 from above
     0349:8D 54 03    STA _LoadFont+2; AddressHi = FontHi + (c/32)
-```                     ; intentional fall into _DrawChar1 @ $034C
+                                    ; intentional fall into _DrawChar1 @ $034C
+```
 
 Since we'll re-use our existing font drawing code `_DrawChar1` at $034C it is always a good idea to document why there is no `RTS` at the end.
 
@@ -1336,7 +1337,7 @@ Here is a comparison between the original and final version:
 
            Original   Final
     Bytes  23         18
-    Cycles ?          ?
+    Cycles ? TODO     ? TODO
 
 Much better!!!
 
