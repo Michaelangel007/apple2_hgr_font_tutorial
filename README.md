@@ -1,6 +1,6 @@
-#Apple ]\[ HGR Font Tutorial
+#Apple ]\[ //e HGR Font 6502 Assembly Language Tutorial
 
-Revision: 34, Jan 14, 2016.
+Revision: 35, Jan 14, 2016.
 
 # Table of Contents
 
@@ -31,11 +31,13 @@ Revision: 34, Jan 14, 2016.
 * Y Cursor Position
 * Natural Params SetCursorColRow()
 * DrawString()
-* Recap
 * Copy text screen to HGR
-* Exercise 1: ScrollHgrUpLine()
-* Exercise 2: ScrollHgrUpPixel()
+* Exercises
+ * Exercise 1: ScrollHgrUpLine()
+ * Exercise 2: ScrollHgrUpPixel()
+* Recap
 * Conclusion
+* Solutions
  * Solution 1: ScrollHgrUpLine()
  * Solution 2: ScrollHgrUpPixel()
 * References
@@ -1872,46 +1874,6 @@ Note: An easy way to get the hex bytes for a string is to use this tiny JavaScri
 ```
 
 
-# Recap
-
-Here are all the routines we've entered in so far:
-
-
-    0301:   48 6A 6A 6A 6A 20 0A
-    0308:03 68 29 0F AA BD 90 03
-    0310:4C 3A 03 BD A0 03 85 F5
-    0318:BD B8 03 18 65 E6 85 F6
-    0320:60 86 F5 B9 A0 03 18 65
-    0328:F5 85 F5 B9 B8 03 18 65
-    0330:E6 85 F6 60 EA 48 20 13
-    0338:03 68 2A 2A 2A AA 29 F8
-    0340:8D 53 03 8A 29 03 2A 69
-    0348:60 8D 54 03 A6 F6 86 FD
-    0350:A2 00 BD 00 00 91 F5 18
-    0358:A5 F6 69 04 85 F6 E8 E0
-    0360:08 D0 EF C8 A6 FD 86 F6
-    0368:60
-    0390:30 31 32 33 34 35 36 37
-    0398:38 39 41 42 43 44 45 46
-    03A0:00 80 00 80 00 80 00 80
-    03A8:28 A8 28 A8 28 A8 28 A8
-    03B0:50 D0 50 D0 50 D0 50 D0
-    03B8:00 00 01 01 02 02 03 03
-    03C0:00 00 01 01 02 02 03 03
-    03C8:00 00 01 01 02 02 03 03
-
-(To save this: `BSAVE CODE_0300.BIN,A$300,L$D0`)
-
-What's left? Quite a few things actually:
-
- * Copy the 40-Column text screen to HGR
- * Scroll the HGR screen up by 1 pixel
- * Copy the 80-Column text screen to DHGR (Double High Resolution)
- * Hook into the COUT so all text appears onto the HGR or DHGR screen
-
-Let's implement those first two.
-
-
 ## Copy text screen to HGR
 
 For our final trick we are going to copy the characters off the text screen onto the HGR screen.  More magic?  Nah, just bit-shuffling.
@@ -2097,6 +2059,8 @@ And to restore the bottom 4 text rows
     C053
 
 
+# Exercises
+
 ## Exercise 1: ScrollHgrUpPixel()
 
 Hey!  Homework?  Yes, the only (true) way to demonstrate you understand the theory is with implementation:
@@ -2125,19 +2089,58 @@ Hey!  Homework?  Yes, the only (true) way to demonstrate you understand the theo
     very bottom scanline should be "blank."
 
 
+# Recap
+
+Here are all the (core) routines we've entered in so far:
+
+
+    0301:   48 6A 6A 6A 6A 20 0A
+    0308:03 68 29 0F AA BD 90 03
+    0310:4C 3A 03 BD A0 03 85 F5
+    0318:BD B8 03 18 65 E6 85 F6
+    0320:60 86 F5 B9 A0 03 18 65
+    0328:F5 85 F5 B9 B8 03 18 65
+    0330:E6 85 F6 60 EA 48 20 13
+    0338:03 68 2A 2A 2A AA 29 F8
+    0340:8D 53 03 8A 29 03 2A 69
+    0348:60 8D 54 03 A6 F6 86 FD
+    0350:A2 00 BD 00 00 91 F5 18
+    0358:A5 F6 69 04 85 F6 E8 E0
+    0360:08 D0 EF C8 A6 FD 86 F6
+    0368:60
+    0390:30 31 32 33 34 35 36 37
+    0398:38 39 41 42 43 44 45 46
+    03A0:00 80 00 80 00 80 00 80
+    03A8:28 A8 28 A8 28 A8 28 A8
+    03B0:50 D0 50 D0 50 D0 50 D0
+    03B8:00 00 01 01 02 02 03 03
+    03C0:00 00 01 01 02 02 03 03
+    03C8:00 00 01 01 02 02 03 03
+
+(To save this: `BSAVE CODE_0300.BIN,A$300,L$D0`)
+
+What's left? Quite a few things actually:
+
+ * Copy the 80-Column text screen to DHGR (Double High Resolution)
+ * Hook into the COUT so all text appears onto the HGR or DHGR screen
+ * Other 7x8 fonts
+ * Other non-7x8 fonts
+
+
 ## Conclusion
 
 Hope this HGR font tutorial helped you understand the inner workings of a font blitter!
 
 Happy (Apple ]\[ //e //c) Hacking!
+
 Michael "AppleWin Debug Dev"
 
+
+# Solutions
 
 ## Solution 1: ScrollHgrUpLine()
 
 Figure it out !  You have all the tools and knowledge.
-
-
 
 
 ## Solution 2: ScrollHgrUpPixel()
