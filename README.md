@@ -1,6 +1,6 @@
 #Apple ]\[ //e HGR Font 6502 Assembly Language Tutorial
 
-Revision: 35, Jan 14, 2016.
+Revision: 36, Jan 14, 2016.
 
 # Table of Contents
 
@@ -2143,6 +2143,149 @@ Michael "AppleWin Debug Dev"
 Figure it out !  You have all the tools and knowledge.
 
 
+Seriously though, start with the data flow. Let's look at the HGR "text" lines we need to copy from/to:
+
+    Src Dst
+     1    0
+     2    1
+     3    2
+     4    3
+     5    4
+     6    5
+     7    6
+     8    7
+     9    8
+    10    9
+    11   10
+    12   11
+    13   12
+    14   13
+    15   14
+    16   15
+    17   16
+    18   17
+    19   18
+    20   19
+    21   20
+    22   21
+    23   22
+    --   23
+
+We need to copy 23 HGR "text" lines to the one above; we also need to clear the bottom row.  Pseudo-code would be:
+
+```C
+    for( int line = 0; line < 24-1; line++
+        copy_line( line+1, line );
+    clear_line( 23 );
+```
+
+Each HGR "text" line takes up 40 columns
+
+```C
+    for( int row = 0; row < 23; row++
+        char *src = HGRAddressY[ row + 1 ]
+        char *dst = HGRAddressY[ row + 0 ]
+        for( int col = 0; col < 40; col++ )
+            *dst++ = *src++;
+    clear_line( 23 );
+```
+
+However each HGR "text" line takes 8 scanlines (since our font cell is 7x8).
+
+```C
+    for( row = 0; row < 23; row++
+        char *src = HGRAddressY[ row + 1 ]
+        char *dst = HGRAddressY[ row + 0 ]
+        for( line = 0; line < 8; line++ )
+        {
+            for( col = 0; col < 40; col++ )
+                *dst++ = *src++;
+            src += 0x400;
+            dst += 0x400;
+        }
+```
+
+We could code this up as:
+
+```assembly
+                  Src    EQU $F8
+                  Dst    EQU $FA
+                  Tmp    EQU $FC
+
+    ; NOTE: Requires $E6 to be initialized with $20 or $40 for graphics page
+
+                     ORG $1900
+    1900:         ScrollHgrUpLine
+    1900:A2 00       LDX #0         ; row
+    ; Copy Top 184 rows
+    1902:BD A0 03 .1 LDA HgrLoY,X
+    1905:85 FA       STA Dst+0
+    1907:BD B8 03    LDA HgrHiY,X
+    190A:05 E6       ORA $E6
+    190C:85 FB       STA Dst+1
+    190E:E8          INX
+    190F:BD A0 03    LDA HgrLoY,X
+    1912:85 F8       STA Src+0
+    1914:BD B8 03    LDA HgrHiY,X
+    1917:05 E6       ORA $E6
+    1919:85 F9       STA Src+1
+    191B:A9 07       LDA #7         ; 8 scanlines/text line
+    191D:85 FC       STA Tmp
+    191F:A0 27    .2 LDY #40-1      ; 40 columns to copy
+    1921:B1 F8    .3 LDA (Src),Y
+    1923:91 FA       STA (Dst),Y
+    1925:88          DEY
+    1926:10 F9       BPL .3         ; while (y-- > 0)
+    1928:18          CLC
+    1929:A5 F9       LDA Src+1
+    192B:69 04       ADC #4
+    192D:85 F9       STA Src+1
+    192F:18          CLC
+    1930:A5 FB       LDA Dst+1
+    1932:69 04       ADC #4
+    1934:85 FB       STA Dst+1
+    1936:C6 FC       DEC Tmp
+    1938:10 E5       BPL .2
+    193A:E0 17       CPX #23        ; 24 rows is #$18
+    193C:90 C4       BCC .1         ; Y >= 23
+    ; Zero Bottom 8 scanlines       ; $F8,$F9 = $D0,$43
+    193E:A2 08       LDX #8         ; bottom 8 scanlines
+    1940:38          CLC
+    1941:A5 F9       LDA Src+1
+    1943:E9 20       SBC #20
+    1945:85 F9       STA Src+1
+    1947:A9 00    .4 LDA #00        ; color = black
+    1949:A0 27       LDY #40-1      ; 40 columns to copy
+    194B:91 F8    .5 STA (Src),Y
+    194D:88          DEY
+    194E:10 FB       BPL .5         ; while (y-- > 0)
+    1950:18          CLC
+    1951:A5 F9       LDA Src+1
+    1953:69 04       ADC #4
+    1955:85 F9       STA Src+1
+    1957:CA          DEX
+    1958:D0 ED       BNE .4         ; BNZ ; Try this fun bug: D0 EF
+    195A:60          RTS
+```
+
+Enter in:
+
+    1900:A2 00 BD A0 03 85 FA BD
+    1908:B8 03 05 E6 85 FB E8 BD
+    1910:A0 03 85 F8 BD B8 03 05
+    1918:E6 85 F9 A9 07 85 FC A0
+    1920:27 B1 F8 91 FA 88 10 F9
+    1928:18 A5 F9 69 04 85 F9 18
+    1930:A5 FB 69 04 85 FB C6 FC
+    1938:10 E5 E0 17 90 C4 A2 08
+    1940:38 A5 F9 E9 20 85 F9 A9
+    1948:00 A0 27 91 F8 88 10 FB
+    1950:18 A5 F9 69 04 85 F9 CA
+    1958:D0 ED 60
+
+Excellent.
+
+
 ## Solution 2: ScrollHgrUpPixel()
 
 There are many different ways to solve this depending if we want to prioritize space or speed.
@@ -2652,4 +2795,7 @@ That's all folks!  Now go write some cool font blitter code.
  ![font_codepage_437_8x8.png](font_codepage_437_8x8.png) (In progress)
 - [ ] Double Hi-Res
 - [ ] PDF of this document (As a work-around use Chrome and Print to PDF)
+- [ ] Explains `c/32` = `c / 2^5` = `c / (1 << 5)` = `c >> 5`
+- [ ] Fix mis-lable: We need to (again) touch up our `PrintChar` entry point at $0310 calling `_DrawChar2` ($034C)
+
 
