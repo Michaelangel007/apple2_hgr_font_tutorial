@@ -866,7 +866,7 @@ We change the carry flag state _before_ we do the operation depending on whether
     036C:60          RTS
 ```
 
-One thing when writing 6502 assembly is to pay attention to _all_ optimization opportunities due to the slow ~1 MHz of the 6502.  Since we only need to modify the upper few bits instead of doing a bulky subtraction `SEC SBC` we might be tempted to see if there is a faster and/or smaller alternative.  We just need to be careful that our optimization is "shuffling" the bits _behaves_ around in the _exact_ same way at the end of the day. i.e. The Right Place at the Right Time.
+One thing when writing 6502 assembly is to pay attention to _all_ optimization opportunities due to the slow ~1 MHz of the 6502.  Since we only need to modify the upper few bits instead of doing a bulky subtraction `SEC SBC` we might be tempted to see if there is a faster and/or smaller alternative.  We just need to be careful that our optimization is "shuffling" the bits around _behaves_ in the _exact_ same way at the end of the day. i.e. "The Right Place at the Right Time."
 
 The problem is we want to see if we can _simply_ the transform of TmpHi after 8 scanlines (basically reset the cursor back to the original scanline before we drew all 8 scanlines of the glyph):
 
@@ -981,14 +981,14 @@ We just need to touch up our entry point `PrintChar` at $0310 instead of calling
 
 ```assembly
                      ORG $0310
-    0310:         PrintChar
+    0310:         DrawChar
     0310:4C 4C 03    JMP _DrawChar1 ; NEW entry point
 
                      ORG $0A00
     0A00:         DemoDraw3Char
-    0A00:20 00 09    JSR DrawChar
-    0A03:20 10 03    JSR PrintChar
-    0A06:20 10 03    JMP PrintChar
+    0A00:20 00 09    JSR PrintChar
+    0A03:20 10 03    JSR DrawChar
+    0A06:20 10 03    JMP DrawChar
     0A09:60          RTS
 
 ```
@@ -1220,11 +1220,12 @@ However, there are still 2 more optimizations we can make:
 
 2\. It is "funny" how we end up shifting and rotating in the **same** direction: Left! :-)  It would nice to _leverage this work_ for both the high and low byte address calculation. That is the technical term for _"Don't do dumb (redundant) work"_ or in the immortal words of Back to the Future: "Think, McFly!" :-)
 
-    Given: c
+    Given: glyph c     in binary is:    %PQRstuvw
+    The 16-bit address in binary is: %PQRstuvw000
 
-| Start    | AddressHi | AddressLo |
-|:--------:|:---------:|:---------:|
-| PQRstuvw | 00000PQR  | stuvw000  |
+| Glyph     | AddressHi | AddressLo |
+|:---------:|:---------:|:---------:|
+| %PQRstuvw | 00000PQR  | stuvw000  |
 
 Our original glyph fits in one byte.  Our 16-bit address offset technically _could also_ fit in one byte -- we just have shifted it over 3 bits with zeroes.
 
@@ -1287,7 +1288,7 @@ That might look like something like this:
     STA _LoadFont+2
 ```
 
-Hmm, that seems like an **awful lot of work** just for some `bit-shuffling`!! For one thing we're doing a shift and `stuvw` is not taking advantage of it.  Can we not we make use of the fact that we will eventually be doing `AND #1F` and `AND #E0` ?
+Hmm, that seems like an **awful lot of work** just for some `bit-shuffling`!! For one thing we're doing a shift and `stuvw` is not taking advantage of it.  Can we not we make use of the fact that we will eventually be doing `AND #1F` -> `AND #F8` and `AND #E0` -> `AND #07` ?
 
 The **lateral** thinking is to _use partial results_.
 
