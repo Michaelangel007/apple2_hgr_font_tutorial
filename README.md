@@ -1297,10 +1297,11 @@ The **lateral** thinking is to _use partial results_.
     2     Q   Rstuvw?P
     3     R   stuvw?PQ
               --push A--
-              --A & #F8
+              stuvw000 <- A & #F8
               --store low byte offset--
               --pop A--
     4     s   tuvw?PQR
+              00000PQR <- A & #07
               --CLC--
               --add FontHi to A
               --store high byte offset--
