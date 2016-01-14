@@ -1333,11 +1333,28 @@ Let's code this up:
 
 Since we'll re-use our existing font drawing code `_DrawChar1` at $034C it is always a good idea to document why there is no `RTS` at the end.
 
-Here is a comparison between the original and final version:
+Here is a comparison between the original and final version (clock cycle timings are the #'s):
+
+    ORG $0335 (old)   ORG $033A (new)
+    3 PHA             2 ROL              
+    2 AND #1F         2 ROL              
+    2 ASL             2 ROL              
+    2 ASL             2 TAX              
+    2 ASL             2 AND #F8          
+    2 ADC #<Font      4 STA _LoadFont+1  
+    4 STA _LoadFont+1 2 TXA              
+    4 PLA             2 AND #3           
+    2 AND #E0         2 ROL              
+    2 ROL             3 ADC #>Font       
+    2 ROL             4 STA _LoadFont+2  
+    2 ROL             -
+    2 ROL             -
+    2 ADC #>Font      -
+    4 STA _LoadFont+2 -
 
            Original   Final
     Bytes  23         18
-    Cycles ? TODO     ? TODO
+    Cycles 37         27
 
 Much better!!!
 
@@ -2624,9 +2641,11 @@ That's all folks!  Now go write some cool font blitter code.
 # TODO:
 
 - [x] Screenshots!
-- [ ] Cleanup all assembly for consistent indentation and alignment (IN PROGRESS)
+- [x] Cleanup all assembly for consistent indentation and alignment
 - [ ] Binary code for 300.bin and 1000.bin so you can load it directly into the emulator
 - [ ] Disk image: `HGR_FONT.DSK` (In progress)
+- [x] Count cycles of old and new DrawCharCol Address Calculation
+- [ ] Alternative fonts
 - [ ] Re-engineer Codepage 437 Font to 7x8 cells:
  ![font_codepage_437_8x8.png](font_codepage_437_8x8.png)
 - [ ] Double Hi-Res
