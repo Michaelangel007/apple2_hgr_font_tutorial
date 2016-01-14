@@ -1216,13 +1216,9 @@ Did you catch that **note** ?  One popular trick on the 6502 was `self-modifying
 
 However, there are still 2 more optimizations we can make:
 
-1. If we assume our font is "page aligned", that is, starts at a multiple of 256 bytes -- we could remove the redundant `AddressLo += (FontLo + (c*8))` and replace with the direct `AddressLo = (c*8)`.  Technically, in C you would keep the bottom 8-bits with `& 0xFF` but since the 6502 registers are only 8-bit and we're storing a byte the `& 0xFF` is not needed.
+1\. If we assume our font is "page aligned", that is, starts at a multiple of 256 bytes -- we could remove the redundant `AddressLo += (FontLo + (c*8))` and replace with the direct `AddressLo = (c*8)`.  Technically, in C you would keep only the bottom 8-bits by masking off the the other bits with `& 0xFF` but since the 6502 registers are only 8-bit and we're storing a byte the `& 0xFF` is not needed.
 
-```assembly
-    033B:69 00       ADC #<Font     ; += FontLo; Carry = 0 since R=0 from above
-```
-
-2. It is "funny" how we end up shifting and rotating in the **same** direction: Left! :-)  It would nice to _leverage this work_ for both the high and low byte address calculation. That is the technical term for _"Don't do dumb (redundant) work"_ or in the immortal words of Back to the Future: "Think, McFly!" :-)
+2\. It is "funny" how we end up shifting and rotating in the **same** direction: Left! :-)  It would nice to _leverage this work_ for both the high and low byte address calculation. That is the technical term for _"Don't do dumb (redundant) work"_ or in the immortal words of Back to the Future: "Think, McFly!" :-)
 
     Given: c
 
