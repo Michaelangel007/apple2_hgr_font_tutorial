@@ -1106,7 +1106,7 @@ Since we are dealing with a 16-bit address offset it is simpler to break this do
     int AddressHi = FontAddressHi + (c / 32)
 ```
 
-But since the 6502 doesn't have a division instruction we need to use bit-shifts instead. The calculation `c / 32` is the same as `c >> 5`.
+But since the 6502 doesn't have a division instruction we need to use bit-shifts instead. The calculation `c / 32` = `c / 2^5` = `c / (1 << 5)` == `c >> 5`.
 
 ```c
     char c        = 'D'; // 0x44
@@ -2795,7 +2795,6 @@ That's all folks!  Now go write some cool font blitter code.
  ![font_codepage_437_8x8.png](font_codepage_437_8x8.png) (In progress)
 - [ ] Double Hi-Res
 - [ ] PDF of this document (As a work-around use Chrome and Print to PDF)
-- [ ] Explains `c/32` = `c / 2^5` = `c / (1 << 5)` = `c >> 5`
 - [ ] Fix mis-lable: We need to (again) touch up our `PrintChar` entry point at $0310 calling `_DrawChar2` ($034C)
 
 
