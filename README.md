@@ -2076,7 +2076,7 @@ That's why I turned 50% scanlines on, for better readability:
 
 
 
-Using one of the newer emulators with NTSC emulation, unfortunately, doesn't help with readaibility: :-/
+Using one of the newer emulators with NTSC emulation, unfortunately, doesn't help with readability: :-/
 
 * NTSC Alpha (with tweaked Palette):
 
