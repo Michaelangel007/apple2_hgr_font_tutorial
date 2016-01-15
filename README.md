@@ -884,7 +884,7 @@ Since we only care about the high byte:
         TmpHi   = destination HGR address after drawing all 8 lines
         Final   = destination HGR address set back to initial value
 
-|Y  |Initial|TmpHi|Final| (T and $1F) | (T and $1F) or $20 |
+|Y  |Initial|TmpHi|Final| (TmpHi and $1F) | (TmpHi and $1F) or $20 |
 |--:|:-----:|:---:|:---:|:---:|:---:|
 |  0| $2000 | $40 | $20 | $00 | $20 |
 |  8| $2080 | $40 | $20 | $00 | $20 |
@@ -1053,6 +1053,9 @@ Recall that our font has this memory layout:
 | D  | $44 | $6220 |
 | :  |   : |     : |
 | _  | $5F | $62F8 |
+| :  |   : |     : |
+| ~  | $7E | $63F0 |
+|    | $7F | $63F8 |
 
 The 6502 stores and loads 16-bit addresses in `Little-Endian` format so for glyph `D` we need to store the bytes of the address `$6220` in **reverse** order.
 
@@ -1880,39 +1883,39 @@ For our final trick we are going to copy the characters off the text screen onto
 
 The text screen, like the HGR screen, is also non-linear, and also broken up into a triad:
 
-|Row|Text Address|HGR Address|
-|--:|:----:|:-----:|
-| 0 | $400 | $2000 |
-| 1 | $480 | $2080 |
-| 2 | $500 | $2100 |
-| 3 | $580 | $2180 |
-| 4 | $600 | $2200 |
-| 5 | $600 | $2280 |
-| 6 | $700 | $2300 |
-| 7 | $780 | $2380 |
-| - | ---- | ----- |
-| 8 | $428 | $2028 |
-| 9 | $4A8 | $20A8 |
-|10 | $528 | $2128 |
-|11 | $5A8 | $21A8 |
-|12 | $628 | $2228 |
-|13 | $6A8 | $22A8 |
-|14 | $728 | $2328 |
-|15 | $7A8 | $23A8 |
-| - | ---- | ----- |
-|16 | $450 | $2050 |
-|17 | $4D0 | $20D0 |
-|18 | $550 | $2150 |
-|19 | $5D0 | $21D0 |
-|20 | $650 | $2250 |
-|21 | $6D0 | $22D0 |
-|22 | $750 | $2350 |
-|23 | $7D0 | $23D0 |
+|Row|Text Address|HGR Address|HGR Scanline|
+|--:|:----:|:-----:|---:|
+| 0 | $400 | $2000 |   0|
+| 1 | $480 | $2080 |   8|
+| 2 | $500 | $2100 |  16|
+| 3 | $580 | $2180 |  24|
+| 4 | $600 | $2200 |  32|
+| 5 | $600 | $2280 |  40|
+| 6 | $700 | $2300 |  48|
+| 7 | $780 | $2380 |  56|
+| - | ---- | ----- |  - |
+| 8 | $428 | $2028 |  64|
+| 9 | $4A8 | $20A8 |  72|
+|10 | $528 | $2128 |  80|
+|11 | $5A8 | $21A8 |  88|
+|12 | $628 | $2228 |  96|
+|13 | $6A8 | $22A8 | 104|
+|14 | $728 | $2328 | 112|
+|15 | $7A8 | $23A8 | 120|
+| - | ---- | ----- |  - |
+|16 | $450 | $2050 | 128|
+|17 | $4D0 | $20D0 | 136|
+|18 | $550 | $2150 | 144|
+|19 | $5D0 | $21D0 | 152|
+|20 | $650 | $2250 | 160|
+|21 | $6D0 | $22D0 | 168|
+|22 | $750 | $2350 | 176|
+|23 | $7D0 | $23D0 | 184|
 
 
 While the Apple's memory layout seems esoteric it has beautiful symmetry. For any given text row notice that:
 
-* the low  byte of the text address is the same low byte of the HGR address
+* the low  byte of the text address is the same low byte of the corresponding HGR scanline address, and
 * the high byte of the text address is 0x1C less then the high byte of the HGR address
 
 Technically, to convert the HGR high byte address to a Text high byte address, we only need to map these 4 high bytes:
