@@ -2777,8 +2777,10 @@ That's all folks!  Now go write some cool font blitter code.
 
 ## References
 
+* https://en.wikibooks.org/wiki/6502_Assembly
 * http://www.6502.org/tutorials/compare_instructions.html
 * http://www.6502.org/tutorials/6502opcodes.html
+* https://skilldrick.github.io/easy6502/
 
 ## Misc. Utilities and Files
 
