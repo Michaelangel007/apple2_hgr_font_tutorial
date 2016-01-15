@@ -1,6 +1,6 @@
 #Apple ]\[ //e HGR Font 6502 Assembly Language Tutorial
 
-Revision: 37, Jan 14, 2016.
+Revision: 38, Jan 15, 2016.
 
 # Table of Contents
 
@@ -1893,7 +1893,7 @@ The text screen, like the HGR screen, is also non-linear, and also broken up int
 | 5 | $600 | $2280 |  40|
 | 6 | $700 | $2300 |  48|
 | 7 | $780 | $2380 |  56|
-| - | ---- | ----- |  - |
+| - | ---- | ----- | ---|
 | 8 | $428 | $2028 |  64|
 | 9 | $4A8 | $20A8 |  72|
 |10 | $528 | $2128 |  80|
@@ -1902,7 +1902,7 @@ The text screen, like the HGR screen, is also non-linear, and also broken up int
 |13 | $6A8 | $22A8 | 104|
 |14 | $728 | $2328 | 112|
 |15 | $7A8 | $23A8 | 120|
-| - | ---- | ----- |  - |
+| - | ---- | ----- | ---|
 |16 | $450 | $2050 | 128|
 |17 | $4D0 | $20D0 | 136|
 |18 | $550 | $2150 | 144|
