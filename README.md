@@ -1,6 +1,6 @@
 #Apple ]\[ //e HGR Font 6502 Assembly Language Tutorial
 
-Revision: 38, Jan 15, 2016.
+Revision: 39, Jan 18, 2016.
 
 # Table of Contents
 
@@ -60,7 +60,7 @@ If you use:
 
  * You will also need the Java JRE.
 
- * On OSX, Jace has an copy-paste bug and won't paste in the first line of the clipboard. :-/
+ * ~~On OSX, Jace has an copy-paste bug and won't paste in the first line of the clipboard. :-/~~ (**Update**: Fixed! Thanks Blurry!) 
 
 * [Virtual II](http://www.virtualii.com/) press `Ctrl-F12` to reset.
 
