@@ -1,6 +1,6 @@
 #Apple ]\[ //e HGR Font 6502 Assembly Language Tutorial
 
-Revision: 41, Jan 26, 2016.
+Revision: 42, Jan 26, 2016.
 
 # Table of Contents
 
@@ -1818,7 +1818,7 @@ Enter in:
     330:E6 85 F6 60
 
 
-## DrawString()
+# DrawString()
 
 Now that we have the basic print char working lets extend it to print a C-style string (one that is zero terminated.)
 
@@ -1886,7 +1886,7 @@ Note: An easy way to get the hex bytes for a string is to use this tiny JavaScri
 ```
 
 
-## Copy text screen to HGR
+# Copy text screen to HGR
 
 For our final trick we are going to copy the characters off the text screen onto the HGR screen.  More magic?  Nah, just bit-shuffling.
 
@@ -2141,7 +2141,7 @@ What's left? Quite a few things actually:
  * Other non-7x8 fonts
 
 
-## Conclusion
+# Conclusion
 
 Hope this HGR font tutorial helped you understand the inner workings of a font blitter!
 
@@ -2786,14 +2786,14 @@ And who said JavaScript was a useless language? :-)
 That's all folks!  Now go write some cool font blitter code.
 
 
-## References
+# References
 
 * https://en.wikibooks.org/wiki/6502_Assembly
 * http://www.6502.org/tutorials/compare_instructions.html
 * http://www.6502.org/tutorials/6502opcodes.html
 * https://skilldrick.github.io/easy6502/
 
-## Misc. Utilities and Files
+# Misc. Utilities and Files
 
 * Convert [font image to C array](image_2_c.html)
 * Convert [C array to binary font](c_2_fontbin.c)
