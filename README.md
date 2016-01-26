@@ -1,6 +1,6 @@
 #Apple ]\[ //e HGR Font 6502 Assembly Language Tutorial
 
-Revision: 42, Jan 26, 2016.
+Revision: 43, Jan 26, 2016.
 
 # Table of Contents
 
@@ -750,12 +750,14 @@ Here's the disassembly of our (hard-coded) DrawChar() program:
 
 Enter in:
 
+```
     900:20 0A 09 A9 00 A0 00 4C 10 03
     90A:A5 E5 85 F5 A5 E6 85 F6 60
     310:4C 50 03
     350:A2 00 BD 00 62 91 F5 18
     358:A5 F6 69 04 85 F6 E8 E0
     360:08 D0 EF 60
+```
 
 We're almost ready to run this! We just need to initialize one variable -- where to draw the glyph at:
 
@@ -1006,9 +1008,11 @@ We just need to touch up our entry point `PrintChar` at $0310 instead of calling
 
 Enter in:
 
+```
     310:4C 4C 03
     34C:A6 F6 86 FD
     363:C8 A6 FD 86 F6 60
+```
 
 Let's try it out:
 
@@ -1379,12 +1383,14 @@ We need to (again) touch up our `DrawChar` entry point at $0310 calling `_DrawCh
 
 Enter in:
 
+```
     B00:20 0A 09 A9 00 A0 00 4C 10 03
     310:4C 3A 03
     33A:2A 2A 2A AA 29 F8
     340:8D 53 03 8A 29 03 2A 69
     348:60 8D 54 03
     B00G
+```
 
 We should now see an closed apple glyph!
 
@@ -1813,10 +1819,11 @@ This is a little clunky but it is progress. Let's write the new SetCursorColRow(
 
 Enter in:
 
+```
     321:   86 F5 B9 A0 03 18 65
     328:F5 85 F5 B9 B8 03 18 65
     330:E6 85 F6 60
-
+```
 
 # DrawString()
 
@@ -1867,6 +1874,7 @@ And our example to verify that it works:
 
 Enter in:
 
+```
     37E:84 F0 86 F1 A0 00 B1 F0
     386:F0 07 20 10 03 C0 28 90 F5 60
 
@@ -1874,6 +1882,7 @@ Enter in:
     1207:A2 12 A0 0E 4C 7E 03
     120E:48 65 6C 6C 6F 20 57 6F 72 6C 64 00
     1200G
+```
 
 ![Screenshot 17](pics/hgrfont_17.png?raw=true)
 
@@ -2023,6 +2032,7 @@ And here is the assembly:
 
 Enter in:
 
+```
     1300:A9 00 85 F3 85 E5 A9 20
     1308:85 E6 A4 F3 C0 18 B0 22
     1310:A2 00 86 F2 20 21 03 38
@@ -2030,12 +2040,15 @@ Enter in:
     1320:F7 A4 F2 B1 F7 29 7F 20
     1328:3A 03 C0 28 90 F5 E6 F3
     1330:D0 D8 60
+```
 
 And now for the moment of truth! Don't worry if you can't see what you are typing.
 
+```
     FC58G
     1300L
     1300G
+```
 
 Voila!
 
@@ -2064,12 +2077,15 @@ Using one of the newer emulators with NTSC emulation, unfortunately, doesn't hel
 
 And just to prove that it copied the bottom 4 text rows as well:
 
+```
     C052
+```
 
 And to restore the bottom 4 text rows
 
+```
     C053
-
+```
 
 # Exercises
 
@@ -2105,7 +2121,7 @@ Hey!  Homework?  Yes, the only (true) way to demonstrate you understand the theo
 
 Here are all the (core) routines we've entered in so far:
 
-
+```
     0301:   48 6A 6A 6A 6A 20 0A
     0308:03 68 29 0F AA BD 90 03
     0310:4C 3A 03 BD A0 03 85 F5
@@ -2128,6 +2144,7 @@ Here are all the (core) routines we've entered in so far:
     03B8:00 00 01 01 02 02 03 03
     03C0:00 00 01 01 02 02 03 03
     03C8:00 00 01 01 02 02 03 03
+```
 
 (To save this: `BSAVE CODE_0300.BIN,A$300,L$D0`)
 
@@ -2284,6 +2301,7 @@ We could code this up as:
 
 Enter in:
 
+```
     1900:A2 00 BD A0 03 85 FA BD
     1908:B8 03 05 E6 85 FB E8 BD
     1910:A0 03 85 F8 BD B8 03 05
@@ -2296,6 +2314,7 @@ Enter in:
     1948:00 A0 27 91 F8 88 10 FB
     1950:18 A5 F9 69 04 85 F9 CA
     1958:D0 ED 60
+```
 
 Excellent.
 
@@ -2308,6 +2327,7 @@ We could manually unroll every loop such as this monstrosity (we trade space for
 
 Enter this (or download [hgr_scroll_up.bin](hgr_scroll_up.bin) or `BRUN HGR_SCROLL_UP`):
 
+```
     1400:A2 27
     1402:BD 00 24 9D 00 20
     1408:BD 00 28 9D 00 24
@@ -2503,7 +2523,7 @@ Enter this (or download [hgr_scroll_up.bin](hgr_scroll_up.bin) or `BRUN HGR_SCRO
     187C:A9 00    9D D0 3F
     1881:CA 30 03 4C 02 14
     1887:60
-
+```
 
 And let's write a little demo ...
 
@@ -2517,23 +2537,29 @@ And let's write a little demo ...
 
 Enter in:
 
+```
     13F7:A0 C0 20 00 14 88 D0 FA 60
+```
 
 (To save to disk type `BSAVE HGR_SCROLL_UP.BIN,A$13F7,L$490`)
 
 And let's try it out:
 
+```
     1300L
     1300G
     1400G
     1400G
     1400G
+```
 
 ![Screenshot 21](pics/hgrfont_21.png?raw=true)
 
-And for the finale:
+And for the grand finale:
 
+```
     13F7G
+```
 
 Sweet !
 
