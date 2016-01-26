@@ -1,6 +1,6 @@
 #Apple ]\[ //e HGR Font 6502 Assembly Language Tutorial
 
-Revision: 39, Jan 18, 2016.
+Revision: 40, Jan 26, 2016.
 
 # Table of Contents
 
@@ -1571,7 +1571,7 @@ Our final version is:
     1020:FE A5 FE 29 7F 85 FE 10
     1028:DB C9 95 D0 05 E6 FE 18
     1030:90 EF C9 9B D0 DD 60 48
-3   1038:20 10 03 A9 20 20 10 03
+    1038:20 10 03 A9 20 20 10 03
     1040:68 4C 01 03
     1000G
 
