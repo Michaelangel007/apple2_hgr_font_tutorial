@@ -1,6 +1,6 @@
 #Apple ]\[ //e HGR Font 6502 Assembly Language Tutorial
 
-Revision: 45, Jan 27, 2016.
+Revision: 46, Jan 27, 2016.
 
 # Table of Contents
 
@@ -722,6 +722,11 @@ Here's the disassembly of our (hard-coded) DrawChar() program:
     090E:A5 E6       LDA HgrHi      ; to working pointer
     0910:85 F6       STA TmpHi
     0912:60          RTS
+```
+
+Listing 1:
+
+```assembly
     ; FUNC: DrawChar()
     ; PARAM: A = glyph to draw
     ; PARAM: Y = column to draw at; $0 .. $27 (Columns 0 .. 39) (not modified)
@@ -838,6 +843,8 @@ After drawing a character with `DrawChar()` it is handy if we can advance both:
 
 Notice how after 8 scan lines we end up with and `Tmp` address of $4xxx (or $6xxx if we were drawing to HGR page 2.)  This means we need to subtract off $20 from the top byte of the 16-bit address to the temp destination screen pointer.
 
+Listing 2a:
+
 ```assembly
     ; FUNC: IncCursorCol1()
     ; OUTPUT: Y-Register (column) is incremented
@@ -865,6 +872,8 @@ One tip for beginner 6502 assembly programmers. It is tempting just to always cl
 
 We change the carry flag state _before_ we do the operation depending on whether we are `adding` or `subtracting`.  The `Rule of Thumb` is `CLC before ADD` and `SEC before SUB`.  A mnemonic to help you remember is that both `SEC` and `SUB` start with `S`.
 
+Listing 2b:
+
 ```assembly
     ; FUNC: IncCursorCol2()
     ; OUTPUT: Y-Register (column) is incremented
@@ -876,7 +885,7 @@ We change the carry flag state _before_ we do the operation depending on whether
     0364:C8          INY
     0365:38          SEC            ; CLC SBC #1F
     0366:A5 F6       LDA TmpHi      ; was not obvious that we really
-    0368:E9 20       SBC #$20       ; meant A - #$20 !!
+    0368:E9 20       SBC #$20       ; meant: TmpHi = A - #$20 !!
     036A:85 F6       STA TmpHi
     036C:60          RTS
 ```
@@ -926,12 +935,14 @@ Since we only care about the high byte:
 
 Hmm, we would need to replace `SEC SBC` with `AND OR` which we might think would be a littler faster and takes less code to boot but let's verify our assumption:
 
+Listing 3a:
+
 ```assembly
     ; FUNC: IncCursorCol3()
     ; OUTPUT: Y-Register (column) is incremented
     ; Increment the cursor column and move the destination screen pointer back
     ; up 8 scan lines previously to what it was when DrawChar() was called.
-    ; Version 3
+    ; Version 3a
                      ORG $0364
     0364:         IncCursorCol3
     0364:C8          INY
@@ -959,6 +970,28 @@ vs
     ORA #m ; 2 cycles
 ```
 Nope. Bummer. :-(
+
+We probably should remove that hard-coded HGR page 1.
+
+Listing 3b:
+
+```assembly
+    ; FUNC: IncCursorCol3()
+    ; OUTPUT: Y-Register (column) is incremented
+    ; Increment the cursor column and move the destination screen pointer back
+    ; up 8 scan lines previously to what it was when DrawChar() was called.
+    ; Version 3b
+                     ORG $0364
+    0364:         IncCursorCol3
+    0364:C8          INY
+    0365:A5 F6       LDA TmpHi
+    0367:29 1F       AND #%00011111 ; Requires an extra OR
+    0369:05 E6       ORA HgrHi      ; user specified Page 1 or Page 2
+    036B:85 F6       STA TmpHi
+    036D:60          RTS
+```
+
+At least the timing for `ORA HgrHi` is still 2 clock cycles. :-)
 
 The lessons?
 
@@ -2314,10 +2347,8 @@ Let's write a program to view all the ASCII characters.
 
 ```Assembly
                 .ORG $1050
-                
+                ; <<Forthcoming!>>
 ```
-
-
 
 Here is a table of all the glyphs that we'll eventually fix:
 
