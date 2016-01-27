@@ -1,6 +1,6 @@
 #Apple ]\[ //e HGR Font 6502 Assembly Language Tutorial
 
-Revision: 49, Jan 27, 2016.
+Revision: 50, Jan 27, 2016.
 
 # Table of Contents
 
@@ -23,6 +23,7 @@ Revision: 49, Jan 27, 2016.
  * X Cursor Position
  * CursorCol()
  * Introduction to Optimization
+ * Recap - Listing 5
  * DrawChar() version 2
  * DrawChar() version 3
 * Character Inspector
@@ -35,7 +36,7 @@ Revision: 49, Jan 27, 2016.
 * Exercises
  * Exercise 1: ScrollHgrUpLine()
  * Exercise 2: ScrollHgrUpPixel()
-* Recap
+* Recap - Font Draw
 * Other Fonts
  * Fat Stroke Fonts
   * Beautiful Boot
@@ -705,23 +706,25 @@ Before we can start a simple `DrawChar(char c)` function, we also first need to 
 
 Here's the disassembly of our (hard-coded) DrawChar() program:
 
+Listing Demo 1:
+
 ```assembly
     ; FUNC: PrintChar()
     ; NOTES: A, X, Y is destroyed
-                     ORG $0900
-    0900:         PrintChar
-    0900:20 0A 09    JSR HgrToTmpPtr
-    0903:A9 00       LDA #00        ; glyph 'c' to draw (not used yet)
-    0905:A0 00       LDY #00        ; Y = column to draw at (hard-coded)
-    0907:4C 10 03    JMP DrawChar
+                    ORG $0900
+    0900:       PrintChar
+    0900:20 0A 09   JSR HgrToTmpPtr
+    0903:A9 00      LDA #00         ; glyph 'c' to draw (not used yet)
+    0905:A0 00      LDY #00         ; Y = column to draw at (hard-coded)
+    0907:4C 10 03   JMP DrawChar
 
     ; FUNC: HgrToTmpPtr()
-    090A:         HgrToTmpPtr
-    090A:A5 E5       LDA HgrLo      ; Copy initial screen
-    090C:85 F5       STA TmpLo      ; destination pointer
-    090E:A5 E6       LDA HgrHi      ; to working pointer
-    0910:85 F6       STA TmpHi
-    0912:60          RTS
+    090A:       HgrToTmpPtr
+    090A:A5 E5      LDA HgrLo       ; Copy initial screen
+    090C:85 F5      STA TmpLo       ; destination pointer
+    090E:A5 E6      LDA HgrHi       ; to working pointer
+    0910:85 F6      STA TmpHi
+    0912:60         RTS
 ```
 
 Listing 1:
@@ -733,14 +736,14 @@ Listing 1:
     ; INPUT : $F5,$F6 pointer to the destination screen scanline
     ;         Must start at every 8 scanlines.
     ; OUTPUT: The Y-Register (cursor column) is automatically incremented.
-                     ORG $0310
-    0310:         DrawChar
-    0310:4C 50 03    JMP _DrawChar
+                    ORG $0310
+    0310:       DrawChar
+    0310:4C 50 03   JMP _DrawChar
 
                      ORG $0350
-    0350:         _DrawChar
+    0350:       _DrawChar
     0350:A2 00       LDX #0
-    0352:         _LoadFont         ; A = font[ offset ]
+    0352:       _LoadFont           ; A = font[ offset ]
     0352:BD 00 62    LDA Font+$200,X
     0355:91 F5       STA (TmpLo),Y  ; screen[col] = A
     0357:18          CLC
@@ -832,7 +835,7 @@ Here's the C pseudo-code of the assembly code:
 
 Since the Y-register controls the column we can inline this function and have the caller take care of setting the Y-Register before calling DrawChar().
 
-```assmebly
+```assembly
                      LDY #column
 ```
 
@@ -851,14 +854,14 @@ Listing 2a:
     ; Increment the cursor column and move the destination screen pointer back
     ; up 8 scan lines previously to what it was when DrawChar() was called.
     ; Version 1
-                     ORG $0364
-    0364:         IncCursorCol1
-    0364:C8          INY
-    0365:18          CLC            ; Note:
-    0366:A5 F6       LDA TmpHi      ;     (To the astute reader)
-    0368:E9 1F       SBC #$1F       ; <-- ??? Shouldn't this be #$20 ?!
-    036A:85 F6       STA TmpHi
-    036C:60          RTS
+                    ORG $0364
+    0364:       IncCursorCol1
+    0364:C8         INY
+    0365:18         CLC             ; Note:
+    0366:A5 F6      LDA TmpHi       ;     (To the astute reader)
+    0368:E9 1F      SBC #$1F        ; <-- ??? Shouldn't this be #$20 ?!
+    036A:85 F6      STA TmpHi
+    036C:60         RTS
 ```
 
 ### Introduction to Optimization
@@ -881,13 +884,13 @@ Listing 2b:
     ; up 8 scan lines previously to what it was when DrawChar() was called.
     ; Version 2
                      ORG $0364
-    0364:         IncCursorCol2
-    0364:C8          INY
-    0365:38          SEC            ; CLC SBC #1F
-    0366:A5 F6       LDA TmpHi      ; was not obvious that we really
-    0368:E9 20       SBC #$20       ; meant: TmpHi = A - #$20 !!
-    036A:85 F6       STA TmpHi
-    036C:60          RTS
+    0364:       IncCursorCol2
+    0364:C8         INY
+    0365:38         SEC             ; CLC SBC #1F
+    0366:A5 F6      LDA TmpHi       ; was not obvious that we really
+    0368:E9 20      SBC #$20        ; meant: TmpHi = A - #$20 !!
+    036A:85 F6      STA TmpHi
+    036C:60         RTS
 ```
 
 One thing when writing 6502 assembly is to pay attention to _all_ optimization opportunities due to the slow ~1 MHz of the 6502.  Since we only need to modify the upper few bits instead of doing a bulky subtraction `SEC SBC` we might be tempted to see if there is a faster and/or smaller alternative.  We just need to be careful that our optimization is "shuffling" the bits around _behaves_ in the _exact_ same way at the end of the day. i.e. "The Right Place at the Right Time."
@@ -944,13 +947,13 @@ Listing 3a:
     ; up 8 scan lines previously to what it was when DrawChar() was called.
     ; Version 3a
                      ORG $0364
-    0364:         IncCursorCol3
-    0364:C8          INY
-    0365:A5 F6       LDA TmpHi
-    0367:29 1F       AND #%00011111 ; Requires an extra OR
-    0369:09 20       ORA #$20       ; Hard-code to HGR page 1 (high byte)
-    036B:85 F6       STA TmpHi
-    036D:60          RTS
+    0364:       IncCursorCol3
+    0364:C8         INY
+    0365:A5 F6      LDA TmpHi
+    0367:29 1F      AND #%00011111  ; Requires an extra OR
+    0369:09 20      ORA #$20        ; Hard-code to HGR page 1 (high byte)
+    036B:85 F6      STA TmpHi
+    036D:60         RTS
 ```
 
 
@@ -982,13 +985,13 @@ Listing 3b:
     ; up 8 scan lines previously to what it was when DrawChar() was called.
     ; Version 3b
                      ORG $0364
-    0364:         IncCursorCol3
-    0364:C8          INY
-    0365:A5 F6       LDA TmpHi
-    0367:29 1F       AND #%00011111 ; Requires an extra OR
-    0369:05 E6       ORA HgrHi      ; user specified Page 1 or Page 2
-    036B:85 F6       STA TmpHi
-    036D:60          RTS
+    0364:       IncCursorCol3
+    0364:C8         INY
+    0365:A5 F6      LDA TmpHi
+    0367:29 1F      AND #%00011111  ; Requires an extra OR
+    0369:05 E6      ORA HgrHi       ; user specified Page 1 or Page 2
+    036B:85 F6      STA TmpHi
+    036D:60         RTS
 ```
 
 At least the timing for `ORA HgrHi` is still 2 clock cycles. :-)
@@ -1019,11 +1022,11 @@ Listing 4a:
     ;35F:E0 08      CPX #8
     ;361:D0 EF      BNE _LoadFont
     ;363:60         RTS
-    ;           ; === DrawChar end ===
+                ; === DrawChar end ===
 
     ; FUNC: IncCursorCol()
                      ORG $0363      ; intentional extend _DrawChar by
-    0363:         IncCursorCol      ; over-writing RTS
+    0363:       IncCursorCol        ; over-writing RTS
     0363:C8          INY
     0364:A6  FD      LDX TopHi      ; Move cursor back to top of scanline
     0366:86  F6      STX TmpHi
@@ -1035,20 +1038,20 @@ We just need to touch up our entry point `PrintChar` at $0310 instead of calling
 Listing 4b:
 
 ```assembly
-                     ORG $0310
-    0310:         DrawChar
-    0310:4C 4C 03    JMP _DrawChar1 ; NEW entry point
+                    ORG $0310
+    0310:       DrawChar
+    0310:4C 4C 03   JMP _DrawChar1  ; NEW entry point
 ```
 
-Listing 5:
+Listing Demo 2:
 
 ```assembly
-                     ORG $0A00
-    0A00:         DemoDraw3Char
-    0A00:20 00 09    JSR PrintChar
-    0A03:20 10 03    JSR DrawChar
-    0A06:20 10 03    JMP DrawChar
-    0A09:60          RTS
+                    ORG $0A00
+    0A00:       DemoDraw3Char
+    0A00:20 00 09   JSR PrintChar
+    0A03:20 10 03   JSR DrawChar
+    0A06:20 10 03   JMP DrawChar
+    0A09:60         RTS
 ```
 
 Enter in:
@@ -1078,7 +1081,7 @@ We are one step closer to printing a string.  We have a total of 5 `@` because w
 <hr>
 
 
-# Recap - Listing 4
+## Recap - Listing 5
 
 Here is what our render glyph code looks like so far:
 
@@ -1238,77 +1241,79 @@ IF this is confusing, remember, we are calculating a 16-bit offset:
 A naive 6502 glyph/32 calculation would be to use 5 shift right bit-shifts:
 
 ```assembly
-    48       PHA      ; save c
-    --       --       ; calc low byte offset
-    68       PLA      ; pop c  = %PQRstuvw to draw
-    4A       LSR      ; c /  2 = %0PQRstuv C=w
-    4A       LSR      ; c /  4 = %w0PQRstu C=V
-    4A       LSR      ; c /  8 = %wv0PQRst C=u
-    4A       LSR      ; c / 16 = %uvw0PQRs C=t
-    4A       LSR      ; c / 32 = %tUvw0PQR C=s
-    29 07    AND #07  ;        = %00000PQR
-    18       CLC      ;
+    48      PHA     ; save c
+    --      --      ; calc low byte offset
+    68      PLA     ; pop c  = %PQRstuvw to draw
+    4A      LSR     ; c /  2 = %0PQRstuv C=w
+    4A      LSR     ; c /  4 = %w0PQRstu C=V
+    4A      LSR     ; c /  8 = %wv0PQRst C=u
+    4A      LSR     ; c / 16 = %uvw0PQRs C=t
+    4A      LSR     ; c / 32 = %tUvw0PQR C=s
+    29 07   AND #07 ;        = %00000PQR
+    18      CLC     ;
 ```
 
 We can optimize the `CLC` out by clearing the bottom bits and _then_ doing the shift:
 
 ```assembly
-    48       PHA      ; save c
-    --       --       ; calc low byte offset
-    68       PLA      ; pop c  = %PQRstuvw to draw
-    29 E0    AND #E0  ;        = %PQR00000 s=0, Optimization: implicit CLC
-    4A       LSR      ; c /  2 = %0PQR0000
-    4A       LSR      ; c /  4 = %00PQR000
-    4A       LSR      ; c /  8 = %000PQR00
-    4A       LSR      ; c / 16 = %0000PQR0
-    4A       LSR      ; c / 32 = %00000PQR
+    48      PHA     ; save c
+    --      --      ; calc low byte offset
+    68      PLA     ; pop c  = %PQRstuvw to draw
+    29 E0   AND #E0 ;        = %PQR00000 s=0, Optimization: implicit CLC
+    4A      LSR     ; c /  2 = %0PQR0000
+    4A      LSR     ; c /  4 = %00PQR000
+    4A      LSR     ; c /  8 = %000PQR00
+    4A      LSR     ; c / 16 = %0000PQR0
+    4A      LSR     ; c / 32 = %00000PQR
 ```
 
 However we can save one instruction (and 2 cycles) if we optimize `c/32` to use the counter-intuitive 6502's `ROL` instruction -- which only requires 4 instructions instead:
 
 ```assembly
-    48       PHA      ; save c
-    --       --       ; calc low byte offset
-    68       PLA      ; pop c  = %PQRstuvw to draw
-    29 E0    AND #E0  ;        = %PQR00000 s=0, Optimization: implicit CLC
-    2A       ROL      ;        = %QR000000 C=P
-    2A       ROL      ;        = %R000000P C=Q
-    2A       ROL      ;        = %000000PQ C=R
-    2A       ROL      ; c / 32 = %00000PQR C=0
+    48      PHA     ; save c
+    --      --      ; calc low byte offset
+    68      PLA     ; pop c  = %PQRstuvw to draw
+    29 E0   AND #E0 ;        = %PQR00000 s=0, Optimization: implicit CLC
+    2A      ROL     ;        = %QR000000 C=P
+    2A      ROL     ;        = %R000000P C=Q
+    2A      ROL     ;        = %000000PQ C=R
+    2A      ROL     ; c / 32 = %00000PQR C=0
 ```
 
 Our prefix code to setup the source address becomes:
+
+Listing 6:
 
 ```assembly
     ; FUNC: _DrawChar2a( c, col )
     ; PARAM: A = glyph to draw
     ; PARAM: Y = column to draw at; $0 .. $27 (Columns 0 .. 39) (not modified)
     ; NOTES: X is destroyed
-                     ORG $0335
-    0335:         _DrawChar2a
-    0335:48          PHA            ; push c = %PQRstuvw to draw
-    0336:29 1F       AND #1F        ;        = %000stuvw R=0, implicit CLC
-    0338:0A          ASL            ; c * 2    %00stuvw0
-    0339:0A          ASL            ; c * 4    %0stuvw00
-    033A:0A          ASL            ; c * 8    %stuvw000
-    033B:69 00       ADC #<Font     ; += FontLo; Carry = 0 since R=0 from above
-    033D:8D 53 03    STA _LoadFont+1; AddressLo = FontLo + (c*8)
-    0340:68          PLA            ; pop c  = %PQRstuvw to draw
-    0341:29 E0       AND #E0        ;        = %PQR00000 s=0, implicit CLC
-    0343:2A          ROL            ;        = %QR000000 C=P
-    0344:2A          ROL            ;        = %R000000P C=Q
-    0345:2A          ROL            ;        = %000000PQ C=R need one more
-    0346:2A          ROL            ; c / 32 = %00000PQR C=0 shift to get R
-    0347:69 60       ADC #>Font     ; += FontHi; Carry = 0 since S=0 from above
-    0349:8D 54 03    STA _LoadFont+2; AddressHi = FontHi + (c/32)
-                     ; intentional fall into _DrawChar1
-    034C:          _DrawChar1
-    034C:A6 F6       LDX TmpHi
-    034E:86 FD       STX TopHi
-    0350:         _DrawChar
-    0350:A2 00       LDX #0         ; Note: next instruction is self-modified !
-    0352:         _LoadFont         ; A = font[ offset ]
-    0352:BD 00 00    LDA $0000,X
+                    ORG $0335
+    0335:       _DrawChar2a
+    0335:48         PHA             ; push c = %PQRstuvw to draw
+    0336:29 1F      AND #1F         ;        = %000stuvw R=0, implicit CLC
+    0338:0A         ASL             ; c * 2    %00stuvw0
+    0339:0A         ASL             ; c * 4    %0stuvw00
+    033A:0A         ASL             ; c * 8    %stuvw000
+    033B:69 00      ADC #<Font      ; += FontLo; Carry = 0 since R=0 from above
+    033D:8D 53 03   STA _LoadFont+1 ; AddressLo = FontLo + (c*8)
+    0340:68         PLA             ; pop c  = %PQRstuvw to draw
+    0341:29 E0      AND #E0         ;        = %PQR00000 s=0, implicit CLC
+    0343:2A         ROL             ;        = %QR000000 C=P
+    0344:2A         ROL             ;        = %R000000P C=Q
+    0345:2A         ROL             ;        = %000000PQ C=R need one more
+    0346:2A         ROL             ; c / 32 = %00000PQR C=0 shift to get R
+    0347:69 60      ADC #>Font      ; += FontHi; Carry = 0 since S=0 from above
+    0349:8D 54 03   STA _LoadFont+2; AddressHi = FontHi + (c/32)
+                                    ; intentional fall into _DrawChar1
+    034C:       _DrawChar1
+    034C:A6 F6      LDX TmpHi
+    034E:86 FD      STX TopHi
+    0350:       _DrawChar
+    0350:A2 00      LDX #0          ; Note: next instruction is self-modified !
+    0352:       _LoadFont           ; A = font[ offset ]
+    0352:BD 00 60   LDA Font,X
 ```
 
 Did you catch that **note** ?  One popular trick on the 6502 was `self-modifying code`.  Instead of wasting memory with yet-another-variable we directly change the load/store instructions themselves!  This actually has 2 advantages:
@@ -1368,21 +1373,21 @@ We would need to start with the carry **pre-loaded** with P, and the QR already 
 That might look like something like this:
 
 ```assembly
-    PHA        ; push c
+    PHA             ; push c
     AND #$E0
-    TAX        ; save %PQR00000
-    PLA        ; pop c
+    TAX             ; save %PQR00000
+    PLA             ; pop c
     AND #$1F
-    STA Temp   ; save %000stuvw
-    TXA        ;     A=PQR00000
-    ASL        ; C=P A=QR000000  <- stuvw not taking advantage of shift :-(
-    OR  Temp   ; C=P A=QR0stuvw
-    ROL        ; C=Q A=R0stuvwP
-    ROL        ; C=R A=0stuvwPQ
-    ROL        ; C=0 A=stuvwPQR
+    STA Temp        ; save %000stuvw
+    TXA             ;     A=PQR00000
+    ASL             ; C=P A=QR000000  <- stuvw not taking advantage of shift :-(
+    OR  Temp        ; C=P A=QR0stuvw
+    ROL             ; C=Q A=R0stuvwP
+    ROL             ; C=R A=0stuvwPQ
+    ROL             ; C=0 A=stuvwPQR
     PHA
-    AND #1F        ;        = %000stuvw
-    STA _LoadFont+1; AddressLo = FontLo + (c*8)
+    AND #1F         ;        = %000stuvw
+    STA _LoadFont+1 ; AddressLo = FontLo + (c*8)
     PLA
     AND #E0
     CLC
@@ -1411,26 +1416,26 @@ The **lateral** thinking is to _use partial results_.
 
 Let's code this up:
 
-Listing 6:
+Listing 7:
 
 ```Assembly
     ; FUNC: DrawCharCol( c, col ) alias _DrawChar2
     ; PARAM: A = glyph to draw
     ; PARAM: Y = column to draw at; $0 .. $27 (Columns 0 .. 39) (not modified)
     ; NOTES: X is destroyed
-                     ORG $033A
-    033A:          DrawCharCol      ;     A=%PQRstuvw
-    033A:2A          ROL            ; C=P A=%QRstuvw?
-    033B:2A          ROL            ; C=Q A=%Rstuvw?P
-    033C:2A          ROL            ; C=R A=%stuvw?PQ
-    033D:AA          TAX            ;     X=%stuvw?PQ push glyph
-    033E:29 F8       AND #F8        ;     A=%stuvw000
-    0340:8D 53 03    STA _LoadFont+1; AddressLo = (c*8)
-    0343:8A          TXA            ;     A=%stuvw?PQ pop glyph
-    0344:29 03       AND #3         ; Optimization: s=0 implicit CLC !
-    0346:2A          ROL            ; C=s A=%00000PQR and 1 last ROL to get R
-    0347:69 60       ADC #>Font     ; += FontHi; Carry=0 since s=0 from above
-    0349:8D 54 03    STA _LoadFont+2; AddressHi = FontHi + (c/32)
+                    ORG $033A
+    033A:       DrawCharCol         ;     A=%PQRstuvw
+    033A:2A         ROL             ; C=P A=%QRstuvw?
+    033B:2A         ROL             ; C=Q A=%Rstuvw?P
+    033C:2A         ROL             ; C=R A=%stuvw?PQ
+    033D:AA         TAX             ;     X=%stuvw?PQ push glyph
+    033E:29 F8      AND #F8         ;     A=%stuvw000
+    0340:8D 53 03   STA _LoadFont+1 ; AddressLo = (c*8)
+    0343:8A         TXA             ;     A=%stuvw?PQ pop glyph
+    0344:29 03      AND #3          ; Optimization: s=0 implicit CLC !
+    0346:2A         ROL             ; C=s A=%00000PQR and 1 last ROL to get R
+    0347:69 60      ADC #>Font      ; += FontHi; Carry=0 since s=0 from above
+    0349:8D 54 03   STA _LoadFont+2 ; AddressHi = FontHi + (c/32)
                                     ; intentional fall into _DrawChar1 @ $034C
 ```
 
@@ -1509,13 +1514,16 @@ We now have the ability to print any of the 128 ASCII characters!
 
 Let's verify this by writing a character inspector. We'll use the arrow keys to select the glyph and ESC to exit.
 
-Listing Demo2a:
+Listing Demo 3a:
 
 ```assembly
     ; FUNC: DemoCharInspect()
-                  KEYBOARD    EQU $C000
-                  KEYSTROBE   EQU $C010
-                  glyph       EQU $FE
+                HgrLo       EQU $F5
+                HgrHi       EQU $F6
+                glyph       EQU $FE
+
+                KEYBOARD    EQU $C000
+                KEYSTROBE   EQU $C010
 
                      ORG $1000
     1000:         DemoCharInspect
@@ -1578,45 +1586,51 @@ We now have an ASCII char inspector!
 
 Let's fix it up to print the hex value of the current character we are inspecting:
 
-Listing Demo2b:
+Listing Demo 3b:
 
 ```assembly
-                     ORG $1010
-    1010:20 3C 10    JSR Patch1
+                    ORG $1010
+    1010:20 3C 10   JSR Patch1
 
-                     ORG $1037
-    103C:         Patch1
-    103C:48          PHA            ; save c
-    103D:20 10 03    JSR DrawChar
-    1040:68          PLA            ; restore c so we can print it in hex
-    1041:4C 01 03    JMP DrawHexByte
+                    ORG $1037
+    103C:       Patch1
+    103C:48         PHA             ; save c
+    103D:20 10 03   JSR DrawChar
+    1040:68         PLA             ; restore c so we can print it in hex
+    1041:4C 01 03   JMP DrawHexByte
+```
 
-                     ORG $0303
+Listing 8:
+
+```assembly
+                    ORG $0303
     ; FUNC: DrawHexByte( c ) = $0301
     ; PARAM: A = byte to print in hex
-    0301:         DrawHexByte
-    0301:48          PHA            ; save low nibble
-    0302:6A          ROR            ; shift high nibble
-    0303:6A          ROR            ; to low nibble
-    0304:6A          ROR
-    0305:6A          ROR
-    0306:20 0A 03    JSR DrawHexNib ; print high nib in hex
-    0309:68          PLA            ; pritn low  nib in hex
+    0301:       DrawHexByte
+    0301:48         PHA             ; save low nibble
+    0302:6A         ROR             ; shift high nibble
+    0303:6A         ROR             ; to low nibble
+    0304:6A         ROR             ;
+    0305:6A         ROR             ;
+    0306:20 0A 03   JSR DrawHexNib  ; print high nib in hex
+    0309:68         PLA             ; pritn low  nib in hex
 
     ; FUNC: DrawHexNib() = $030C
     ; PARAM: A = nibble to print as hex char
-    030A:         DrawHexNib
-    030A:29 0F       AND #F         ; base 16
-    030C:AA          TAX            ;
-    030D:BD 90 03    LDA NIB2HEX,X  ; nibble to ASCII
-                     ; intentional fall into PrintChar
-
-                     ORG $0390
-    0390:30 31 32 33 NIB2HEX ASC "0123456789ABCDEF"
+    030A:       DrawHexNib
+    030A:29 0F      AND #F          ; base 16
+    030C:AA         TAX             ;
+    030D:BD 90 03   LDA NIB2HEX,X   ; nibble to ASCII
+                                    ; intentional fall into PrintChar
+                    ORG $0390
+    0390:30 31 32 33    NIB2HEX ASC "0123456789ABCDEF"
     0394:34 35 36 37
     0398:38 39 41 42
     039C:43 44 45 46
 ```
+
+Q. Can you see a way to make DrawHexNib smaller?
+
 
 Enter in the changes:
 
@@ -1648,17 +1662,17 @@ And now we have our own DrawHexByte() function.
 
 Let's add a space after the character but before the hex value to improve readability of the output.  The new code is:
 
-Listing Demo2c:
+Listing Demo 3c:
 
 ```assembly
-                     ORG $1010
-    1010:20 37 10    JSR Patch2
+                    ORG $1010
+    1010:20 37 10   JSR Patch2
 
-                     ORG $1037
-    1037:         Patch2
-    1037:48          PHA            ; save c
-    1038:20 10 03    JSR PrintChar
-    103B:A9 20       LDA ' '        ; Draw whitespace
+                    ORG $1037
+    1037:       Patch2
+    1037:48         PHA             ; save c
+    1038:20 10 03   JSR PrintChar
+    103B:A9 20      LDA ' '         ; Draw whitespace
 ```
 
 Enter in these changes:
@@ -1754,6 +1768,7 @@ Our `HgrHiY` table:
     03C0:00 00 01 01 02 02 03 03
     03C8:00 00 01 01 02 02 03 03
 
+
 <hr>
 **AppleWin** users: To save this press `F7`, at the debugger console `bsave "hgrtable.bin",3A0:3CF`, press `F7`.
 
@@ -1764,7 +1779,7 @@ Our `HgrHiY` table:
 
 To select which row to draw at we'll pass that in the X register to our DrawCharColRow() routine:
 
-Listing 7:
+Listing 9b:
 
 ```assembly
     ; FUNC: SetCursorRow( row )
@@ -1772,25 +1787,25 @@ Listing 7:
     ; INPUT : $E5,$E6 initial pointer to the destination screen scanline
     ;         Note: Must start at every 8 scanlines.
     ; OUTPUT: $F5,$F5 working pointer to the destination screen scanline
-                     ORG $0313
-    0313:         SetCursorRow
-    0313:BD A0 03    LDA HgrLoY,X   ; HgrLoY[ row ]
-    0316:85 F5       STA TmpLo
-    0318:BD B8 03    LDA HgrHiY,X   ; HgrHiY[ row ]
-    031B:18          CLC
-    031C:65 E6       ADC HgrHi
-    031E:85 F6       STA TmpHi
-    0320:60          RTS
+                    ORG $0313
+    0313:       SetCursorRow
+    0313:BD A0 03   LDA HgrLoY,X    ; HgrLoY[ row ]
+    0316:85 F5      STA TmpLo
+    0318:BD B8 03   LDA HgrHiY,X    ; HgrHiY[ row ]
+    031B:18         CLC
+    031C:65 E6      ADC HgrHi
+    031E:85 F6      STA TmpHi
+    0320:60         RTS
 
     ; FUNC: DrawCharColRow()
     ; PARAM: A = glyph to draw
     ; PARAM: Y = column to draw at  ; $0 .. $27 (Columns 0 .. 39) (not modified)
     ; PARAM: X = row    to draw at  ; $0 .. $17 (Rows 0 .. 23) (destroyed)
-                     ORG $0335
-    0335:         DrawCharColRow
-    0335:48          PHA
-    0336:20 13 03    JSR SetCursorRow
-    0339:68          PLA
+                    ORG $0335
+    0335:       DrawCharColRow
+    0335:48         PHA
+    0336:20 13 03   JSR SetCursorRow
+    0339:68         PLA
                                     ; intentional fall into _DrawChar2
 ```
 
@@ -1803,13 +1818,15 @@ Enter in:
 
 Now we can print a char at any location:
 
+Listing Demo 4:
+
 ```assembly
                     ORG $1100
-    1100:         PrintAYX
-    1100:A9 41       LDA #41        ; A-register = char
-    1102:A0 01       LDY #1         ; Y-register = col 1 (2nd column)
-    1104:A2 02       LDX #2         ; X-register = row 2 (3rd row)
-    1106:4C 35 03    JMP DrawCharColRow
+    1100:       PrintAYX
+    1100:A9 41      LDA #41         ; A-register = char
+    1102:A0 01      LDY #1          ; Y-register = col 1 (2nd column)
+    1104:A2 02      LDX #2          ; X-register = row 2 (3rd row)
+    1106:4C 35 03   JMP DrawCharColRow
 ```
 
 Enter in:
@@ -1837,18 +1854,20 @@ Unfortunately, our usage of the X and Y registers are not intuitive. This is due
 
 We could map the X-register to the natural column (x-axis), and the Y-register to the natural row (y-axis).  Alas, we're stuck with the X=row and Y=col unless we wanted to add extra code to "swap" the two.
 
+Listing 10:
+
 ```assembly
     ; FUNC: SetCursorColRowYX()
     ; PARAM: Y = col
     ; PARAM: X = row
-                     ORG $0369
-    369:         SetCursorColRowYX
-    369:20 13 03     JSR SetCursorRow
-    36C:18           CLC
-    36D:98           TYA
-    36E:65 F5        ADC $F5
-    371:85 F5        STA $F5
-    373:60           RTS
+                    ORG $0369
+    369:        SetCursorColRowYX
+    369:20 13 03    JSR SetCursorRow
+    36C:18          CLC
+    36D:98          TYA
+    36E:65 F5       ADC $F5
+    371:85 F5       STA $F5
+    373:60          RTS
 ```
 Or are we stuck? Since we're using a function to calculate the destination address let's fix the order.
 
@@ -1858,17 +1877,17 @@ We'll need to change the `X` offset in SetCursorColRowXY() to `Y`;
     ; FUNC: SetCursorColRow2a( row )
     ; PARAM: Y = row
     ; NOTES: Version 2a !
-    0928:            ORG $0928
-    0928:         SetCursorColRow2a
-    0928:B9 A0 03    LDA HgrLoY,Y   ; changed from: ,X
-    092B:18          CLC
-    092C:65 E5       ADC HgrLo
-    092E:85 F5       STA TmpLo
-    0930:B9 B8 03    LDA HgrHiY,Y   ; changed from: ,X
-    0933:18          CLC
-    0934:65 E6       ADC HgrHi
-    0936:85 F6       STA TmpHi
-    0938:60          RTS
+    0928:           ORG $0928
+    0928:       SetCursorColRow2a
+    0928:B9 A0 03   LDA HgrLoY,Y    ; changed from: ,X
+    092B:18         CLC
+    092C:65 E5      ADC HgrLo
+    092E:85 F5      STA TmpLo
+    0930:B9 B8 03   LDA HgrHiY,Y    ; changed from: ,X
+    0933:18         CLC
+    0934:65 E6      ADC HgrHi
+    0936:85 F6      STA TmpHi
+    0938:60         RTS
 ```
 
 And change the low byte to add `X` instead:
@@ -1878,17 +1897,19 @@ And change the low byte to add `X` instead:
     ; PARAM: X = col
     ; PARAM: Y = row
     ; NOTES: Version 2b !
-                     ORG $0979
-    979:         SetCursorColRow2b
-    979:20 13 03     JSR SetCursorRow
-    97C:18           CLC
-    37D:88           TXA            ; changed from: TYA
-    97E:65 F5        ADC $F5
-    981:85 F5        STA $F5
+                    ORG $0979
+    979:        SetCursorColRow2b
+    979:20 13 03    JSR SetCursorRow
+    97C:18          CLC
+    37D:88          TXA             ; changed from: TYA
+    97E:65 F5       ADC $F5
+    981:85 F5       STA $F5
     983:60
 ```
 
 This is a little clunky but it is progress. Let's write the new SetCursorColRow() version with the SetCursorRow() inlined so we don't have to use a JSR.
+
+Listing 11:
 
 ```assembly
     ; FUNC: SetCursorColRow( col, row )
@@ -1896,19 +1917,19 @@ This is a little clunky but it is progress. Let's write the new SetCursorColRow(
     ; PARAM: Y = row    to draw at; $0 .. $17 (Rows 0 .. 23) (not modified)
     ; NOTES: Version 3! X and Y is swapped from earlier version!
     ; [$F5] = HgrLoY[ Y ] + ScreenLo + X
-                     ORG $0321
-    0321:         SetCursorColRow
-    0321:86 F5       STX TmpLo
-    0323:B9 A0 03    LDA HgrLoY,Y   ; HgrLoY[ row ]
-    0326:18          CLC
-    0327:65 F5       ADC TmpLo      ; add column
-    0329:85 F5       STA TmpLo
-    032B:B9 B8 03    LDA HgrHiY,Y   ; HgrHiY[ row ]
-    032E:18          CLC            ; \ could optimize this into
-    032F:65 E6       ADC HgrHi      ; / single ORA HgrHi
-    0331:85 F6       STA TmpHi
-    0333:60          RTS
-    0334:EA          NOP            ; pad
+                    ORG $0321
+    0321:       SetCursorColRow
+    0321:86 F5      STX TmpLo
+    0323:B9 A0 03   LDA HgrLoY,Y    ; HgrLoY[ row ]
+    0326:18         CLC
+    0327:65 F5      ADC TmpLo       ; add column
+    0329:85 F5      STA TmpLo
+    032B:B9 B8 03   LDA HgrHiY,Y    ; HgrHiY[ row ]
+    032E:18         CLC             ; \ could optimize this into
+    032F:65 E6      ADC HgrHi       ; / single ORA HgrHi
+    0331:85 F6      STA TmpHi
+    0333:60         RTS
+    0334:EA         NOP             ; pad
 ```
 
 Enter in:
@@ -1923,23 +1944,25 @@ Enter in:
 
 Now that we have the basic print char working lets extend it to print a C-style string (one that is zero terminated.)
 
+Listing 12:
+
 ```assembly
                   String EQU $F0
 
     ; FUNC: DrawString( *text )
     ; PARAM: X = High byte of string address
     ; PARAM: Y = Low  byte of string address
-    037E:            ORG $037E
-    037E:         DrawString
+    037E:           ORG $037E
+    037E:       DrawString
     037E:84 F0       STY String+0
     0380:86 F1       STX String+1
     0382:A0 00       LDY #0
-    0384:B1 F0    .1 LDA (String),Y
+    0384:B1 F0  .1   LDA (String),Y
     0386:F0 07       BEQ .2         ; null byte? Done
     0388:20 10 03    JSR DrawChar   ; or DrawCharCol for speed
     038B:C0 28       CPY #40        ; col < 40?
     038D:90 F5       BCC .1
-    038F:60       .2 RTS
+    038F:60     .2   RTS
 ```
 <hr>
 **AppleWin**:
@@ -1951,6 +1974,8 @@ Now that we have the basic print char working lets extend it to print a C-style 
 
 
 And our example to verify that it works:
+
+Listing Demo 5:
 
 ```assembly
     ; FUNC: DemoDrawString()
@@ -2211,9 +2236,9 @@ Hey!  Homework?  Yes, the only (true) way to demonstrate you understand the theo
     very bottom scanline should be "blank."
 
 
-# Recap
+# Recap - Font Draw
 
-Here are all the (core) routines we've entered in so far:
+Here are all the (core) font rendering routines we've entered in so far:
 
 ```
     0301:   48 6A 6A 6A 6A 20 0A
@@ -2240,7 +2265,7 @@ Here are all the (core) routines we've entered in so far:
     03C8:00 00 01 01 02 02 03 03
 ```
 
-(To save this: `BSAVE CODE_0300.BIN,A$300,L$D0`)
+(To save this: `BSAVE FONTDRAW.BIN,A$300,L$D0`)
 
 # Other Fonts
 
@@ -2405,7 +2430,7 @@ Hmm, some of those glyphs are badly designed (inconsistent.) :-/ That's the bigg
 Let's write a program to view all the ASCII characters.
 
 ```Assembly
-                .ORG $1050
+                ORG $1050
                 ; <<Forthcoming!>>
 ```
 
