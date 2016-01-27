@@ -1,6 +1,6 @@
 #Apple ]\[ //e HGR Font 6502 Assembly Language Tutorial
 
-Revision: 44, Jan 26, 2016.
+Revision: 45, Jan 27, 2016.
 
 # Table of Contents
 
@@ -37,8 +37,9 @@ Revision: 44, Jan 26, 2016.
  * Exercise 2: ScrollHgrUpPixel()
 * Recap
 * Other Fonts
- * Fat Font / Beautiful Boot
-* What's Next?
+ * Fat Stroke Fonts
+  * Beautiful Boot
+* What\'s Next?
 * Conclusion
 * Solutions
  * Solution 1: ScrollHgrUpLine()
@@ -721,7 +722,6 @@ Here's the disassembly of our (hard-coded) DrawChar() program:
     090E:A5 E6       LDA HgrHi      ; to working pointer
     0910:85 F6       STA TmpHi
     0912:60          RTS
-
     ; FUNC: DrawChar()
     ; PARAM: A = glyph to draw
     ; PARAM: Y = column to draw at; $0 .. $27 (Columns 0 .. 39) (not modified)
@@ -2152,7 +2152,14 @@ Here are all the (core) routines we've entered in so far:
 
 # Other Fonts
 
-## Fat Font / Beautiful Boot
+## Fat Stroke Fonts
+
+[Moon Patrol](https://www.google.com/search?q=apple+2+moon+patrol&tbm=isch) on the Apple 2 used what I call a "Fat Stroke Font" -- each stroke was 2 pixels when possible.
+
+A similiar font is the one used by "Beautiful Boot".  Let's examine it.
+
+
+### Beautiful Boot
 
 Here is the font used by Beautiful Boot
 
@@ -2302,6 +2309,15 @@ Hmm, some of those glyphs are badly designed (inconsistent.) :-/ That's the bigg
 
  * When to follow the "rules", and
  * When to bend/break the "rules".
+
+Let's write a program to view all the ASCII characters.
+
+```Assembly
+                .ORG $1050
+                
+```
+
+
 
 Here is a table of all the glyphs that we'll eventually fix:
 
@@ -3103,6 +3119,7 @@ That's all folks!  Now go write some cool font blitter code.
 - [x] Screenshots!
 - [x] Cleanup all assembly for consistent indentation and alignment
 - [x] Count cycles of old and new DrawCharCol Address Calculation
+- [x] Alternative `Beautiful Boot` Font
 - [ ] Binary code for 300.bin and 1000.bin so you can load it directly into the emulator (In progress)
 - [ ] Disk image: `HGR_FONT.DSK` (In progress)
 - [ ] Alternative fonts
