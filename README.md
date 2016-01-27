@@ -1,6 +1,6 @@
 #Apple ]\[ //e HGR Font 6502 Assembly Language Tutorial
 
-Revision: 52, Jan 27, 2016.
+Revision: 53, Jan 27, 2016.
 
 # Table of Contents
 
@@ -1754,7 +1754,21 @@ We'll split this table of 16-bit addresses into Low and High bytes for easier ac
 
 This is our mini HGR Y Address look-up table. "Funny" that it has 24 entries -- the same height as our text screen. :-)
 
-Enter these bytes (or save [hgrtable.bin](hgrtable.bin) and `bload hgrtable.bin,3A0`):
+Listing 9a:
+
+```assembly
+                    ORG $03A0
+                HgrLoY
+                    DFB $00,$80,$00,$80,$00,$80,$00,$80
+                    DFB $28,$A8,$28,$A8,$28,$A8,$28,$A8
+                    DFB $50,$D0,$50,$D0,$50,$D0,$50,$D0
+                HgrHiY
+                    DFB $00,$00,$01,$01,$02,$02,$03,$03
+                    DFB $00,$00,$01,$01,$02,$02,$03,$03
+                    DFB $00,$00,$01,$01,$02,$02,$03,$03
+```
+
+Enter these bytes (or download [hgrtable.bin](hgrtable.bin) and `BLOAD HGRTABLE.BIN,3A0`):
 
 Our `HgrLoY` table:
 
