@@ -1,6 +1,6 @@
 #Apple ]\[ //e HGR Font 6502 Assembly Language Tutorial
 
-Revision: 56, Jan 27, 2016.
+Revision: 57, Jan 27, 2016.
 
 # Table of Contents
 
@@ -696,12 +696,12 @@ How did I know to use $0400 when going to the next line?  One quirk of the HGR s
 Before we can start a simple `DrawChar(char c)` function, we also first need to assign some zero page memory locations for our static and temporary variables, our 16-bit address of where want to draw to. Since we also have our font data, we need a symbol for that too.
 
 ```assembly
-                  HgrLo   EQU $E5   ; Low  byte Pointer to screen destination
-                  HgrHi   EQU $E6   ; High byte Pointer to screen destination
-                  TmpLo   EQU $F5   ; Low  byte Working pointer to screen byte
-                  TmpHi   EQU $F6   ; High byte Working pointer to screen byte
+                HgrLo   EQU $E5   ; Low  byte Pointer to screen destination
+                HgrHi   EQU $E6   ; High byte Pointer to screen destination
+                TmpLo   EQU $F5   ; Low  byte Working pointer to screen byte
+                TmpHi   EQU $F6   ; High byte Working pointer to screen byte
 
-                  Font    EQU $6000
+                Font    EQU $6000
 ```
 
 Here's the disassembly of our (hard-coded) DrawChar() program:
@@ -1008,7 +1008,7 @@ Wait, you say! There IS a way to solve this problem -- and it doesn't take later
 Listing 4a:
 
 ```assembly
-                  TopHi   EQU $FD
+                TopHi   EQU $FD
 
                     ORG $034C
     034C:       _DrawChar1
@@ -1960,22 +1960,22 @@ Now that we have the basic print char working lets extend it to print a C-style 
 Listing 12:
 
 ```assembly
-                  String EQU $F0
+                String  EQU $F0
 
     ; FUNC: DrawString( *text )
     ; PARAM: X = High byte of string address
     ; PARAM: Y = Low  byte of string address
     037E:           ORG $037E
     037E:       DrawString
-    037E:84 F0       STY String+0
-    0380:86 F1       STX String+1
-    0382:A0 00       LDY #0
-    0384:B1 F0  .1   LDA (String),Y
-    0386:F0 07       BEQ .2         ; null byte? Done
-    0388:20 10 03    JSR DrawChar   ; or DrawCharCol for speed
-    038B:C0 28       CPY #40        ; col < 40?
-    038D:90 F5       BCC .1
-    038F:60     .2   RTS
+    037E:84 F0      STY String+0
+    0380:86 F1      STX String+1
+    0382:A0 00      LDY #0
+    0384:B1 F0  .1  LDA (String),Y
+    0386:F0 07      BEQ .2         ; null byte? Done
+    0388:20 10 03   JSR DrawChar   ; or DrawCharCol for speed
+    038B:C0 28      CPY #40        ; col < 40?
+    038D:90 F5      BCC .1
+    038F:60     .2  RTS
 ```
 <hr>
 **AppleWin**:
@@ -2123,9 +2123,9 @@ And here is the assembly:
     ; DATA:
     ;    $6000.$63FF  Font 7x8 Data
     ;    $6400.$642F  HgrLoY, HgrHiY table for every 8 scanlines
-    1300:         Txt    EQU $F7
+    1300:       Txt  EQU $F7
                      ORG $1300
-    1300:         CopyTextToHgr
+    1300:       CopyTextToHgr
     1300:A9 00       LDA #0
     1302:85 F3       STA row
     1304:85 E5       STA $E5
@@ -2656,9 +2656,9 @@ However each HGR "text" line takes 8 scanlines (since our font cell is 7x8).
 We could code this up as:
 
 ```assembly
-                  Src    EQU $F8
-                  Dst    EQU $FA
-                  Tmp    EQU $FC
+                Src     EQU $F8
+                Dst     EQU $FA
+                Tmp     EQU $FC
 
     ; NOTE: Requires $E6 to be initialized with $20 or $40 for graphics page
 
