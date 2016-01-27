@@ -1,6 +1,6 @@
 #Apple ]\[ //e HGR Font 6502 Assembly Language Tutorial
 
-Revision: 50, Jan 27, 2016.
+Revision: 51, Jan 27, 2016.
 
 # Table of Contents
 
@@ -96,7 +96,7 @@ When you are at the Applesoft `]` prompt type in (or paste) the following:
     FC58G
     400:41
 
-We used the the ASCII char `A` which has a hex value 0x41.  Hmm, OK, so we see an `A` but why is it flashing?
+We used the ASCII character `A` which has a hex value 0x41.  Hmm, OK, so we see an `A` but why is it flashing??
 
 <hr>
 **Note**: If you use AppleWin, select the lines, copy, switch back to the emulator, and press Shift-Insert to paste.
@@ -1767,7 +1767,6 @@ Our `HgrHiY` table:
     03B8:00 00 01 01 02 02 03 03
     03C0:00 00 01 01 02 02 03 03
     03C8:00 00 01 01 02 02 03 03
-
 
 <hr>
 **AppleWin** users: To save this press `F7`, at the debugger console `bsave "hgrtable.bin",3A0:3CF`, press `F7`.
