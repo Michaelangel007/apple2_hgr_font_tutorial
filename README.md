@@ -1,6 +1,6 @@
 #Apple ]\[ //e HGR Font 6502 Assembly Language Tutorial
 
-Revision: 55, Jan 27, 2016.
+Revision: 56, Jan 27, 2016.
 
 # Table of Contents
 
@@ -1386,16 +1386,16 @@ That might look like something like this:
     ROL             ; C=R A=0stuvwPQ
     ROL             ; C=0 A=stuvwPQR
     PHA
-    AND #1F         ;        = %000stuvw
+    AND #$1F        ;        = %000stuvw
     STA _LoadFont+1 ; AddressLo = FontLo + (c*8)
     PLA
-    AND #E0
+    AND #$E0
     CLC
     ADC AddressHi
     STA _LoadFont+2
 ```
 
-Hmm, that seems like an **awful lot of work** just for some `bit-shuffling`!! For one thing we're doing a shift and `stuvw` is not taking advantage of it.  Can we not we make use of the fact that we will eventually be doing `AND #1F` -> `AND #F8` and `AND #E0` -> `AND #07` ?
+Hmm, that seems like an **awful lot of work** just for some `bit-shuffling`!! For one thing we're doing a shift and `stuvw` is not taking advantage of it.  Can we not we make use of the fact that we will eventually be doing `AND #1F` -> `AND #$F8` and `AND #E0` -> `AND #07` ?
 
 The **lateral** thinking is to _use partial results_.
 
@@ -1405,11 +1405,11 @@ The **lateral** thinking is to _use partial results_.
     2     Q   Rstuvw?P
     3     R   stuvw?PQ
               --push A--
-              stuvw000 <- A & #F8
+              stuvw000 <- A & #$F8
               --store low byte offset--
               --pop A--
     4     s   tuvw?PQR
-              00000PQR <- A & #07
+              00000PQR <- A & #$07
               --CLC--
               --add FontHi to A
               --store high byte offset--
@@ -1429,7 +1429,7 @@ Listing 7:
     033B:2A         ROL             ; C=Q A=%Rstuvw?P
     033C:2A         ROL             ; C=R A=%stuvw?PQ
     033D:AA         TAX             ;     X=%stuvw?PQ push glyph
-    033E:29 F8      AND #F8         ;     A=%stuvw000
+    033E:29 F8      AND #$F8        ;     A=%stuvw000
     0340:8D 53 03   STA _LoadFont+1 ; AddressLo = (c*8)
     0343:8A         TXA             ;     A=%stuvw?PQ pop glyph
     0344:29 03      AND #3          ; Optimization: s=0 implicit CLC !
@@ -1448,7 +1448,7 @@ Here is a comparison between the original and final version (clock cycle timings
     2 AND #1F         2 ROL              
     2 ASL             2 ROL              
     2 ASL             2 TAX              
-    2 ASL             2 AND #F8          
+    2 ASL             2 AND #$F8         
     2 ADC #<Font      4 STA _LoadFont+1  
     4 STA _LoadFont+1 2 TXA              
     4 PLA             2 AND #3           
@@ -1618,7 +1618,7 @@ Listing 8:
     ; FUNC: DrawHexNib() = $030C
     ; PARAM: A = nibble to print as hex char
     030A:       DrawHexNib
-    030A:29 0F      AND #F          ; base 16
+    030A:29 0F      AND #$F         ; base 16
     030C:AA         TAX             ;
     030D:BD 90 03   LDA NIB2HEX,X   ; nibble to ASCII
                                     ; intentional fall into PrintChar
@@ -2264,7 +2264,7 @@ Here are all the (core) font rendering routines we've entered in so far:
     0338:03 68 2A 2A 2A AA 29 F8
     0340:8D 53 03 8A 29 03 2A 69
     0348:60 8D 54 03 A6 F6 86 FD
-    0350:A2 00 BD 00 00 91 F5 18
+    0350:A2 00 BD 00 60 91 F5 18
     0358:A5 F6 69 04 85 F6 E8 E0
     0360:08 D0 EF C8 A6 FD 86 F6
     0368:60
