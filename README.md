@@ -1,6 +1,6 @@
 #Apple ]\[ //e HGR Font 6502 Assembly Language Tutorial
 
-Revision: 53, Jan 27, 2016.
+Revision: 54, Jan 27, 2016.
 
 # Table of Contents
 
@@ -1878,8 +1878,8 @@ Listing 10:
     369:20 13 03    JSR SetCursorRow
     36C:18          CLC
     36D:98          TYA
-    36E:65 F5       ADC $F5
-    371:85 F5       STA $F5
+    36E:65 F5       ADC TmpLo
+    371:85 F5       STA TmpLo
     373:60          RTS
 ```
 Or are we stuck? Since we're using a function to calculate the destination address let's fix the order.
@@ -1915,8 +1915,8 @@ And change the low byte to add `X` instead:
     979:20 13 03    JSR SetCursorRow
     97C:18          CLC
     37D:88          TXA             ; changed from: TYA
-    97E:65 F5       ADC $F5
-    981:85 F5       STA $F5
+    97E:65 F5       ADC TmpLo
+    981:85 F5       STA TmpLo
     983:60
 ```
 
