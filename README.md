@@ -849,7 +849,7 @@ Notice how after 8 scan lines we end up with and `Tmp` address of $4xxx (or $6xx
     0364:C8          INY
     0365:18          CLC            ; Note:
     0366:A5 F6       LDA TmpHi      ;     (To the astute reader)
-    0368:E9 1F       SBC #$1F       ; <-- ??? Shouldn't this be #20 ?!
+    0368:E9 1F       SBC #$1F       ; <-- ??? Shouldn't this be #$20 ?!
     036A:85 F6       STA TmpHi
     036C:60          RTS
 ```
@@ -937,7 +937,7 @@ Hmm, we would need to replace `SEC SBC` with `AND OR` which we might think would
     0364:C8          INY
     0365:A5 F6       LDA TmpHi
     0367:29 1F       AND #%00011111 ; Requires an extra OR
-    0369:09 20       ORA #20        ; Hard-code to HGR page 1
+    0369:09 20       ORA #$20       ; Hard-code to HGR page 1 (high byte)
     036B:85 F6       STA TmpHi
     036D:60          RTS
 ```
