@@ -1,6 +1,6 @@
 #Apple ]\[ //e HGR Font 6502 Assembly Language Tutorial
 
-Revision: 43, Jan 26, 2016.
+Revision: 44, Jan 26, 2016.
 
 # Table of Contents
 
@@ -36,6 +36,8 @@ Revision: 43, Jan 26, 2016.
  * Exercise 1: ScrollHgrUpLine()
  * Exercise 2: ScrollHgrUpPixel()
 * Recap
+* Other Fonts
+ * Fat Font / Beautiful Boot
 * What's Next?
 * Conclusion
 * Solutions
@@ -2147,6 +2149,277 @@ Here are all the (core) routines we've entered in so far:
 ```
 
 (To save this: `BSAVE CODE_0300.BIN,A$300,L$D0`)
+
+# Other Fonts
+
+## Fat Font / Beautiful Boot
+
+Here is the font used by Beautiful Boot
+
+```
+    6100:80 80 80 80 80 80 80 80  ' 
+    6108:80 87 87 80 87 87 87 87  '!
+    6110:80 80 80 80 B6 A4 B6 B6  '"
+    6118:80 9E 9E BF 9E BF 9E 9E  '#
+    6120:80 8C 9F B0 9E 83 BE 8C  '$
+    6128:80 BB BB 86 8C 98 B7 B7  '%
+    6130:80 AE 9B BB 8F 86 8F 86  '&
+    6138:80 80 80 80 8C 88 8C 8C  ''
+    6140:80 B8 9C 8E 8E 8E 9C B8  '(
+    6148:80 87 8E 9C 9C 9C 8E 87  ')
+    6150:80 88 AA 9C BE 9C AA 88  '*
+    6158:80 80 8C 8C BF BF 8C 8C  '+
+    6160:83 86 87 80 80 80 80 80  ',
+    6168:80 80 80 80 BE BE 80 80  '-
+    6170:80 87 87 80 80 80 80 80  '.
+    6178:80 83 87 8E 9C B8 F0 E0  '/
+    6180:80 9E B3 B3 B3 B3 B3 9E  '0
+    6188:80 BF 8C 8C 8C 8F 8E 8C  '1
+    6190:80 BF BF 8E B8 B3 BF 9E  '2
+    6198:80 9E BF B0 BE B0 BF 9E  '3
+    61A0:80 B0 B0 BF B3 B6 BC B8  '4
+    61A8:80 9E BF B0 9F 83 BF BF  '5
+    61B0:80 9E BF B3 9F 83 BF 9E  '6
+    61B8:80 8C 8C 8C 98 B0 BF BF  '7
+    61C0:80 9E BF B3 9E B3 BF 9E  '8
+    61C8:80 9E BF B0 BE B3 BF 9E  '9
+    61D0:80 9C 9C 80 80 9C 9C 80  ':
+    61D8:83 86 87 80 80 87 87 80  ';
+    61E0:80 F0 B8 9C 8E 9C B8 F0  '<
+    61E8:80 80 80 BE 80 BE 80 80  '=
+    61F0:80 87 8E 9C B8 9C 8E 87  '>
+    61F8:80 8C 80 8C 98 B3 BF 9E  '?
+    6200:80 BE 83 BB BB B3 B3 9E  '@
+    6208:80 B3 B3 BF BF B3 BF 9E  'A
+    6210:80 9F BF B3 9F B3 BF 9F  'B
+    6218:80 9E BF B3 83 B3 BF 9E  'C
+    6220:80 9F BF B3 B3 B3 BF 9F  'D
+    6228:80 BF BF 83 9F 83 BF BF  'E
+    6230:80 83 83 9F 9F 83 BF BF  'F
+    6238:80 9E BF B3 BB 83 BF 9E  'G
+    6240:80 B3 B3 BF BF B3 B3 B3  'H
+    6248:80 BF BF 8C 8C 8C BF BF  'I
+    6250:80 9E BF B3 B0 B0 B0 B0  'J
+    6258:80 B3 BB 9F 8F 9F BB B3  'K
+    6260:80 BF BF 83 83 83 83 83  'L
+    6268:80 B3 B3 B3 B3 B3 BF B3  'M
+    6270:80 B3 B3 BB BF B7 B3 B3  'N
+    6278:80 9E BF B3 B3 B3 BF 9E  'O
+    6280:80 83 83 9F BF B3 BF 9F  'P
+    6288:80 AE 93 AB A3 A3 BF 9E  'Q
+    6290:80 B3 BB 9F BF B3 BF 9F  'R
+    6298:80 9E B3 B0 9E 83 B3 9E  'S
+    62A0:80 8C 8C 8C 8C 8C BF BF  'T
+    62A8:80 9E BF B3 B3 B3 B3 B3  'U
+    62B0:80 8C 9E B3 B3 B3 B3 B3  'V
+    62B8:80 B3 BF B3 B3 B3 B3 B3  'W
+    62C0:80 B3 B3 9E 8C 9E B3 B3  'X
+    62C8:80 8C 8C 8C 9E B3 B3 B3  'Y
+    62D0:80 BF BF 86 8C 98 BF BF  'Z
+    62D8:80 BC BC 8C 8C 8C BC BC  '[
+    62E0:80 E0 F0 B8 9C 8E 87 83  '\
+    62E8:80 8F 8F 8C 8C 8C 8F 8F  ']
+    62F0:80 80 80 80 80 BF 9E 8C  '^
+    62F8:80 FF FF 80 80 80 80 80  '_
+    6300:80 80 80 80 80 98 8C 86  '`
+    6308:80 BE B3 BE B0 9E 80 80  'a
+    6310:80 9F B3 B3 B3 9F 83 83  'b
+    6318:80 9E B3 83 B3 9E 80 80  'c
+    6320:80 BE B3 B3 B3 BE B0 B0  'd
+    6328:80 9E 83 9F B3 9E 80 80  'e
+    6330:80 86 86 86 9F 86 B6 9C  'f
+    6338:9E B0 BE B3 B3 9E 80 80  'g
+    6340:80 B3 B3 B3 B3 9F 83 83  'h
+    6348:80 8C 8C 8C 8C 80 8C 80  'i
+    6350:9E B3 B3 B0 B0 B0 80 B0  'j
+    6358:80 B3 9B 8F 9B B3 83 83  'k
+    6360:80 9E 8C 8C 8C 8C 8C 8E  'l
+    6368:80 B3 B3 B3 BF B3 80 80  'm
+    6370:80 B3 B3 B3 B3 9F 80 80  'n
+    6378:80 9E B3 B3 B3 9E 80 80  'o
+    6380:83 83 9F B3 B3 9F 80 80  'p
+    6388:B0 B0 BE B3 B3 BE 80 80  'q
+    6390:80 83 83 83 B3 9F 80 80  'r
+    6398:80 9E B0 9E 83 9E 80 80  's
+    63A0:80 9C B6 86 86 9F 86 86  't
+    63A8:80 BE B3 B3 B3 B3 80 80  'u
+    63B0:80 8C 9E B3 B3 B3 80 80  'v
+    63B8:80 B3 BF B3 B3 B3 80 80  'w
+    63C0:80 B3 9E 8C 9E B3 80 80  'x
+    63C8:9E B0 BE B3 B3 B3 80 80  'y
+    63D0:80 BF 86 8C 98 BF 80 80  'z
+    63D8:80 9C 9E 86 87 86 9E 9C  '{
+    63E0:8C 8C 8C 8C 8C 8C 8C 8C  '|
+    63E8:80 8E 9E 98 B8 98 9E 8E  '}
+    63F0:80 80 80 80 80 98 BF 86  '~
+    63F8:00 00 00 00 00 00 00 00  '#
+```
+
+Again copy this to higher memory
+
+```
+8000<6000.63FFM
+```
+
+Fire up our ASCII Character Inspector. Recall:
+
+```
+    1000:A9 00 85 FE A9 00 85 F5
+    1008:A9 20 85 F6 A5 FE A0 00
+    1010:20 37 10 AD 00 C0 10 FB
+    1018:8D 10 C0 C9 88 D0 0A C6
+    1020:FE A5 FE 29 7F 85 FE 10
+    1028:DB C9 95 D0 05 E6 FE 18
+    1030:90 EF C9 9B D0 DD 60 48
+    1038:20 10 03 A9 20 20 10 03
+    1040:68 4C 01 03
+    1000G
+```
+
+Press `ESC` when done viewing.
+
+Argh, those glyphs are upside down!
+
+Here's our 5 byte patch to fix our rendering code.
+
+```assembly
+    0350:         _DrawChar
+    0350:A2 07       LDX #7         ; <- #0
+    :
+    035E:CA          DEX            ; <- INX
+    035F:EA EA       NOP NOP        ; <- CPX #8
+    0361:10 EF       BPL _LoadFont  ; <- BNE _LoadFont
+```
+
+Enter in:
+
+```
+    351:7
+    35E:CA EA EA 10
+```
+
+Hmm, some of those glyphs are badly designed (inconsistent.) :-/ That's the biggest problem amateur artists have; they haven't yet internalized a "consistent style" -- their's is all over the place.  This comes with experience of knowing:
+
+ * When to follow the "rules", and
+ * When to bend/break the "rules".
+
+Here is a table of all the glyphs that we'll eventually fix:
+
+|Glyph|
+|:---:|
+| 2 |
+| 7 |
+| M |
+| Q |
+| S |
+| W |
+| Y |
+| X |
+| ^ |
+| j |
+| m |
+| s |
+
+Alrighty then.
+
+The first glyph that stands out is the `S`. Our rule is:
+
+* Horizontal and Vertical lines are 2 pixels when possible.
+
+
+Change the `S` = $53 @ `6298`:
+
+From:
+
+```
+    6298:80 9E B3 B0 9E 83 B3 9E  'S
+```
+
+To:
+
+```
+    6298:80 9E BF B8 9E 87 BF 9E  'S
+```
+
+While that matches the style of `5` it doesn't match the style of `A`.
+Let's fix the and bottom rows.
+
+```
+    6298:80 9F BF B8 9E 87 BF BE  'S
+```
+
+There we go!
+
+Q. How did I know what bits/bytes to use?
+
+A. The "Beautiful Boot" font is 7x8, with the last pixel being a spacer. This makes each glyph effectively by 6x8. The font also sets the high bit so we'll need to preserve that. Why? (Answer below.)
+
+a) Remember, bits are reversed on the HGR screen:
+
+|Bits|HGR|Hex|
+|:--:|--:|--:|
+|0000| $0| $0|
+|1000| $8| $1|
+|0100| $4| $2|
+|1100| $C| $3|
+|0010| $2| $4|
+|1010| $A| $5|
+|0110| $6| $6|
+|1110| $E| $7|
+|0001| $1| $8|
+|1001| $9| $9|
+|0101| $5| $A|
+|1101| $D| $B|
+|0011| $3| $C|
+|1011| $B| $D|
+|0111| $7| $E|
+|1111| $F| $F|
+
+ Let's sort that table by HGR hex value:
+
+|Bits|HGR|Hex|
+|:--:|--:|--:|
+|0000| $0| $0|
+|0001| $1| $8|
+|0010| $2| $4|
+|0011| $3| $C|
+|0100| $4| $2|
+|0101| $5| $A|
+|0110| $6| $6|
+|0111| $7| $E|
+|1000| $8| $1|
+|1001| $9| $9|
+|1010| $A| $5|
+|1011| $B| $D|
+|1100| $C| $3|
+|1101| $D| $B|
+|1110| $E| $7|
+|1111| $F| $F|
+
+ With our "flip bits table" we can list the `old` and `new` bytes:
+
+|HGR Bits |HGR|Hex|Row|
+|:-------:|--:|--:|:--|
+|0111_1001|$79|$9E| 0 |
+|0111_1101|$7D|$BE| 0 |
+|    -    | --| --| - |
+|1100_1101|$CD|$B3| 1 |
+|1111_1101|$CF|$BF| 1 |
+|    -    | --| --| - |
+|0000_0110|$C1|$83| 2 |
+|0000_1110|$E1|$87| 2 |
+|    -    | --| --| - |
+|0000_1101|$0D|$B0| 4 |
+|0001_1101|$1D|$B8| 4 |
+|    -    | --| --| - |
+|0111_1001|$79|$9E| 0 |
+|1111_1001|$F9|$9F| 0 |
+
+b) Did I manually enter in those hex values?
+
+`<<Forthcoming!>>`
+
+
 
 # What's next?
 
