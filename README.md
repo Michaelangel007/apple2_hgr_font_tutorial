@@ -1,6 +1,6 @@
 #Apple ]\[ //e HGR Font 6502 Assembly Language Tutorial
 
-Revision: 51, Jan 27, 2016.
+Revision: 52, Jan 27, 2016.
 
 # Table of Contents
 
@@ -1672,7 +1672,7 @@ Listing Demo 3c:
     1037:       Patch2
     1037:48         PHA             ; save c
     1038:20 10 03   JSR PrintChar
-    103B:A9 20      LDA ' '         ; Draw whitespace
+    103B:A9 20      LDA #' '        ; Draw whitespace
 ```
 
 Enter in these changes:
