@@ -1,6 +1,6 @@
 #Apple ]\[ //e HGR Font 6502 Assembly Language Tutorial
 
-Revision: 46, Jan 27, 2016.
+Revision: 47, Jan 27, 2016.
 
 # Table of Contents
 
@@ -741,7 +741,7 @@ Listing 1:
     0350:         _DrawChar
     0350:A2 00       LDX #0
     0352:         _LoadFont         ; A = font[ offset ]
-    0352:BD 00 62    LDA Font+#$200,X
+    0352:BD 00 62    LDA Font+$200,X
     0355:91 F5       STA (TmpLo),Y  ; screen[col] = A
     0357:18          CLC
     0358:A5 F6       LDA TmpHi
@@ -1002,23 +1002,28 @@ We'll briefly touch upon this topic of optimization again with `bit-shifts` and 
 
 Wait, you say! There IS a way to solve this problem -- and it doesn't take lateral thinking.  What we _really_ are doing is just _restoring_ TmpHi back to its previous value!  We need to **save** TmpHi when we set the `rows to draw` to 0, and **restore** it after drawing 8 rows.
 
+Listing 4a:
+
 ```assembly
+                  TopHi   EQU $FD
+
                      ORG $034C
-    034C:          _DrawChar1
+    034C:         _DrawChar1
     034C:A6 F6       LDX TmpHi
     034E:86 FD       STX TopHi
 
-    ;                === _DrawChar begin ===
-    ;                 ORG $0350
-    ;0350:         _DrawChar
-    ;                 ...
-    ;035F:E0 08       CPX #8
-    ;0361:D0 EF       BNE _LoadFont
-    ;0363:60          RTS
-    ;                === DrawChar end ===
+    ;             === _DrawChar begin ===
+    ;                ORG $0350
+    ;350:         _DrawChar
+    ;...:
+    ;35F:E0 08       CPX #8
+    ;361:D0 EF       BNE _LoadFont
+    ;363:60          RTS
+    ;             === DrawChar end ===
 
     ; FUNC: IncCursorCol()
-                     ORG $0363      ; intentional extend _DrawChar
+                     ORG $0363      ; intentional extend _DrawChar by
+    0363:         IncCursorCol      ; over-writing RTS
     0363:C8          INY
     0364:A6  FD      LDX TopHi      ; Move cursor back to top of scanline
     0366:86  F6      STX TmpHi
@@ -1027,18 +1032,24 @@ Wait, you say! There IS a way to solve this problem -- and it doesn't take later
 
 We just need to touch up our entry point `PrintChar` at $0310 instead of calling `_DrawChar` ($0350) we need to call our new `_DrawChar1` ($034C):
 
+Listing 4b:
+
 ```assembly
                      ORG $0310
     0310:         DrawChar
     0310:4C 4C 03    JMP _DrawChar1 ; NEW entry point
+```
 
+
+Listing 5:
+
+```assembly
                      ORG $0A00
     0A00:         DemoDraw3Char
     0A00:20 00 09    JSR PrintChar
     0A03:20 10 03    JSR DrawChar
     0A06:20 10 03    JMP DrawChar
     0A09:60          RTS
-
 ```
 
 Enter in:
@@ -1066,6 +1077,45 @@ We are one step closer to printing a string.  We have a total of 5 `@` because w
     SYM IncCursorCol = 363
     34CL
 <hr>
+
+
+# Recap - Listing 4
+
+Here is what our render glyph code looks like so far:
+
+```assembly
+        HgrLo   = $E5   ; Low  byte Pointer to screen destination
+        HgrHi   = $E6   ; High byte Pointer to screen destination
+        TmpLo   = $F5   ; Low  byte Working pointer to screen byte
+        TmpHi   = $F6   ; High byte Working pointer to screen byte
+        Font    = $6000
+
+        .ORG $310
+DrawChar:
+        JMP _DrawChar1
+
+        .ORG $34C
+_DrawChar1
+        LDX TmpHi
+        STX TopHi
+_DrawChar:
+        LDX #0
+_LoadFont:              ; A = font[ offset ]
+        LDA Font+$200,X
+        STA (TmpLo),Y   ; screen[col] = A
+        CLC
+        LDA TmpHi       ;
+        ADC #4          ; screen += 0x400
+        STA TmpHi
+        INX
+        CPX #8
+        BNE _LoadFont
+IncCursorCol:
+        INY
+        LDX TopHi       ; Move cursor back to top of scanline
+        STX TmpHi
+        RTS
+```
 
 
 ## DrawChar() version 2
@@ -1259,7 +1309,7 @@ Our prefix code to setup the source address becomes:
     0350:         _DrawChar
     0350:A2 00       LDX #0         ; Note: next instruction is self-modified !
     0352:         _LoadFont         ; A = font[ offset ]
-    0352:BD 00 00    LDA Font+#$200,X
+    0352:BD 00 00    LDA $0000,X
 ```
 
 Did you catch that **note** ?  One popular trick on the 6502 was `self-modifying code`.  Instead of wasting memory with yet-another-variable we directly change the load/store instructions themselves!  This actually has 2 advantages:
