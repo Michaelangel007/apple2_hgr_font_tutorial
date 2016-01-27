@@ -1,6 +1,6 @@
 #Apple ]\[ //e HGR Font 6502 Assembly Language Tutorial
 
-Revision: 47, Jan 27, 2016.
+Revision: 48, Jan 27, 2016.
 
 # Table of Contents
 
@@ -1007,19 +1007,19 @@ Listing 4a:
 ```assembly
                   TopHi   EQU $FD
 
-                     ORG $034C
-    034C:         _DrawChar1
-    034C:A6 F6       LDX TmpHi
-    034E:86 FD       STX TopHi
+                    ORG $034C
+    034C:       _DrawChar1
+    034C:A6 F6      LDX TmpHi
+    034E:86 FD      STX TopHi
 
-    ;             === _DrawChar begin ===
-    ;                ORG $0350
-    ;350:         _DrawChar
+                ; === _DrawChar begin ===
+                ;   ORG $0350
+    ;350:       _DrawChar
     ;...:
-    ;35F:E0 08       CPX #8
-    ;361:D0 EF       BNE _LoadFont
-    ;363:60          RTS
-    ;             === DrawChar end ===
+    ;35F:E0 08      CPX #8
+    ;361:D0 EF      BNE _LoadFont
+    ;363:60         RTS
+    ;           ; === DrawChar end ===
 
     ; FUNC: IncCursorCol()
                      ORG $0363      ; intentional extend _DrawChar by
@@ -1039,7 +1039,6 @@ Listing 4b:
     0310:         DrawChar
     0310:4C 4C 03    JMP _DrawChar1 ; NEW entry point
 ```
-
 
 Listing 5:
 
