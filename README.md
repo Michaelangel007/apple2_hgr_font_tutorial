@@ -1,6 +1,6 @@
 #Apple ]\[ //e HGR Font 6502 Assembly Language Tutorial
 
-Revision: 48, Jan 27, 2016.
+Revision: 49, Jan 27, 2016.
 
 # Table of Contents
 
@@ -1411,6 +1411,8 @@ The **lateral** thinking is to _use partial results_.
 
 Let's code this up:
 
+Listing 6:
+
 ```Assembly
     ; FUNC: DrawCharCol( c, col ) alias _DrawChar2
     ; PARAM: A = glyph to draw
@@ -1507,6 +1509,8 @@ We now have the ability to print any of the 128 ASCII characters!
 
 Let's verify this by writing a character inspector. We'll use the arrow keys to select the glyph and ESC to exit.
 
+Listing Demo2a:
+
 ```assembly
     ; FUNC: DemoCharInspect()
                   KEYBOARD    EQU $C000
@@ -1573,6 +1577,8 @@ We now have an ASCII char inspector!
 ## Character Inspector version 2
 
 Let's fix it up to print the hex value of the current character we are inspecting:
+
+Listing Demo2b:
 
 ```assembly
                      ORG $1010
@@ -1641,6 +1647,8 @@ And now we have our own DrawHexByte() function.
 ## Character Inspector version 3
 
 Let's add a space after the character but before the hex value to improve readability of the output.  The new code is:
+
+Listing Demo2c:
 
 ```assembly
                      ORG $1010
@@ -1755,6 +1763,8 @@ Our `HgrHiY` table:
 <hr>
 
 To select which row to draw at we'll pass that in the X register to our DrawCharColRow() routine:
+
+Listing 7:
 
 ```assembly
     ; FUNC: SetCursorRow( row )
