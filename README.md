@@ -1,6 +1,6 @@
 #Apple ]\[ //e HGR Font 6502 Assembly Language Tutorial
 
-Revision: 54, Jan 27, 2016.
+Revision: 55, Jan 27, 2016.
 
 # Table of Contents
 
@@ -1092,11 +1092,11 @@ Here is what our render glyph code looks like so far:
         TmpHi   = $F6   ; High byte Working pointer to screen byte
         Font    = $6000
 
-        .ORG $310
+        ORG $310
 DrawChar:
         JMP _DrawChar1
 
-        .ORG $34C
+        ORG $34C
 _DrawChar1
         LDX TmpHi
         STX TopHi
@@ -1603,7 +1603,7 @@ Listing Demo 3b:
 Listing 8:
 
 ```assembly
-                    ORG $0303
+                    ORG $0301
     ; FUNC: DrawHexByte( c ) = $0301
     ; PARAM: A = byte to print in hex
     0301:       DrawHexByte
