@@ -104,7 +104,10 @@ DEL=rm
 
     ASM_FLAGS="--cpu 65c02"
     LNK_FLAGS="-C apple2bin.cfg"
-    CnL_FLAGS="-t apple2enh -C apple2enh-asm.cfg -u __EXEHDR__"
+
+    #If your code doesn't load below $803 you could alternatively
+    #use this to assemble & link
+    #CnL_FLAGS="-t apple2enh -C apple2enh-asm.cfg -u __EXEHDR__"
 
 # Assemble & Link
     ${DEBUG} ${DEL}                                ${BIN}   ${OBJ}
