@@ -13,21 +13,27 @@
         HgrLo       = $F5
         HgrHi       = $F6
         glyph       = $FE
+        row         = $FF
         DrawChar    = $310
         HgrLoY      = $3A0
         HgrHiY      = $3B8
 
+        START_ROW   = 0
+
 AsciiTable
-        BIT PAGE1       ; Page 1
-        BIT TXTCLR      ; not text, but graphics
-        BIT MIXSET      ; Split screen text/graphics
-        BIT HIRES       ; HGR, no GR
+        LDY #(START_ROW-1) & $FF
+        STY row
 
         LDA #0          ; glyph=0
         STA glyph       ; save which glyph to draw
 
-        LDY #8          ; Row=8
-_RowN
+        BIT PAGE1       ; Page 1
+        BIT TXTCLR      ; not text, but graphics
+        BIT MIXSET      ; Split screen text/graphics
+        BIT HIRES       ; HGR, no GR
+_NextRow
+        INC row
+        LDY row
         LDA HgrLoY,Y
         STA HgrLo       ; Screen Address Lo
         LDA HgrHiY,Y
@@ -35,26 +41,20 @@ _RowN
         STA HgrHi       ; Screen Address Hi
 
         LDY #00         ; Y = col
-_Glyph
+_NextCol
         LDA glyph       ; A = glyph
         JSR DrawChar
         INC glyph       ; yes, ++glyph
         LDA glyph       ;
         CMP #$20        ; done 16 chars?
-        BEQ _Row1
+        BEQ _NextRow
         CMP #$40
-        BEQ _Row2
+        BEQ _NextRow
         CMP #$60
-        BEQ _Row3
+        BEQ _NextRow
         CMP #$80
-        BNE _Glyph      ;
-_Done   RTS             ; Optimization: BEQ _Row4
-_Row1   LDY #9
-        BNE _RowN
-_Row2   LDY #10
-        BNE _RowN
-_Row3   LDY #11
-        BNE _RowN
+        BNE _NextCol
+_Done   RTS             ; Optimization: BEQ _NextRow
 
 __END:
 
