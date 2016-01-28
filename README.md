@@ -1,6 +1,6 @@
 #Apple ]\[ //e HGR Font 6502 Assembly Language Tutorial
 
-Revision: 61, Jan 27, 2016.
+Revision: 62, Jan 28, 2016.
 
 # Table of Contents
 
@@ -2476,12 +2476,12 @@ Again copy this to higher memory
 8000<6000.63FFM
 ```
 
-Let's display this just a few lines down at row 6. We need to use `row-1` because of the pre-increment at `$1080`.
+Let's display this just a few lines down at row 6. We need to use `row-1` because of the pre-increment at `_NextRow` @ `$1094`.
  
 
 ```
-1081:5
-1080G
+    1081:5
+    1080G
 ```
 
 ![Screenshot ASCII Table Font BB Upside Down](pics/ascii_table_2_fontbb.png?raw=true)
@@ -2560,12 +2560,28 @@ To:
     6298:80 9E BF B8 9E 87 BF 9E  'S
 ```
 
+Let's display our new glyphs at row 12.
+
+```
+    1081:0B
+    1080G
+```
+
+![Screenshot ASCII Table Font BB S2](pics/ascii_table_s2_fontbb.png?raw=true)
+
+
 While that matches the style of `5` it doesn't match the style of `A`.
 Let's fix the and bottom rows.
 
 ```
     6298:80 9F BF B8 9E 87 BF BE  'S
 ```
+
+![Screenshot ASCII Table Font BB S3](pics/ascii_table_s3_fontbb.png?raw=true)
+
+And just in case you had trouble seeing the difference ...
+
+![Screenshot ASCII Table Font BB S4](pics/ascii_table_s4_fontbb.png?raw=true)
 
 There we go!
 
