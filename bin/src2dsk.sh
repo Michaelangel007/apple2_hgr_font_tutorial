@@ -126,7 +126,7 @@ if [ -f ${OBJ} ]; then
 
     if [ ! -f ${DSK} ]; then
         echo "INFO: Using blank disk: ${DSK}"
-        ${COPY} emptydos33.dsk ${DSK}
+        ${COPY} emptydos33_dsk ${DSK}
     else
         echo "INFO: Updatig existing disk: ${DSK}"
         # If you want to keep an existing disk then you'll
