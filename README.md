@@ -1,6 +1,6 @@
 #Apple ]\[ //e HGR Font 6502 Assembly Language Tutorial
 
-Revision: 63, Jan 28, 2016.
+Revision: 64, Jan 28, 2016.
 
 # Table of Contents
 
@@ -40,6 +40,10 @@ Revision: 63, Jan 28, 2016.
 * Other Fonts
  * Fat Stroke Fonts
   * Beautiful Boot
+   * Fat Font: S
+   * Fat Font: X
+   * Fat Font: 2
+   * Fat Font: j
 * What's Next?
 * Conclusion
 * Solutions
@@ -2541,6 +2545,9 @@ Here is a table of all the glyphs that we'll eventually fix:
 
 Alrighty then.
 
+
+### Fat Font: S
+
 The first glyph that stands out is the `S`. Our rule is:
 
 * Horizontal and Vertical lines are 2 pixels when possible.
@@ -2653,6 +2660,8 @@ a) Remember, bits are reversed on the HGR screen:
 b) Did I manually enter in those hex values?
 
 `<<Forthcoming!>>`
+
+### Fat Font: X
 
 The next glyph that stands out is the `X`.
 
@@ -2767,15 +2776,85 @@ We can either do this now, or fix the other glyphs and do this later.
 
 Let's touch up the `2` and `Q` first.
 
+### Fat Font: 2
+
 We want to fix row 4 of the `2`:
 
     6190:80 BF BF 8E 38 B3 BF 9E
 
-Excellent!
-
 ![Screenshot ASCII Table Font BB 2b](pics/ascii_table_2b_fontbb.png?raw=true)
 
+Excellent!
+
 ![Screenshot ASCII Table Font BB 2c](pics/ascii_table_2c_fontbb.png?raw=true)
+
+### Fat Font: j
+
+The serif/terminal on the `f` is one pixel while the serif/tail on the `j` is two pixels.
+
+From:
+
+```
+    6350:9E B3 B3 B0 B0 B0 80 B0
+```
+
+To:
+
+```
+    6350:9E B3 B0 B0 B0 B0 80 B0
+```
+
+![Screenshot ASCII Table Font BB j2](pics/ascii_table_j2_fontbb.png?raw=true)
+
+The dot / tittle on the `j` is inconsistent with the `i`. :-/  Another easy fix:
+
+```
+    6350:9E B3 B0 B0 B0 80 B0 80
+```
+
+![Screenshot ASCII Table Font BB j3](pics/ascii_table_j3_fontbb.png?raw=true)
+
+![Screenshot ASCII Table Font BB j4](pics/ascii_table_j4_fontbb.png?raw=true)
+
+
+# What's next?
+
+What's left? Quite a few things actually:
+
+ * Copy the 80-Column text screen to DHGR (Double High Resolution)
+ * Hook into the COUT so all text appears onto the HGR or DHGR screen
+ * Other 7x8 fonts
+ * Other non-7x8 fonts
+
+
+# Conclusion
+
+Hope this HGR font tutorial helped you understand the inner workings of a font blitter!
+
+Happy (Apple ]\[ //e //c) Hacking!
+
+Michael "AppleWin Debug Dev"
+
+
+# Solutions
+
+## Solution 1: ScrollHgrUpLine()
+
+Figure it out !  You have all the tools and knowledge.
+
+
+Seriously though, start with the data flow. Let's look at the HGR "text" lines we need to copy from/to:
+
+    Src Dst
+     1    0
+     2    1
+     3    2
+     4    3
+     5    4
+     6    5
+     7    6
+     8    7
+
 
 # What's next?
 
