@@ -1,6 +1,6 @@
 #Apple ]\[ //e HGR Font 6502 Assembly Language Tutorial
 
-Revision: 64, Jan 28, 2016.
+Revision: 65, Jan 28, 2016.
 
 # Table of Contents
 
@@ -44,6 +44,12 @@ Revision: 64, Jan 28, 2016.
    * Fat Font: X
    * Fat Font: 2
    * Fat Font: j
+   * Fat Font: s
+   * Fat Font: l
+   * Fat Font: M
+   * Fat Font: W
+   * Fat Font: Q
+   * Fat Font: 7
 * What's Next?
 * Conclusion
 * Solutions
@@ -2540,10 +2546,21 @@ Here is a table of all the glyphs that we'll eventually fix:
 | X |
 | ^ |
 | j |
+| l |
 | m |
 | s |
 
 Alrighty then.
+
+## Quick Review of Typography
+
+Don't bother with [typeface anatomy](https://en.wikipedia.org/wiki/Typeface_anatomy) on Wikipedia.  It is not comprehensive, nor detailed enough.
+
+Here are 2 pictures that will help us understand the aesthetics and language of typography:
+
+![Typography](http://lunaweb.com/blog/wp-content/uploads/2013/06/typography.gif)
+
+![Anatomy of Typography](http://pamelaplatt.com/digital_course_resources/typography/anatomy_of_typography.jpg)
 
 
 ### Fat Font: S
@@ -2760,9 +2777,9 @@ We just need to add 1/2 a pixel on the left edge and 1/2 a pixel on the right ed
 
 ![Screenshot ASCII Table Font BB X6](pics/ascii_table_x6_fontbb.png?raw=true)
 
-![Screenshot ASCII Table Font BB X7](pics/ascii_table_x7_fontbb.png?raw=true)
-
 Looking good!
+
+![Screenshot ASCII Table Font BB X7](pics/ascii_table_x7_fontbb.png?raw=true)
 
 Except we have one minor problem -- the "kerning" between the `W` and `X` versus the `X` and `Y` is no longer consistent.
 
@@ -2774,7 +2791,7 @@ In order to fix this we need to "undo" ALL these half pixel shifts -- all we nee
 
 We can either do this now, or fix the other glyphs and do this later.
 
-Let's touch up the `2` and `Q` first.
+Let's touch up some more glyphs first though.
 
 ### Fat Font: 2
 
@@ -2790,7 +2807,7 @@ Excellent!
 
 ### Fat Font: j
 
-The serif/terminal on the `f` is one pixel while the serif/tail on the `j` is two pixels.
+The serif/terminal on the `f` is one pixel (tall) while the serif/tail on the `j` is two pixels (tall).
 
 From:
 
@@ -2806,7 +2823,7 @@ To:
 
 ![Screenshot ASCII Table Font BB j2](pics/ascii_table_j2_fontbb.png?raw=true)
 
-The dot / tittle on the `j` is inconsistent with the `i`. :-/  Another easy fix:
+The dot / tittle on the `j` is inconsistent with the `i`. :-/  Thankfully, another easy fix:
 
 ```
     6350:9E B3 B0 B0 B0 80 B0 80
@@ -2816,6 +2833,73 @@ The dot / tittle on the `j` is inconsistent with the `i`. :-/  Another easy fix:
 
 ![Screenshot ASCII Table Font BB j4](pics/ascii_table_j4_fontbb.png?raw=true)
 
+### Fat Font: l
+
+The top serif on the lowercase `l` doesn't also match `f`:
+
+From:
+
+```
+    6360:80 9E 8C 8C 8C 8C 8C 8E
+```
+
+To:
+
+```
+    6360:80 9E 8C 8C 8C 8C 8C 87
+```
+
+![Screenshot ASCII Table Font BB l2](pics/ascii_table_l2_fontbb.png?raw=true)
+
+Hmm, the terminal is _too_ long.
+
+```
+    6360:80 9E 8C 8C 8C 8C 8C 86
+```
+
+![Screenshot ASCII Table Font BB l3](pics/ascii_table_l3_fontbb.png?raw=true)
+
+Nope, we need the top-right "hard" edge. The real problem is that the **bottom** of the `l` has serifs while `i` doesn't.  Let's make this a little more _cursive_.
+
+```
+    6360:80 98 8C 8C 8C 8C 8C 86
+```
+
+![Screenshot ASCII Table Font BB l4](pics/ascii_table_l5_fontbb.png?raw=true)
+
+![Screenshot ASCII Table Font BB l5](pics/ascii_table_l4_fontbb.png?raw=true)
+
+### Fat Font: s
+
+The lowercase `s` should have the left and right edges aligned on the top and bottom rows:
+
+From:
+
+```
+    6398:80 9E B0 9E 83 9E 80 80
+```
+
+To:
+
+```
+    6398:80 9F B0 9E 83 BE 80 80
+```
+
+![Screenshot ASCII Table Font BB s12](pics/ascii_table_s12_fontbb.png?raw=true)
+
+![Screenshot ASCII Table Font BB s13](pics/ascii_table_s13_fontbb.png?raw=true)
+
+### Fat Font: M
+
+The round corners of `A` are **sans serif**.  Let's make the `M` consistent:
+
+### Fat Font: W
+
+### Fat Font: Q
+
+### Fat Font: 7
+
+While the `7` is not bad, we could do a very minor touchup.
 
 # What's next?
 
