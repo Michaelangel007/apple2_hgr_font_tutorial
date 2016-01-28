@@ -1,6 +1,6 @@
 #Apple ]\[ //e HGR Font 6502 Assembly Language Tutorial
 
-Revision: 57, Jan 27, 2016.
+Revision: 58, Jan 27, 2016.
 
 # Table of Contents
 
@@ -1518,12 +1518,13 @@ Listing Demo 3a:
 
 ```assembly
     ; FUNC: DemoCharInspect()
+                KEYBOARD    EQU $C000
+                KEYSTROBE   EQU $C010
+
                 HgrLo       EQU $F5
                 HgrHi       EQU $F6
                 glyph       EQU $FE
-
-                KEYBOARD    EQU $C000
-                KEYSTROBE   EQU $C010
+                DrawChar    EQU $310
 
                      ORG $1000
     1000:         DemoCharInspect
@@ -1531,27 +1532,27 @@ Listing Demo 3a:
     1002:85 FE       STA glyph      ; save which glyph to draw
     1004:A9 00    .1 LDA #0         ; screen = 0x2000
     1006:85 F5       STA HgrLo      ;
-    1008:A9 20       LDA #20        ;
+    1008:A9 20       LDA #$20       ; HGR Page 1
     100A:85 F6       STA HgrHi      ;
     100C:A5 FE       LDA glyph      ; A = glyph
     100E:A0 00       LDY #00        ; Y = col
-    1010:20 10 03    JSR PrintChar
+    1010:20 10 03    JSR DrawChar
     1013:AD 00 C0 .2 LDA KEYBOARD   ; read A=key
-    1016:10 FB       BMI .2         ; no key?
+    1016:10 FB       BPL .2         ; no key?
     1018:8D 10 C0    STA KEYSTROBE  ; debounce key
-    101B:C9 88       CMP #88        ; key == <-- ?
+    101B:C9 88       CMP #$88       ; key == <-- ?
     101D:D0 0A       BNE .4         ;
     101F:C6 FE       DEC glyph      ; yes, --glyph
     1021:A5 FE    .3 LDA glyph      ; glyph &= 0x7F
-    1023:29 7F       AND #7F        ;
+    1023:29 7F       AND #$7F       ;
     1025:85 FE       STA glyph      ;
     1027:10 DB       BPL .1         ; always branch, draw prev char
-    1029:C9 95    .4 CMP #95        ; key == --> ?
+    1029:C9 95    .4 CMP #$95       ; key == --> ?
     102B:D0 05       BNE .5         ;
     102D:E6 FE       INC glyph      ; yes, ++glyph
     102F:18          CLC            ; always branch
     1030:90 EF       BCC .3         ;   draw prev char
-    1032:C9 9B    .5 CMP #9B        ; key == ESC ?
+    1032:C9 9B    .5 CMP #$9B       ; key == ESC ?
     1034:D0 DD       BNE .2         ;
     1036:60          RTS            ; yes, exit
 ```
