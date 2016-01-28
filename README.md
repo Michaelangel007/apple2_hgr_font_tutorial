@@ -2865,9 +2865,9 @@ Nope, we need the top-right "hard" edge. The real problem is that the **bottom**
     6360:80 98 8C 8C 8C 8C 8C 86
 ```
 
-![Screenshot ASCII Table Font BB l4](pics/ascii_table_l5_fontbb.png?raw=true)
+![Screenshot ASCII Table Font BB l4](pics/ascii_table_l4_fontbb.png?raw=true)
 
-![Screenshot ASCII Table Font BB l5](pics/ascii_table_l4_fontbb.png?raw=true)
+![Screenshot ASCII Table Font BB l5](pics/ascii_table_l5_fontbb.png?raw=true)
 
 ### Fat Font: s
 
