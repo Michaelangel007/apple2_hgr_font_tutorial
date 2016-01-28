@@ -49,7 +49,5 @@ DemoCharInspect:
         BNE .b         ;
         RTS            ; yes, exit
 
-PrintChar
-
 __END:
 
