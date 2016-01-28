@@ -1,12 +1,12 @@
 #Apple ]\[ //e HGR Font 6502 Assembly Language Tutorial
 
-Revision: 59, Jan 27, 2016.
+Revision: 60, Jan 27, 2016.
 
 # Table of Contents
 
 * Introduction
 * The Problem
-* The Solution
+* A Solution
  * Hard-Coded: A
 * Functions we want & will write
 * Quirks of the Apple HGR screen
@@ -40,7 +40,7 @@ Revision: 59, Jan 27, 2016.
 * Other Fonts
  * Fat Stroke Fonts
   * Beautiful Boot
-* What\'s Next?
+* What's Next?
 * Conclusion
 * Solutions
  * Solution 1: ScrollHgrUpLine()
@@ -132,7 +132,7 @@ If we switch to the HGR screen and tried to enter in 0x41 what would happen? (Ig
 
 Hmm, that doesn't look like an `A` at all, only gibberish -- 2 dots. :-/  (If you see 2 magenta dots ignore the color for now.)
 
-# The Solution:
+# A Solution:
 
 ## Hard-Coded: A
 
