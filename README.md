@@ -2289,6 +2289,83 @@ Here are all the (core) font rendering routines we've entered in so far:
 
 A similiar font is the one used by "Beautiful Boot".  Let's examine it.
 
+First, let's write a program to display an ASCII table of the various glyphs.
+
+Listing [Ascii Table:](asm/asciitable.s)
+
+```assembly
+        KEYBOARD    = $C000
+        KEYSTROBE   = $C010
+        TXTCLR      = $C050 ; Mode Graphics
+        MIXCLR      = $C052 ; Full  screen
+        MIXSET      = $C053 ; Split screen
+        PAGE1       = $C054
+        HIRES       = $C057 ; Mode HGR
+
+        HgrLo       = $F5
+        HgrHi       = $F6
+        glyph       = $FE
+        row         = $FF
+        DrawChar    = $310
+        HgrLoY      = $3A0
+        HgrHiY      = $3B8
+
+        START_ROW   = 0
+
+        ORG $1080
+AsciiTable
+        LDY #(START_ROW-1) & $FF
+        STY row
+
+        LDA #0          ; glyph=0
+        STA glyph       ; save which glyph to draw
+
+        BIT PAGE1       ; Page 1
+        BIT TXTCLR      ; not text, but graphics
+        BIT MIXSET      ; Split screen text/graphics
+        BIT HIRES       ; HGR, no GR
+_NextRow
+        INC row
+        LDY row
+        LDA HgrLoY,Y
+        STA HgrLo       ; Screen Address Lo
+        LDA HgrHiY,Y
+        ORA #$20        ; HGR Page 1
+        STA HgrHi       ; Screen Address Hi
+
+        LDY #00         ; Y = col
+_NextCol
+        LDA glyph       ; A = glyph
+        JSR DrawChar
+        INC glyph       ; yes, ++glyph
+        LDA glyph       ;
+        CMP #$20        ; done 16 chars?
+        BEQ _NextRow
+        CMP #$40
+        BEQ _NextRow
+        CMP #$60
+        BEQ _NextRow
+        CMP #$80
+        BNE _NextCol
+_Done   RTS             ; Optimization: BEQ _NextRow
+```
+
+Enter in:
+
+```
+    1080:A0 FF 84 FF A9 00 85 FE
+    1088:2C 54 C0 2C 50 C0 2C 53
+    1090:C0 2C 57 C0 E6 FF A4 FF
+    1098:B9 A0 03 85 F5 B9 B8 03
+    10A0:09 20 85 F6 A0 00 A5 FE
+    10A8:20 10 03 E6 FE A5 FE C9
+    10B0:20 F0 E1 C9 40 F0 DD C9
+    10B8:60 F0 D9 C9 80 D0 E7 60
+    1080G
+```
+
+![Screenshot ASCII Font 7x8](pics/ascii_table_1_font7x8.png?raw=true)
+
 
 ### Beautiful Boot
 
@@ -2399,22 +2476,15 @@ Again copy this to higher memory
 8000<6000.63FFM
 ```
 
-Fire up our ASCII Character Inspector. Recall:
+Let's display this just a few lines down at row 6. We need to use `row-1` because of the pre-increment at `$1080`.
+ 
 
 ```
-    1000:A9 00 85 FE A9 00 85 F5
-    1008:A9 20 85 F6 A5 FE A0 00
-    1010:20 37 10 AD 00 C0 10 FB
-    1018:8D 10 C0 C9 88 D0 0A C6
-    1020:FE A5 FE 29 7F 85 FE 10
-    1028:DB C9 95 D0 05 E6 FE 18
-    1030:90 EF C9 9B D0 DD 60 48
-    1038:20 10 03 A9 20 20 10 03
-    1040:68 4C 01 03
-    1000G
+1081:5
+1080G
 ```
 
-Press `ESC` when done viewing.
+![Screenshot ASCII Table Font BB Upside Down](pics/ascii_table_2_fontbb.png?raw=true)
 
 Argh, those glyphs are upside down!
 
@@ -2436,17 +2506,21 @@ Enter in:
     35E:CA EA EA 10
 ```
 
-Hmm, some of those glyphs are badly designed (inconsistent.) :-/ That's the biggest problem amateur artists have; they haven't yet internalized a "consistent style" -- their's is all over the place.  This comes with experience of knowing:
+Let's try that again:
+
+```
+    1080G
+```
+
+OK, that's much better.
+
+![Screenshot ASCII Table Font BB Upside Down](pics/ascii_table_3_fontbb.png?raw=true)
+
+
+Hmmm, some of those glyphs are badly designed (inconsistent.) :-/ That's the biggest problem amateur artists have; they haven't yet internalized a "consistent style" -- their's is all over the place.  This comes with experience of knowing:
 
  * When to follow the "rules", and
  * When to bend/break the "rules".
-
-Let's write a program to view all the ASCII characters.
-
-```Assembly
-                ORG $1050
-                ; <<Forthcoming!>>
-```
 
 Here is a table of all the glyphs that we'll eventually fix:
 
