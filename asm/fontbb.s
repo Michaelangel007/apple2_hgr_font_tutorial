@@ -2,7 +2,7 @@
 
     __MAIN = $6000 + ($20*8)                ; $6100
     .include "dos33.inc"
-    .feature c_comments
+    .include "ca65.inc"
 
 FONT:
     .byte   $80,$80,$80,$80,$80,$80,$80,$80 ; SPC $20
