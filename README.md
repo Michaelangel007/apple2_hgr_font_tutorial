@@ -1,6 +1,6 @@
 #Apple ]\[ //e HGR Font 6502 Assembly Language Tutorial
 
-Revision: 66, Jan 28, 2016.
+Revision: 67, Jan 28, 2016.
 
 # Table of Contents
 
@@ -2594,7 +2594,7 @@ Let's display our new glyphs at row 12.
 ![Screenshot ASCII Table Font BB S2](pics/ascii_table_s2_fontbb.png?raw=true)
 
 
-While that matches the style of `5` it doesn't match the style of `A`.
+While that matches the style of `5` / `6` it doesn't match the round style of `A` / `B`.
 Let's fix the top and bottom rows.
 
 ```
