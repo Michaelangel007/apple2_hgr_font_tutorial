@@ -1,6 +1,6 @@
 #Apple ]\[ //e HGR Font 6502 Assembly Language Tutorial
 
-Revision: 65, Jan 28, 2016.
+Revision: 66, Jan 28, 2016.
 
 # Table of Contents
 
@@ -2733,10 +2733,10 @@ Hmm, that's not really an improvement -- we lost our symmetry. Let's review with
 ```
     XX..XX   1
     XX..XX   2
-     XXXX    3
-      XX     4
-     XXXX    5
-    XX  XX   6
+    .XXXX.   3
+    ..XX..   4
+    .XXXX.   5
+    XX..XX   6
     XX..XX   7
 ```
 
