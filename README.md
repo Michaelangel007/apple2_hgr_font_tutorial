@@ -1,6 +1,6 @@
 #Apple ]\[ //e HGR Font 6502 Assembly Language Tutorial
 
-Revision: 60, Jan 27, 2016.
+Revision: 61, Jan 27, 2016.
 
 # Table of Contents
 
@@ -1540,14 +1540,14 @@ Listing Demo 3a:
     1013:AD 00 C0 .2 LDA KEYBOARD   ; read A=key
     1016:10 FB       BPL .2         ; no key?
     1018:8D 10 C0    STA KEYSTROBE  ; debounce key
-    101B:C9 88       CMP #$88       ; key == <-- ?
+    101B:C9 88       CMP #$88       ; key == <-- ? CTRL-H
     101D:D0 0A       BNE .4         ;
     101F:C6 FE       DEC glyph      ; yes, --glyph
     1021:A5 FE    .3 LDA glyph      ; glyph &= 0x7F
     1023:29 7F       AND #$7F       ;
     1025:85 FE       STA glyph      ;
     1027:10 DB       BPL .1         ; always branch, draw prev char
-    1029:C9 95    .4 CMP #$95       ; key == --> ?
+    1029:C9 95    .4 CMP #$95       ; key == --> ? CTRL-U
     102B:D0 05       BNE .5         ;
     102D:E6 FE       INC glyph      ; yes, ++glyph
     102F:18          CLC            ; always branch
