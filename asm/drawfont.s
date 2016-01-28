@@ -1,5 +1,6 @@
         __MAIN = $301
         .include "dos33.inc"
+        .include "ca65.inc"
 
 ; Listing 11
 
