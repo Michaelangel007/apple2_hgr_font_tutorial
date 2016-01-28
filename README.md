@@ -1,6 +1,6 @@
 #Apple ]\[ //e HGR Font 6502 Assembly Language Tutorial
 
-Revision: 58, Jan 27, 2016.
+Revision: 59, Jan 27, 2016.
 
 # Table of Contents
 
@@ -591,7 +591,7 @@ I also recommend "saving" a copy of this font higher in memory.
 7000<6000.63FFM
 ```
 
-(For the advanced user, you can save this: `BSAVE FONT.BIN,A$6000,L$400`)
+(For the advanced user, you can save this: `BSAVE FONT7X8,A$6000,L$400`)
 
 <hr>
 **AppleWin** users: We can save the state of the virutal machine via `F11`.
@@ -3249,9 +3249,9 @@ That's all folks!  Now go write some cool font blitter code.
 - [x] Cleanup all assembly for consistent indentation and alignment
 - [x] Count cycles of old and new DrawCharCol Address Calculation
 - [x] Alternative `Beautiful Boot` Font
-- [ ] Binary code for 300.bin and 1000.bin so you can load it directly into the emulator (In progress)
-- [ ] Disk image: `HGR_FONT.DSK` (In progress)
-- [ ] Alternative fonts
+- [x] Binary code at Font Drawing @ $301 `DRAWFONT` and Char Inspect @ $1000 `CHARINSPECT` so you can load it directly into the emulator
+- [x] Disk image: `HGRFONT.DSK` (DRAWFONT, CHARINSPECT, FONT7X8, FONTBB)
+- [ ] Fix Fat Font glyphs (In progress)
 - [ ] Re-engineer Codepage 437 Font to 7x8 cells:
  ![font_codepage_437_8x8.png](font_codepage_437_8x8.png) (In progress)
 - [ ] Double Hi-Res
