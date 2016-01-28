@@ -2733,9 +2733,9 @@ Hmm, that's not really an improvement -- we lost our symmetry. Let's review with
 ```
     XX..XX   1
     XX..XX   2
-    .XXXX.   3
-    ..XX..   4
-    .XXXX.   5
+     XXXX    3
+      XX     4
+     XXXX    5
     XX..XX   6
     XX..XX   7
 ```
@@ -2759,7 +2759,7 @@ Ugh! That's even worse!
 
 Why?
 
-Because all the other rows are already half-pixel shifted over -- let's "undo"  that for this glyph:
+Because all the _other_ rows are **already** half-pixel shifted over -- let's "undo"  that for this glyph:
 
 ```
     62C0:80 33 9B 1E 0C 1E 9B 33
