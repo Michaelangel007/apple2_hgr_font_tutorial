@@ -1092,11 +1092,11 @@ Here is what our render glyph code looks like so far:
         TmpHi   = $F6   ; High byte Working pointer to screen byte
         Font    = $6000
 
-        ORG $310
+        ORG $0310
 DrawChar:
         JMP _DrawChar1
 
-        ORG $34C
+        ORG $034C
 _DrawChar1
         LDX TmpHi
         STX TopHi
