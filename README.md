@@ -1,6 +1,6 @@
 #Apple ]\[ //e HGR Font 6502 Assembly Language Tutorial
 
-Revision: 62, Jan 28, 2016.
+Revision: 63, Jan 28, 2016.
 
 # Table of Contents
 
@@ -2517,7 +2517,7 @@ OK, that's much better.
 ![Screenshot ASCII Table Font BB Upside Down](pics/ascii_table_3_fontbb.png?raw=true)
 
 
-Hmmm, some of those glyphs are badly designed (inconsistent.) :-/ That's the biggest problem amateur artists have; they haven't yet internalized a "consistent style" -- their's is all over the place.  This comes with experience of knowing:
+Hmmm, some of those glyphs are badly designed (inconsistent.) :-/ That's the biggest problem amateur artists have; they haven't yet internalized a "consistent style" -- theirs is all over the place.  This comes with experience of knowing:
 
  * When to follow the "rules", and
  * When to bend/break the "rules".
@@ -2551,13 +2551,13 @@ Change the `S` = $53 @ `6298`:
 From:
 
 ```
-    6298:80 9E B3 B0 9E 83 B3 9E  'S
+    6298:80 9E B3 B0 9E 83 B3 9E
 ```
 
 To:
 
 ```
-    6298:80 9E BF B8 9E 87 BF 9E  'S
+    6298:80 9E BF B8 9E 87 BF 9E
 ```
 
 Let's display our new glyphs at row 12.
@@ -2571,10 +2571,10 @@ Let's display our new glyphs at row 12.
 
 
 While that matches the style of `5` it doesn't match the style of `A`.
-Let's fix the and bottom rows.
+Let's fix the top and bottom rows.
 
 ```
-    6298:80 9F BF B8 9E 87 BF BE  'S
+    6298:80 9F BF B8 9E 87 BF BE
 ```
 
 ![Screenshot ASCII Table Font BB S3](pics/ascii_table_s3_fontbb.png?raw=true)
@@ -2654,7 +2654,128 @@ b) Did I manually enter in those hex values?
 
 `<<Forthcoming!>>`
 
+The next glyph that stands out is the `X`.
 
+Change the `X` = $53 @ `6298`:
+
+From:
+
+```
+    62C0:80 B3 B3 9E 8C 9E B3 B3
+```
+
+To:
+
+```
+    62C0:80 33 B3 9E 8C 9E B3 33
+```
+
+![Screenshot ASCII Table Font BB X2](pics/ascii_table_x2_fontbb.png?raw=true)
+
+
+Hmm. Close, but no cigar.  We need to shift the top and bottom row's right edge pixels over by 1 pixel:
+
+```
+   XxXx....XxXx
+    xXxX....xXxX
+      xXxXxXxX
+        xXxX
+      xXxXxXxX
+    xXxX....xXxX
+   XxXx....XxXx
+```
+ 
+```
+   XxXx......XxXx
+    xXxX....xXxX
+      xXxXxXxX
+        xXxX
+      xXxXxXxX
+    xXxX....xXxX
+   XxXx......XxXx
+```
+OK, this should fix it:
+
+```
+    62C0:80 63 B3 9E 8C 9E B3 63
+```
+
+![Screenshot ASCII Table Font BB X3](pics/ascii_table_x3_fontbb.png?raw=true)
+
+Hmm, that's not really an improvement -- we lost our symmetry. Let's review with-out the half-pixel shift.
+
+```
+    XX..XX   1
+    XX..XX   2
+     XXXX    3
+      XX     4
+     XXXX    5
+    XX  XX   6
+    XX..XX   7
+```
+
+We really want the top and rows "anchored" and nudge rows 2 and 6 in half a pixel
+
+From:
+
+```
+    62C0:80 B3 B3 9E 8C 9E B3 63
+```
+
+To:
+```
+    62C0:80 B3 9B 9E 8C 9E 9B B3
+```
+
+![Screenshot ASCII Table Font BB X4](pics/ascii_table_x4_fontbb.png?raw=true)
+
+Ugh! That's even worse!
+
+Why?
+
+Because all the other rows are already half-pixel shifted over -- let's "undo"  that for this glyph:
+
+```
+    62C0:80 33 9B 1E 0C 1E 9B 33
+```
+
+![Screenshot ASCII Table Font BB X5](pics/ascii_table_x5_fontbb.png?raw=true)
+
+Almost!
+
+We just need to add 1/2 a pixel on the left edge and 1/2 a pixel on the right edge of the middle row 4.
+
+```
+    62C0:80 33 9B 1E 8E 1E 9B 33
+```
+
+![Screenshot ASCII Table Font BB X6](pics/ascii_table_x6_fontbb.png?raw=true)
+
+![Screenshot ASCII Table Font BB X7](pics/ascii_table_x7_fontbb.png?raw=true)
+
+Looking good!
+
+Except we have one minor problem -- the "kerning" between the `W` and `X` versus the `X` and `Y` is no longer consistent.
+
+Why?
+
+This is because all the glyphs in the font has the high-bit ON which means every glyph is half-pixel shifted to the right.
+
+In order to fix this we need to "undo" ALL these half pixel shifts -- all we need to do is subtract `$80`, or better yet `XOR $80` from every byte.
+
+We can either do this now, or fix the other glyphs and do this later.
+
+Let's touch up the `2` and `Q` first.
+
+We want to fix row 4 of the `2`:
+
+    6190:80 BF BF 8E 38 B3 BF 9E
+
+Excellent!
+
+![Screenshot ASCII Table Font BB 2b](pics/ascii_table_2b_fontbb.png?raw=true)
+
+![Screenshot ASCII Table Font BB 2c](pics/ascii_table_2c_fontbb.png?raw=true)
 
 # What's next?
 
