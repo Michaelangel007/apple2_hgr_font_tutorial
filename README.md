@@ -1,6 +1,6 @@
 #Apple ]\[ //e HGR Font 6502 Assembly Language Tutorial
 
-Revision: 67, Jan 28, 2016.
+Revision: 68, Jan 28, 2016.
 
 # Table of Contents
 
@@ -2901,15 +2901,14 @@ The round corners of `A` are **sans serif**.  Let's make the `M` consistent:
 
 While the `7` is not bad, we could do a very minor touchup.
 
-# What's next?
+# What's Next?
 
-What's left? Quite a few things actually:
+What's left to do? Quite a few things actually:
 
- * Copy the 80-Column text screen to DHGR (Double High Resolution)
- * Hook into the COUT so all text appears onto the HGR or DHGR screen
- * Other 7x8 fonts
- * Other non-7x8 fonts
-
+ * Copy the 80-Column text screen to the DHGR (Double High Resolution Graphics) screen,
+ * Hook into the COUT so all text appears onto the HGR or DHGR screen automatically,
+ * non-grid aligned (proportional) 7x8 fonts (potentially 8 font tables),
+ * non 7x8 fonts, such as 4x6.
 
 # Conclusion
 
