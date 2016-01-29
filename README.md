@@ -1,6 +1,6 @@
 #Apple ]\[ //e HGR Font 6502 Assembly Language Tutorial
 
-Revision: 68, Jan 28, 2016.
+Revision: 67, Jan 28, 2016.
 
 # Table of Contents
 
@@ -106,6 +106,9 @@ When you are at the Applesoft `]` prompt type in (or paste) the following:
     FC58G
     400:41
 
+![Screenshot TEXT flash A](pics/text_flash_a.png?raw=true)
+
+
 We used the ASCII character `A` which has a hex value 0x41.  Hmm, OK, so we see an `A` but why is it flashing??
 
 <hr>
@@ -118,12 +121,16 @@ The 40x24 text screen of the Apple is _"memory-mapped"_ -- that is by directly s
 
     400:01 41 C1
 
+![Screenshot TEXT inverse A](pics/text_inverse_a.png?raw=true)
+
 The control characters show up in `inverse`, ASCII characters show up `flashing`, and our normal character requires the high bit to be set. 0x41 + 080 = 0xC1.
 
 <hr>
 A slight fun diversion: If you are on an enhanced Apple //e or //c we can activate a 2nd character set called `Mouse Text`.  This replaces all the flashing text with special drawing charactes:
 
     C00F:1
+
+![Screenshot TEXT mousetext A](pics/text_mousetext_a.png?raw=true)
 
 You should see the flashing `A` has been replaced with an open apple symbol.
 
@@ -139,6 +146,8 @@ If we switch to the HGR screen and tried to enter in 0x41 what would happen? (Ig
     F399G    ; `TEXT`
     F3E2G    ; `HGR`
     2000:41  ; A
+
+![Screenshot 0](pics_hgrfont_00.png?raw=true)
 
 Hmm, that doesn't look like an `A` at all, only gibberish -- 2 dots. :-/  (If you see 2 magenta dots ignore the color for now.)
 
@@ -2594,7 +2603,7 @@ Let's display our new glyphs at row 12.
 ![Screenshot ASCII Table Font BB S2](pics/ascii_table_s2_fontbb.png?raw=true)
 
 
-While that matches the style of `5` / `6` it doesn't match the round style of `A` / `B`.
+While that matches the style of `5` it doesn't match the style of `A`.
 Let's fix the top and bottom rows.
 
 ```
@@ -2901,14 +2910,15 @@ The round corners of `A` are **sans serif**.  Let's make the `M` consistent:
 
 While the `7` is not bad, we could do a very minor touchup.
 
-# What's Next?
+# What's next?
 
-What's left to do? Quite a few things actually:
+What's left? Quite a few things actually:
 
- * Copy the 80-Column text screen to the DHGR (Double High Resolution Graphics) screen,
- * Hook into the COUT so all text appears onto the HGR or DHGR screen automatically,
- * non-grid aligned (proportional) 7x8 fonts (potentially 8 font tables),
- * non 7x8 fonts, such as 4x6.
+ * Copy the 80-Column text screen to DHGR (Double High Resolution)
+ * Hook into the COUT so all text appears onto the HGR or DHGR screen
+ * Other 7x8 fonts
+ * Other non-7x8 fonts
+
 
 # Conclusion
 
