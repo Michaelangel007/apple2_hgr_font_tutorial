@@ -128,7 +128,7 @@ The control characters show up in `inverse`, ASCII characters show up `flashing`
 <hr>
 A slight fun diversion: If you are on an enhanced Apple //e or //c we can activate a 2nd character set called `Mouse Text`.  This replaces all the flashing text with special drawing characters that help make a text based UI.
 
-This is what the full Mouse Text glyphs look like:
+This is what the full 32 Mouse Text glyphs look like:
 
 ![Screenshot ASCII Font 7x8](pics/ascii_table_1_font7x8.png?raw=true)
 
