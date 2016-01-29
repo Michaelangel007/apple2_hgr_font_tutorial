@@ -147,7 +147,7 @@ If we switch to the HGR screen and tried to enter in 0x41 what would happen? (Ig
     F3E2G    ; `HGR`
     2000:41  ; A
 
-![Screenshot 0](pics_hgrfont_00.png?raw=true)
+![Screenshot 0](pics/hgrfont_00.png?raw=true)
 
 Hmm, that doesn't look like an `A` at all, only gibberish -- 2 dots. :-/  (If you see 2 magenta dots ignore the color for now.)
 
