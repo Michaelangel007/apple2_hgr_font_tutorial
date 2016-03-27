@@ -1,6 +1,7 @@
 #Apple ]\[ //e HGR Font 6502 Assembly Language Tutorial
 
-Revision: 68, Jan 28, 2016.
+By: Michael Pohoreski
+Revision: 60, Mar 27, 2016.
 
 # Table of Contents
 
@@ -86,7 +87,7 @@ There are other emulators written in JavaScript but they are poor due to 2 reaso
 
 Some emulators that run in the browser:
 
-* [Apple 2 js](https://www.scullinsteel.com/apple2/) make sure you select:
+* [Apple 2 js](https://www.scullinsteel.com/apple2/) -- make sure you select:
 
  * Options, [x] Green Screen
 
