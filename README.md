@@ -1,7 +1,7 @@
 #Apple ]\[ //e HGR Font 6502 Assembly Language Tutorial
 
 By: Michael Pohoreski
-Revision: 69, Mar 27, 2016.
+Revision: 70, Mar 27, 2016.
 
 # Table of Contents
 
@@ -124,7 +124,7 @@ The 40x24 text screen of the Apple is _"memory-mapped"_ -- that is by directly s
 
 ![Screenshot TEXT inverse A](pics/text_inverse_a.png?raw=true)
 
-The control characters show up in `inverse`, ASCII characters show up `flashing`, and our normal character requires the high bit to be set. 0x41 + 080 = 0xC1.
+The control characters show up in `inverse`, ASCII characters show up `flashing`, and our normal character requires the high bit to be set. 0x41 + 0x80 = 0xC1.
 
 <hr>
 A slight fun diversion: If you are on an enhanced Apple //e or //c we can activate a 2nd character set called `Mouse Text`.  This replaces all the flashing text with special drawing characters that help make a text based UI.
