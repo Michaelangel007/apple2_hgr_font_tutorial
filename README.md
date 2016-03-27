@@ -1,7 +1,7 @@
 #Apple ]\[ //e HGR Font 6502 Assembly Language Tutorial
 
 By: Michael Pohoreski
-Revision: 60, Mar 27, 2016.
+Revision: 69, Mar 27, 2016.
 
 # Table of Contents
 
