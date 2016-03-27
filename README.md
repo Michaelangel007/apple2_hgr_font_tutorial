@@ -96,7 +96,7 @@ Some emulators that run in the browser:
 
 **Note**: If you are using an emulator -- I've added "comments" in the lines of machine code you would paste  by having a semi-colon and a description at the end of the line.  
 
- * **You may want to mute your sound** since the Apple will beep at the semi-colon "comments" as that part of the input is not tehcnically valid input.  (The rest of the line WILL be processed, though.)
+ * **You may want to mute your sound** since the Apple will beep at the semi-colon "comments" as that part of the input is _not_ technically valid input.  (The rest of the line WILL be processed, though.)
 
 
 # The Problem
