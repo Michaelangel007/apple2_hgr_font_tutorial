@@ -1,7 +1,7 @@
 #Apple ]\[ //e HGR Font 6502 Assembly Language Tutorial
 
 By: Michael Pohoreski
-Revision: 70, Mar 27, 2016.
+Revision: 71, Mar 27, 2016.
 
 # Table of Contents
 
@@ -3015,7 +3015,7 @@ Seriously though, start with the data flow. Let's look at the HGR "text" lines w
 We need to copy 23 HGR "text" lines to the one above; we also need to clear the bottom row.  Pseudo-code would be:
 
 ```C
-    for( int line = 0; line < 24-1; line++
+    for( int line = 0; line < 24-1; line++ )
         copy_line( line+1, line );
     clear_line( 23 );
 ```
@@ -3023,18 +3023,21 @@ We need to copy 23 HGR "text" lines to the one above; we also need to clear the 
 Each HGR "text" line takes up 40 columns
 
 ```C
-    for( int row = 0; row < 23; row++
+    for( int row = 0; row < 23; row++ )
+    {
         char *src = HGRAddressY[ row + 1 ]
         char *dst = HGRAddressY[ row + 0 ]
         for( int col = 0; col < 40; col++ )
             *dst++ = *src++;
+    }
     clear_line( 23 );
 ```
 
 However each HGR "text" line takes 8 scanlines (since our font cell is 7x8).
 
 ```C
-    for( row = 0; row < 23; row++
+    for( row = 0; row < 23; row++ )
+    {
         char *src = HGRAddressY[ row + 1 ]
         char *dst = HGRAddressY[ row + 0 ]
         for( line = 0; line < 8; line++ )
@@ -3044,6 +3047,7 @@ However each HGR "text" line takes 8 scanlines (since our font cell is 7x8).
             src += 0x400;
             dst += 0x400;
         }
+    }
 ```
 
 We could code this up as:
