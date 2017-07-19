@@ -2062,6 +2062,37 @@ For our final trick we are going to copy the characters off the text screen onto
 
 The text screen, like the HGR screen, is also non-linear, and also broken up into a triad:
 
+|Row| Text Address | Screen Hole  |
+|--:|:------------:|:------------:|
+| 0 | $400 .. $427 | n/a          |
+| 1 | $480 .. $4A7 | n/a          |
+| 2 | $500 .. $527 | n/a          |
+| 3 | $580 .. $5A7 | n/a          |
+| 4 | $600 .. $627 | n/a          |
+| 5 | $600 .. $6A7 | n/a          |
+| 6 | $700 .. $727 | n/a          |
+| 7 | $780 .. $7A7 | n/a          |
+| - |      --      | --           |
+| 8 | $428 .. $44F | n/a          |
+| 9 | $4A8 .. $4CF | n/a          |
+|10 | $528 .. $54F | n/a          |
+|11 | $5A8 .. $5CF | n/a          |
+|12 | $628 .. $64F | n/a          |
+|13 | $6A8 .. $6CF | n/a          |
+|14 | $728 .. $74F | n/a          |
+|15 | $7A8 .. $7CF | n/a          |
+| - |      --      | --           |
+|16 | $450 .. $477 | $478 .. $47F |
+|17 | $4D0 .. $4F7 | $4F8 .. $4FF |
+|18 | $550 .. $577 | $578 .. $57F |
+|19 | $5D0 .. $5F7 | $5F8 .. $5FF |
+|20 | $650 .. $677 | $678 .. $67F |
+|21 | $6D0 .. $6F7 | $6F8 .. $6FF |
+|22 | $750 .. $777 | $778 .. $77F |
+|23 | $7D0 .. $7F7 | $7F8 .. $7FF |
+
+Analzying both the Text and HGR addresses:
+
 |Row|Text Address|HGR Address|HGR Scanline|
 |--:|:----:|:-----:|---:|
 | 0 | $400 | $2000 |   0|
