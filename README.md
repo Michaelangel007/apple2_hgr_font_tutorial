@@ -2091,7 +2091,7 @@ The text screen, like the HGR screen, is also non-linear, and also broken up int
 |22 | $750 .. $777 | $778 .. $77F |
 |23 | $7D0 .. $7F7 | $7F8 .. $7FF |
 
-Analzying both the Text and HGR addresses:
+Analyzing both the Text and HGR addresses:
 
 |Row|Text Address|HGR Address|HGR Scanline|
 |--:|:----:|:-----:|---:|
