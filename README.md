@@ -1,7 +1,7 @@
 #Apple ]\[ //e HGR Font 6502 Assembly Language Tutorial
 
 By: Michael Pohoreski
-Revision: 71, Mar 27, 2016.
+Revision: 72, Aug 20, 2020.
 
 # Table of Contents
 
@@ -2062,6 +2062,19 @@ For our final trick we are going to copy the characters off the text screen onto
 
 The text screen, like the HGR screen, is also non-linear, and also broken up into a triad:
 
+|First             |Middle            |Last              |Screen Hole|
+|:-----------------|:-----------------|:-----------------|:----------|
+|$400.. y= 0 ..$427|$428.. y= 8 ..$44F|$450.. y=16 ..$477|$478..$47F |
+|$480.. y= 1 ..$4A7|$428.. y= 9 ..$44F|$4D0.. y=17 ..$4F7|$4F8..$4FF |
+|$500.. y= 2 ..$527|$528.. y=10 ..$54F|$550.. y=18 ..$577|$578..$57F |
+|$580.. y= 3 ..$5A7|$528.. y=11 ..$54F|$5D0.. y=19 ..$5F7|$5F8..$5FF |
+|$600.. y= 4 ..$627|$628.. y=12 ..$64F|$650.. y=20 ..$677|$678..$67F |
+|$680.. y= 5 ..$6A7|$628.. y=13 ..$64F|$6D0.. y=21 ..$6F7|$678..$6FF |
+|$700.. y= 6 ..$727|$728.. y=14 ..$74F|$750.. y=22 ..$777|$778..$77F |
+|$780.. y= 7 ..$7A7|$728.. y=15 ..$74F|$7D0.. y=23 ..$7F7|$7F8..$7FF |
+
+Sorting by row:
+
 |Row| Text Address | Screen Hole  |
 |--:|:------------:|:------------:|
 | 0 | $400 .. $427 | n/a          |
@@ -2090,6 +2103,13 @@ The text screen, like the HGR screen, is also non-linear, and also broken up int
 |21 | $6D0 .. $6F7 | $6F8 .. $6FF |
 |22 | $750 .. $777 | $778 .. $77F |
 |23 | $7D0 .. $7F7 | $7F8 .. $7FF |
+
+
+Here is a 1-liner Javascript code to print off the y and text address:
+
+```
+var base = 0x400; for( var y = 0; y < 24; y++ ) console.log( y + " = $" + (base + (y%8)*128 + Math.floor(y/8)*40).toString(16) );
+```
 
 Analyzing both the Text and HGR addresses:
 
@@ -2949,45 +2969,6 @@ The round corners of `A` are **sans serif**.  Let's make the `M` consistent:
 ### Fat Font: 7
 
 While the `7` is not bad, we could do a very minor touchup.
-
-# What's next?
-
-What's left? Quite a few things actually:
-
- * Copy the 80-Column text screen to DHGR (Double High Resolution)
- * Hook into the COUT so all text appears onto the HGR or DHGR screen
- * Other 7x8 fonts
- * Other non-7x8 fonts
-
-
-# Conclusion
-
-Hope this HGR font tutorial helped you understand the inner workings of a font blitter!
-
-Happy (Apple ]\[ //e //c) Hacking!
-
-Michael "AppleWin Debug Dev"
-
-
-# Solutions
-
-## Solution 1: ScrollHgrUpLine()
-
-Figure it out !  You have all the tools and knowledge.
-
-
-Seriously though, start with the data flow. Let's look at the HGR "text" lines we need to copy from/to:
-
-    Src Dst
-     1    0
-     2    1
-     3    2
-     4    3
-     5    4
-     6    5
-     7    6
-     8    7
-
 
 # What's next?
 
