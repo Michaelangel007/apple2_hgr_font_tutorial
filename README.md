@@ -2060,18 +2060,20 @@ Note: An easy way to get the hex bytes for a string is to use this tiny JavaScri
 
 For our final trick we are going to copy the characters off the text screen onto the HGR screen.  More magic?  Nah, just bit-shuffling.
 
-The text screen, like the HGR screen, is also non-linear, and also broken up into a triad:
+The text screen, like the HGR screen, is also non-linear and also broken up into a triad of 40 characters:
 
-|First             |Middle            |Last              |Screen Hole|
+|First Triad       |Middle Triad      |Last Triad        |Screen Hole|
 |:-----------------|:-----------------|:-----------------|:----------|
 |$400.. y= 0 ..$427|$428.. y= 8 ..$44F|$450.. y=16 ..$477|$478..$47F |
-|$480.. y= 1 ..$4A7|$428.. y= 9 ..$44F|$4D0.. y=17 ..$4F7|$4F8..$4FF |
+|$480.. y= 1 ..$4A7|$4A8.. y= 9 ..$4CF|$4D0.. y=17 ..$4F7|$4F8..$4FF |
 |$500.. y= 2 ..$527|$528.. y=10 ..$54F|$550.. y=18 ..$577|$578..$57F |
-|$580.. y= 3 ..$5A7|$528.. y=11 ..$54F|$5D0.. y=19 ..$5F7|$5F8..$5FF |
+|$580.. y= 3 ..$5A7|$5A8.. y=11 ..$5CF|$5D0.. y=19 ..$5F7|$5F8..$5FF |
 |$600.. y= 4 ..$627|$628.. y=12 ..$64F|$650.. y=20 ..$677|$678..$67F |
-|$680.. y= 5 ..$6A7|$628.. y=13 ..$64F|$6D0.. y=21 ..$6F7|$678..$6FF |
+|$680.. y= 5 ..$6A7|$6A8.. y=13 ..$6CF|$6D0.. y=21 ..$6F7|$6F8..$6FF |
 |$700.. y= 6 ..$727|$728.. y=14 ..$74F|$750.. y=22 ..$777|$778..$77F |
-|$780.. y= 7 ..$7A7|$728.. y=15 ..$74F|$7D0.. y=23 ..$7F7|$7F8..$7FF |
+|$780.. y= 7 ..$7A7|$7A8.. y=15 ..$7CF|$7D0.. y=23 ..$7F7|$7F8..$7FF |
+
+Notice 128 bytes = 40 columns * 3 rows + 8 unused bytes.
 
 Sorting by row:
 
